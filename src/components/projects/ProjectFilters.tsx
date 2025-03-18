@@ -1,0 +1,156 @@
+// src/components/projects/ProjectFilters.tsx
+import React from 'react';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Button } from '@/components/ui/button';
+import { FilterIcon, XIcon } from 'lucide-react';
+
+type FilterOption = {
+  id: string;
+  name: string;
+};
+
+type ProjectFiltersProps = {
+  students: FilterOption[];
+  assignments: FilterOption[];
+  languages: FilterOption[];
+  selectedStudent: string;
+  selectedAssignment: string;
+  selectedLanguage: string;
+  selectedType: string;
+  onStudentChange: (value: string) => void;
+  onAssignmentChange: (value: string) => void;
+  onLanguageChange: (value: string) => void;
+  onTypeChange: (value: string) => void;
+  onClearFilters: () => void;
+};
+
+export const ProjectFilters: React.FC<ProjectFiltersProps> = ({
+  students,
+  assignments,
+  languages,
+  selectedStudent,
+  selectedAssignment,
+  selectedLanguage,
+  selectedType,
+  onStudentChange,
+  onAssignmentChange,
+  onLanguageChange,
+  onTypeChange,
+  onClearFilters,
+}) => {
+  // Updated 'data-viz' to 'data_viz' to match the backend change
+  const projectTypes = [
+    { value: 'game', label: 'Game' },
+    { value: 'app', label: 'Application' },
+    { value: 'website', label: 'Website' },
+    { value: 'poster', label: 'Poster' },
+    { value: 'presentation', label: 'Presentation' },
+    { value: 'data_viz', label: 'Data Visualization' },
+    { value: 'other', label: 'Other' },
+  ];
+
+  const hasActiveFilters = 
+    selectedStudent !== 'all' || 
+    selectedAssignment !== 'all' || 
+    selectedLanguage !== 'all' || 
+    selectedType !== 'all';
+
+  return (
+    <div className="bg-card border rounded-lg p-4 mb-6">
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-lg font-medium flex items-center">
+          <FilterIcon size={18} className="mr-2" />
+          Filter Projects
+        </h2>
+        
+        {hasActiveFilters && (
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            onClick={onClearFilters}
+            className="flex items-center text-muted-foreground hover:text-foreground"
+          >
+            <XIcon size={14} className="mr-1" />
+            Clear filters
+          </Button>
+        )}
+      </div>
+      
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div>
+          <label className="text-sm font-medium block mb-2">Student</label>
+          <Select value={selectedStudent} onValueChange={onStudentChange}>
+            <SelectTrigger>
+              <SelectValue placeholder="All students" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All students</SelectItem>
+              {students.map((student) => (
+                <SelectItem key={student.id} value={student.id}>
+                  {student.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        
+        <div>
+          <label className="text-sm font-medium block mb-2">Assignment</label>
+          <Select value={selectedAssignment} onValueChange={onAssignmentChange}>
+            <SelectTrigger>
+              <SelectValue placeholder="All assignments" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All assignments</SelectItem>
+              {assignments.map((assignment) => (
+                <SelectItem key={assignment.id} value={assignment.id}>
+                  {assignment.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        
+        <div>
+          <label className="text-sm font-medium block mb-2">Language</label>
+          <Select value={selectedLanguage} onValueChange={onLanguageChange}>
+            <SelectTrigger>
+              <SelectValue placeholder="All languages" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All languages</SelectItem>
+              {languages.map((language) => (
+                <SelectItem key={language.id} value={language.id}>
+                  {language.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        
+        <div>
+          <label className="text-sm font-medium block mb-2">Project Type</label>
+          <Select value={selectedType} onValueChange={onTypeChange}>
+            <SelectTrigger>
+              <SelectValue placeholder="All types" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All types</SelectItem>
+              {projectTypes.map((type) => (
+                <SelectItem key={type.value} value={type.value}>
+                  {type.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
+    </div>
+  );
+};
