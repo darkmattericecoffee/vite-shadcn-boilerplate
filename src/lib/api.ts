@@ -221,6 +221,7 @@ export async function getProjectById(id: string) {
           id
           name
           class
+          graduationYear
         }
         languages {
           id
@@ -247,6 +248,16 @@ export async function getProjectById(id: string) {
           id
           description
           file {
+            filename
+            url
+            filesize
+          }
+        }
+        zipArchives {
+          id
+          description
+          extractedPath
+          archive {
             filename
             url
             filesize
