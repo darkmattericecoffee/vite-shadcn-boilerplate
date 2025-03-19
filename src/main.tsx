@@ -1,18 +1,19 @@
 // src/main.tsx
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { 
-  createBrowserRouter, 
-  RouterProvider, 
-  Navigate 
+import {
+  createBrowserRouter,
+  RouterProvider,
+  Navigate
 } from 'react-router-dom';
 import { Layout } from './components/Layout';
-import { 
-  HomePage, 
-  ProjectsPage, 
-  ProjectDetailPage, 
-  StudentsPage, 
-  AssignmentsPage 
+import {
+  HomePage,
+  ProjectsPage,
+  ProjectDetailPage,
+  StudentsPage,
+  AssignmentsPage,
+  AssignmentDetailPage // Import the new component
 } from './pages';
 import './index.css';
 
@@ -40,6 +41,10 @@ const router = createBrowserRouter([
       {
         path: 'assignments',
         element: <AssignmentsPage />,
+      },
+      {
+        path: 'assignments/:id', // Add the new route
+        element: <AssignmentDetailPage />,
       },
       {
         path: '*',

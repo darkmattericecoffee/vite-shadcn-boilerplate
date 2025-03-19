@@ -10,7 +10,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from '@/components/ui/button';
-import { BookOpenIcon, CalendarIcon } from 'lucide-react';
+import { BookOpenIcon, CalendarIcon, ChevronRightIcon, FileTextIcon } from 'lucide-react';
 
 const AssignmentsPage = () => {
   interface Assignment {
@@ -55,7 +55,7 @@ const AssignmentsPage = () => {
       {assignments.length > 0 ? (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {assignments.map((assignment) => (
-            <Card key={assignment.id}>
+            <Card key={assignment.id} className="hover:shadow-md transition-shadow">
               <CardHeader>
                 <CardTitle className="flex items-center">
                   <BookOpenIcon size={20} className="mr-2" />
@@ -70,9 +70,16 @@ const AssignmentsPage = () => {
                   </div>
                 )}
               </CardContent>
-              <CardFooter>
-                <Button asChild variant="outline" className="w-full">
-                  <Link to={`/projects?assignment=${assignment.id}`}>
+              <CardFooter className="flex gap-3">
+                <Button asChild variant="default" className="flex-1">
+                  <Link to={`/assignments/${assignment.id}`} className="flex items-center justify-center">
+                    <FileTextIcon size={16} className="mr-2" />
+                    View Details
+                  </Link>
+                </Button>
+                <Button asChild variant="outline" className="flex-1">
+                  <Link to={`/projects?assignment=${assignment.id}`} className="flex items-center justify-center">
+                    <ChevronRightIcon size={16} className="mr-2" />
                     View Projects
                   </Link>
                 </Button>

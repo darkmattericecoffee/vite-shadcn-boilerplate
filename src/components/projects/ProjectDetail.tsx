@@ -1,5 +1,5 @@
 // src/components/projects/ProjectDetail.tsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Dialog,
   DialogContent,
@@ -17,7 +17,8 @@ import {
   GraduationCapIcon,
   TagIcon,
   FolderIcon,
-  InfoIcon
+  InfoIcon,
+  Code2Icon
 } from 'lucide-react';
 import { DocumentRenderer } from '@keystone-6/document-renderer';
 import {
@@ -30,6 +31,8 @@ import {
 import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar } from "@/components/ui/avatar";
+import { CodeViewer } from '@/components/viewer/code-viewer';
+import { loadPrism } from '@/lib/prism';
 
 // Define the backend API URL
 const API_BASE_URL = 'http://localhost:3000'; // Make sure this matches your Keystone server
@@ -114,6 +117,23 @@ const formatFileSize = (bytes: number) => {
 const ProjectDetail: React.FC<ProjectDetailProps> = ({ project }) => {
   const [selectedScreenshot, setSelectedScreenshot] = useState<string | null>(null);
   const [reflectionTab, setReflectionTab] = useState<string>("reflection");
+  const [selectedCodeFile, setSelectedCodeFile] = useState<{ url: string, filename: string } | null>(null);
+  
+  // Load Prism.js for syntax highlighting when component mounts
+  useEffect(() => {
+    loadPrism();
+  }, []);
+  
+  // Load Prism.js again after the code dialog opens
+  useEffect(() => {
+    if (selectedCodeFile) {
+      setTimeout(() => {
+        if ((window as any).Prism) {
+          (window as any).Prism.highlightAll();
+        }
+      }, 300);
+    }
+  }, [selectedCodeFile]);
   
   // Get first sentence or first 150 characters (whichever is shorter) for summary
   const getAssignmentSummary = () => {
@@ -422,11 +442,7 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({ project }) => {
                     <div 
                       key={`thumb-${screenshot.id || index}`}
                       className="flex-shrink-0 w-24 h-16 border rounded-md overflow-hidden cursor-pointer hover:opacity-80 transition-opacity"
-                      onClick={() => {
-                        // You would need to implement a way to jump to a specific slide
-                        // This might require customizing the Carousel component or using a different approach
-                        console.log(`Jump to screenshot ${index + 1}`);
-                      }}
+                      onClick={() => handleThumbnailClick(index)}
                     >
                       <img 
                         src={getFullUrl(screenshot.image.url)} 
@@ -619,11 +635,38 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({ project }) => {
                               {formatFileSize(codeFile.file.filesize)}
                             </p>
                           </div>
-                          <a href={getFullUrl(codeFile.file.url)} download className="ml-2">
-                            <Button variant="outline" size="sm">
-                              Download
-                            </Button>
-                          </a>
+                          <div className="flex gap-2 ml-2">
+                            <Dialog>
+                              <DialogTrigger asChild>
+                                <Button 
+                                  variant="outline" 
+                                  size="sm"
+                                  className="flex items-center gap-1"
+                                  onClick={() => setSelectedCodeFile({
+                                    url: codeFile.file ? getFullUrl(codeFile.file.url) || '' : '',
+                                    filename: codeFile.file ? codeFile.file.filename : ''
+                                  })}
+                                >
+                                  <Code2Icon size={14} />
+                                  <span>View</span>
+                                </Button>
+                              </DialogTrigger>
+                              <DialogContent className="max-w-[90vw] w-[90vw] max-h-[90vh]">
+                                {selectedCodeFile && selectedCodeFile.filename === codeFile.file.filename && (
+                                  <CodeViewer 
+                                    fileUrl={selectedCodeFile.url} 
+                                    fileName={selectedCodeFile.filename} 
+                                  />
+                                )}
+                              </DialogContent>
+                            </Dialog>
+                            
+                            <a href={getFullUrl(codeFile.file.url)} download>
+                              <Button variant="outline" size="sm">
+                                Download
+                              </Button>
+                            </a>
+                          </div>
                         </div>
                         {codeFile.description && (
                           <p className="text-xs mt-1">{codeFile.description}</p>
@@ -642,25 +685,19 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({ project }) => {
       <div className="mt-8">
         <Tabs value={reflectionTab} onValueChange={setReflectionTab} className="w-full">
           <TabsList className="w-full justify-start">
-            <TabsTrigger value="description">
-              <div className="flex items-center gap-2">
-                <InfoIcon size={16} />
-                <span>About This Project</span>
-              </div>
-            </TabsTrigger>
             <TabsTrigger value="reflection">
               <div className="flex items-center gap-2">
                 <UserIcon size={16} />
                 <span>Development Process</span>
               </div>
             </TabsTrigger>
+            <TabsTrigger value="description">
+              <div className="flex items-center gap-2">
+                <InfoIcon size={16} />
+                <span>About This Project</span>
+              </div>
+            </TabsTrigger>
           </TabsList>
-          
-          <TabsContent value="description" className="mt-4">
-            <div className="prose max-w-none dark:prose-invert">
-              <DocumentRenderer document={project.description.document} renderers={renderers} />
-            </div>
-          </TabsContent>
           
           <TabsContent value="reflection" className="mt-4">
             <div className="bg-muted/30 rounded-lg p-6">
@@ -688,6 +725,12 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({ project }) => {
                   and how they grew as a developer or designer through this project.
                 </p>
               </div>
+            </div>
+          </TabsContent>
+          
+          <TabsContent value="description" className="mt-4">
+            <div className="prose max-w-none dark:prose-invert">
+              <DocumentRenderer document={project.description.document} renderers={renderers} />
             </div>
           </TabsContent>
         </Tabs>

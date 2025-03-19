@@ -188,6 +188,38 @@ export async function getAssignments() {
   return fetchGraphQL(query);
 }
 
+export async function getAssignmentById(id: string) {
+  const query = `
+    query GetAssignment($id: ID!) {
+      assignment(where: { id: $id }) {
+        id
+        title
+        description {
+          document
+        }
+        dueDate
+        projects {
+          id
+          title
+          student {
+            name
+            class
+          }
+          screenshots {
+            image {
+              url
+            }
+          }
+        }
+      }
+    }
+  `;
+
+  const data = await fetchGraphQL(query, { id });
+  console.log("GetAssignmentById Response:", JSON.stringify(data, null, 2));
+  return data;
+}
+
 // Query to get all programming languages
 export async function getProgrammingLanguages() {
   const query = `
