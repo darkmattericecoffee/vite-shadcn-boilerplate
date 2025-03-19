@@ -1,11 +1,10 @@
-// src/components/projects/ProjectDetail.tsx - with fixed image URLs
+// src/components/projects/ProjectDetail.tsx
 import React, { useState } from 'react';
 import { 
-  Tabs, 
-  TabsContent, 
-  TabsList, 
-  TabsTrigger 
-} from '@/components/ui/tabs';
+  Dialog,
+  DialogContent,
+  DialogTrigger
+} from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { 
@@ -13,7 +12,10 @@ import {
   CalendarIcon, 
   FileIcon,
   ExternalLinkIcon,
-  BookOpenIcon
+  BookOpenIcon,
+  MaximizeIcon,
+  GraduationCapIcon,
+  TagIcon
 } from 'lucide-react';
 import { DocumentRenderer } from '@keystone-6/document-renderer';
 import {
@@ -23,6 +25,7 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
+import { Separator } from '@/components/ui/separator';
 
 // Define the backend API URL
 const API_BASE_URL = 'http://localhost:3000'; // Make sure this matches your Keystone server
@@ -50,6 +53,7 @@ type ProjectDetailProps = {
     student: {
       name: string;
       class?: string;
+      graduationYear?: number;
     };
     assignment?: {
       title: string;
@@ -94,7 +98,41 @@ const formatFileSize = (bytes: number) => {
 };
 
 const ProjectDetail: React.FC<ProjectDetailProps> = ({ project }) => {
-  const [activeTab, setActiveTab] = useState('info');
+  const [selectedScreenshot, setSelectedScreenshot] = useState<string | null>(null);
+  
+  // Get first sentence or first 150 characters (whichever is shorter) for summary
+  const getAssignmentSummary = () => {
+    if (!project.assignment?.description || 
+        !project.assignment.description.document || 
+        !project.assignment.description.document[0]?.children) {
+      return 'No assignment description available';
+    }
+
+    // Try to extract text from the assignment document
+    let fullText = '';
+    try {
+      project.assignment.description.document.forEach((block: any) => {
+        if (block.children) {
+          block.children.forEach((child: any) => {
+            if (child.text) {
+              fullText += child.text + ' ';
+            }
+          });
+        }
+      });
+    } catch (error) {
+      console.error('Error extracting text from assignment description', error);
+      return 'Error extracting assignment description';
+    }
+
+    // Get first sentence or truncate
+    const firstSentence = fullText.split(/[.!?]/).filter(s => s.trim().length > 0)[0];
+    if (firstSentence && firstSentence.length < 150) {
+      return firstSentence + '...';
+    }
+    return fullText.substring(0, 150) + '...';
+  };
+  
   const formattedDate = new Date(project.createdAt).toLocaleDateString();
   
   // Map project types to user-friendly names
@@ -113,188 +151,280 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({ project }) => {
     // Add custom renderers for document components if needed
   };
 
+  // Get the first screenshot for featured display
+  const featuredScreenshot = project.screenshots && project.screenshots.length > 0 && project.screenshots[0].image 
+    ? getFullUrl(project.screenshots[0].image.url) 
+    : null;
+
   return (
-    <div className="space-y-8">
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight">{project.title}</h1>
+    <div className="flex flex-col lg:flex-row gap-8">
+      {/* Main content area - left side on desktop */}
+      <div className="flex-grow lg:w-2/3 space-y-6">
+        <h1 className="text-3xl font-bold tracking-tight mb-4">{project.title}</h1>
         
-        <div className="flex flex-wrap items-center gap-4 mt-4">
-          <div className="flex items-center text-muted-foreground">
-            <UserIcon size={16} className="mr-1.5" />
-            <span>{project.student.name}</span>
-            {project.student.class && (
-              <span className="ml-1">({project.student.class})</span>
-            )}
-          </div>
-          
-          {project.assignment && (
-            <div className="flex items-center text-muted-foreground">
-              <BookOpenIcon size={16} className="mr-1.5" />
-              <span>{project.assignment.title}</span>
-            </div>
-          )}
-          
-          <div className="flex items-center text-muted-foreground">
-            <CalendarIcon size={16} className="mr-1.5" />
-            <span>{formattedDate}</span>
-          </div>
-          
-          <Badge className="ml-auto">
-            {projectTypeLabels[project.projectType] || project.projectType}
-          </Badge>
-        </div>
-        
-        <div className="flex flex-wrap gap-2 mt-3">
-          {project.languages.map((lang, index) => (
-            <Badge key={index} variant="outline">
-              {lang.name}
-            </Badge>
-          ))}
-        </div>
-      </div>
-      
-      {/* Project screenshots carousel */}
-      {project.screenshots && project.screenshots.length > 0 && project.screenshots.some(s => s.image) && (
-        <div className="mt-6">
-          <Carousel className="w-full">
-            <CarouselContent>
-              {project.screenshots.map((screenshot, index) => (
-                screenshot.image && (
-                  <CarouselItem key={screenshot.id || index}>
-                    <div className="bg-muted rounded-lg overflow-hidden aspect-video flex items-center justify-center">
-                      <img 
-                        src={getFullUrl(screenshot.image.url)} 
-                        alt={screenshot.caption || `Screenshot ${index + 1}`}
-                        className="max-w-full max-h-full object-contain" 
-                        onError={(e) => console.error(`Error loading image:`, e)}
-                      />
-                    </div>
-                    {screenshot.caption && (
-                      <p className="text-center text-sm text-muted-foreground mt-2">
-                        {screenshot.caption}
-                      </p>
-                    )}
-                  </CarouselItem>
-                )
-              ))}
-            </CarouselContent>
-            <CarouselPrevious className="left-2" />
-            <CarouselNext className="right-2" />
-          </Carousel>
-        </div>
-      )}
-      
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="mt-8">
-        <TabsList className="grid grid-cols-4">
-          <TabsTrigger value="info">Project Info</TabsTrigger>
-          <TabsTrigger value="files">Code Files</TabsTrigger>
-          <TabsTrigger value="demo">Live Demo</TabsTrigger>
-          <TabsTrigger value="assignment">Assignment</TabsTrigger>
-        </TabsList>
-        
-        {/* Project Info Tab */}
-        <TabsContent value="info" className="mt-4">
-          <div className="prose max-w-none dark:prose-invert">
-            <DocumentRenderer document={project.description.document} renderers={renderers} />
-          </div>
-        </TabsContent>
-        
-        {/* Code Files Tab */}
-        <TabsContent value="files" className="mt-4">
-          {project.codeFiles && project.codeFiles.length > 0 && project.codeFiles.some(cf => cf.file) ? (
-            <div className="space-y-4">
-              <h3 className="text-lg font-medium">Project Files</h3>
-              <div className="border rounded-lg divide-y">
-                {project.codeFiles.map((codeFile, index) => (
-                  codeFile.file && (
-                    <div key={codeFile.id || index} className="flex items-center justify-between p-4">
-                      <div className="flex items-center">
-                        <FileIcon size={20} className="mr-3 text-muted-foreground" />
-                        <div>
-                          <p className="font-medium">{codeFile.file.filename}</p>
-                          <p className="text-sm text-muted-foreground">
-                            {formatFileSize(codeFile.file.filesize)}
-                          </p>
-                          {codeFile.description && (
-                            <p className="text-sm mt-1">{codeFile.description}</p>
-                          )}
+        {/* Featured screenshot or carousel */}
+        {project.screenshots && project.screenshots.length > 0 && project.screenshots.some(s => s.image) && (
+          <div className="relative rounded-lg overflow-hidden border">
+            <div className="bg-muted aspect-video">
+              <Carousel className="w-full">
+                <CarouselContent>
+                  {project.screenshots.map((screenshot, index) => (
+                    screenshot.image && (
+                      <CarouselItem key={screenshot.id || index}>
+                        <div className="relative aspect-video w-full flex items-center justify-center bg-black">
+                          <img 
+                            src={getFullUrl(screenshot.image.url)} 
+                            alt={screenshot.caption || `Screenshot ${index + 1}`}
+                            className="max-w-full max-h-full object-contain"
+                            onError={(e) => console.error(`Error loading image:`, e)}
+                          />
+                          
+                          <Dialog>
+                            <DialogTrigger asChild>
+                              <Button 
+                                variant="outline" 
+                                size="icon" 
+                                className="absolute bottom-4 right-4 bg-background/80 hover:bg-background"
+                                onClick={() => setSelectedScreenshot(getFullUrl(screenshot.image?.url) || null)}
+                              >
+                                <MaximizeIcon size={16} />
+                              </Button>
+                            </DialogTrigger>
+                            <DialogContent className="max-w-6xl w-full h-[80vh]">
+                              <div className="w-full h-full flex items-center justify-center">
+                                <img 
+                                  src={getFullUrl(screenshot.image.url)} 
+                                  alt={screenshot.caption || `Screenshot ${index + 1}`}
+                                  className="max-w-full max-h-full object-contain"
+                                />
+                              </div>
+                            </DialogContent>
+                          </Dialog>
                         </div>
-                      </div>
-                      <a href={getFullUrl(codeFile.file.url)} download>
-                        <Button variant="outline" size="sm">
-                          Download
-                        </Button>
-                      </a>
-                    </div>
-                  )
-                ))}
-              </div>
+                        {screenshot.caption && (
+                          <p className="text-center text-sm text-muted-foreground mt-2">
+                            {screenshot.caption}
+                          </p>
+                        )}
+                      </CarouselItem>
+                    )
+                  ))}
+                </CarouselContent>
+                <CarouselPrevious className="left-2" />
+                <CarouselNext className="right-2" />
+              </Carousel>
             </div>
-          ) : (
-            <div className="text-center py-8 text-muted-foreground">
-              No code files available for this project.
-            </div>
-          )}
-        </TabsContent>
+          </div>
+        )}
         
-        {/* Live Demo Tab */}
-        <TabsContent value="demo" className="mt-4">
-          {project.demoUrl || project.embedCode ? (
-            <div className="space-y-4">
-              {project.demoUrl && (
-                <div className="mb-4">
-                  <a 
-                    href={project.demoUrl} 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center"
-                  >
-                    <Button className="flex items-center gap-2">
-                      <ExternalLinkIcon size={16} />
-                      <span>Open Live Demo</span>
-                    </Button>
-                  </a>
-                </div>
-              )}
-              
-              {project.embedCode && (
-                <div className="border rounded-lg p-4 bg-black aspect-video">
+        {/* Live demo section */}
+        {(project.demoUrl || project.embedCode) && (
+          <div className="space-y-4">
+            <h2 className="text-2xl font-bold">Live Demo</h2>
+            
+            {project.embedCode && (
+              <div className="relative border rounded-lg overflow-hidden">
+                <div className="aspect-video bg-black">
                   <div 
                     className="w-full h-full" 
                     dangerouslySetInnerHTML={{ __html: project.embedCode }} 
                   />
                 </div>
-              )}
-            </div>
-          ) : (
-            <div className="text-center py-8 text-muted-foreground">
-              No live demo available for this project.
-            </div>
-          )}
-        </TabsContent>
-        
-        {/* Assignment Tab */}
-        <TabsContent value="assignment" className="mt-4">
-          {project.assignment ? (
-            <div className="space-y-4">
-              <h3 className="text-xl font-semibold">{project.assignment.title}</h3>
-              
-              {project.assignment.description && (
-                <div className="prose max-w-none dark:prose-invert mt-4">
-                  <DocumentRenderer 
-                    document={project.assignment.description.document} 
-                    renderers={renderers} 
+                
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button 
+                      variant="outline" 
+                      size="icon" 
+                      className="absolute bottom-4 right-4 bg-background/80 hover:bg-background"
+                    >
+                      <MaximizeIcon size={16} />
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="max-w-[90vw] w-[90vw] h-[90vh]">
+                    <div className="w-full h-full">
+                      <div 
+                        className="w-full h-full" 
+                        dangerouslySetInnerHTML={{ __html: project.embedCode }} 
+                      />
+                    </div>
+                  </DialogContent>
+                </Dialog>
+              </div>
+            )}
+            
+            {project.demoUrl && !project.embedCode && (
+              <div className="relative border rounded-lg overflow-hidden">
+                <div className="aspect-video bg-black">
+                  <iframe
+                    src={project.demoUrl}
+                    className="w-full h-full"
+                    title={`${project.title} demo`}
+                    allowFullScreen
                   />
                 </div>
+                
+                <Button 
+                  variant="outline" 
+                  className="absolute bottom-4 right-4 bg-background/80 hover:bg-background flex items-center gap-2"
+                  onClick={() => window.open(project.demoUrl, '_blank')}
+                >
+                  <ExternalLinkIcon size={16} />
+                  <span>Open in New Tab</span>
+                </Button>
+              </div>
+            )}
+            
+            {project.demoUrl && project.embedCode && (
+              <div className="mt-4">
+                <a 
+                  href={project.demoUrl} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                >
+                  <Button className="flex items-center gap-2">
+                    <ExternalLinkIcon size={16} />
+                    <span>Open Demo in New Tab</span>
+                  </Button>
+                </a>
+              </div>
+            )}
+          </div>
+        )}
+        
+        {/* Project Description */}
+        <div className="space-y-4">
+          <h2 className="text-2xl font-bold">Project Description</h2>
+          <div className="prose max-w-none dark:prose-invert">
+            <DocumentRenderer document={project.description.document} renderers={renderers} />
+          </div>
+        </div>
+      </div>
+      
+      {/* Sidebar - right side on desktop */}
+      <div className="lg:w-1/3 space-y-6">
+        <div className="bg-card rounded-lg border p-6 space-y-5">
+          {/* Project metadata */}
+          <div>
+            <h3 className="text-lg font-semibold mb-3">Project Details</h3>
+            
+            <div className="space-y-4">
+              <div className="flex items-start gap-3">
+                <UserIcon size={18} className="text-muted-foreground mt-0.5" />
+                <div>
+                  <h4 className="font-medium">Creator</h4>
+                  <p>{project.student.name}</p>
+                  {project.student.class && (
+                    <p className="text-sm text-muted-foreground">{project.student.class}</p>
+                  )}
+                </div>
+              </div>
+              
+              {project.student.graduationYear && (
+                <div className="flex items-start gap-3">
+                  <GraduationCapIcon size={18} className="text-muted-foreground mt-0.5" />
+                  <div>
+                    <h4 className="font-medium">Graduation Year</h4>
+                    <p>{project.student.graduationYear}</p>
+                  </div>
+                </div>
               )}
+              
+              <div className="flex items-start gap-3">
+                <TagIcon size={18} className="text-muted-foreground mt-0.5" />
+                <div>
+                  <h4 className="font-medium">Project Type</h4>
+                  <p>{projectTypeLabels[project.projectType] || project.projectType}</p>
+                </div>
+              </div>
+              
+              <div className="flex items-start gap-3">
+                <CalendarIcon size={18} className="text-muted-foreground mt-0.5" />
+                <div>
+                  <h4 className="font-medium">Created</h4>
+                  <p>{formattedDate}</p>
+                </div>
+              </div>
             </div>
-          ) : (
-            <div className="text-center py-8 text-muted-foreground">
-              No assignment information available.
+          </div>
+          
+          <Separator />
+          
+          {/* Technologies */}
+          <div>
+            <h3 className="text-lg font-semibold mb-3">Technologies</h3>
+            <div className="flex flex-wrap gap-2">
+              {project.languages.map((lang, index) => (
+                <Badge key={index} variant="secondary">
+                  {lang.name}
+                </Badge>
+              ))}
             </div>
+          </div>
+          
+          {/* Assignment */}
+          {project.assignment && (
+            <>
+              <Separator />
+              <div>
+                <h3 className="text-lg font-semibold mb-3">Assignment</h3>
+                <div className="space-y-2">
+                  <div className="flex items-start gap-3">
+                    <BookOpenIcon size={18} className="text-muted-foreground mt-0.5" />
+                    <div>
+                      <h4 className="font-medium">{project.assignment.title}</h4>
+                      <p className="text-sm text-muted-foreground mt-1">{getAssignmentSummary()}</p>
+                      <a 
+                        href={`/assignments/${project.assignment.title}`} 
+                        className="text-primary hover:underline text-sm mt-2 inline-block"
+                      >
+                        View full assignment
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </>
           )}
-        </TabsContent>
-      </Tabs>
+          
+          {/* Code Files */}
+          {project.codeFiles && project.codeFiles.length > 0 && project.codeFiles.some(cf => cf.file) && (
+            <>
+              <Separator />
+              <div>
+                <h3 className="text-lg font-semibold mb-3">Project Files</h3>
+                <div className="space-y-3">
+                  {project.codeFiles.map((codeFile, index) => (
+                    codeFile.file && (
+                      <div key={codeFile.id || index} className="flex items-start">
+                        <FileIcon size={18} className="mr-3 text-muted-foreground mt-0.5" />
+                        <div className="flex-grow">
+                          <div className="flex items-start justify-between">
+                            <div>
+                              <p className="font-medium text-sm">{codeFile.file.filename}</p>
+                              <p className="text-xs text-muted-foreground">
+                                {formatFileSize(codeFile.file.filesize)}
+                              </p>
+                            </div>
+                            <a href={getFullUrl(codeFile.file.url)} download className="ml-2">
+                              <Button variant="outline" size="sm">
+                                Download
+                              </Button>
+                            </a>
+                          </div>
+                          {codeFile.description && (
+                            <p className="text-xs mt-1">{codeFile.description}</p>
+                          )}
+                        </div>
+                      </div>
+                    )
+                  ))}
+                </div>
+              </div>
+            </>
+          )}
+        </div>
+      </div>
     </div>
   );
 };
