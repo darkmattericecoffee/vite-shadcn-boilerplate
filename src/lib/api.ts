@@ -44,17 +44,12 @@ export async function fetchGraphQL(query: string, variables = {}) {
   }
 }
 
-// Query to get all projects with filtering options
-// Update to the getProjects function in src/lib/api.ts
-
-// Update getProjects to include filtering by learningPath and deliverableType
 export async function getProjects({
   studentId,
   assignmentId,
   learningPathId,
   languageId,
   projectType,
-  deliverableType,
   featured,
 }: {
   studentId?: string;
@@ -62,123 +57,120 @@ export async function getProjects({
   learningPathId?: string;
   languageId?: string;
   projectType?: string;
-  deliverableType?: string;
   featured?: boolean;
 }) {
-  // Create a clean variables object with only the variables that are used
-  const variables: Record<string, any> = {};
-  
-  // Build the where clause parts
-  let whereClauseParts = [];
-  
-  if (studentId && studentId !== 'all') {
-    whereClauseParts.push('student: { id: { equals: $studentId } }');
-    variables.studentId = studentId;
-  }
-  
-  if (assignmentId && assignmentId !== 'all') {
-    whereClauseParts.push('assignment: { id: { equals: $assignmentId } }');
-    variables.assignmentId = assignmentId;
-  }
-  
-  if (learningPathId && learningPathId !== 'all') {
-    whereClauseParts.push('learningPath: { id: { equals: $learningPathId } }');
-    variables.learningPathId = learningPathId;
-  }
-  
-  if (languageId && languageId !== 'all') {
-    whereClauseParts.push('languages_some: { id: { equals: $languageId } }');
-    variables.languageId = languageId;
-  }
-  
-  if (projectType && projectType !== 'all') {
-    whereClauseParts.push('projectType: { equals: $projectType }');
-    variables.projectType = projectType;
-  }
-  
-  if (deliverableType && deliverableType !== 'all') {
-    whereClauseParts.push('deliverableType: { equals: $deliverableType }');
-    variables.deliverableType = deliverableType;
-  }
-  
-  if (featured !== undefined) {
-    whereClauseParts.push('featured: { equals: $featured }');
-    variables.featured = featured;
-  }
-  
-  // Join the where clause parts
-  const whereClause = whereClauseParts.length > 0
-    ? `where: { ${whereClauseParts.join(', ')} }`
-    : '';
+  try {
+    // Create a clean variables object with only the variables that are used
+    const variables: Record<string, any> = {};
+    
+    // Build the where clause parts
+    let whereClauseParts = [];
+    
+    if (studentId && studentId !== 'all') {
+      whereClauseParts.push('student: { id: { equals: $studentId } }');
+      variables.studentId = studentId;
+    }
+    
+    if (assignmentId && assignmentId !== 'all') {
+      whereClauseParts.push('assignment: { id: { equals: $assignmentId } }');
+      variables.assignmentId = assignmentId;
+    }
+    
+    if (learningPathId && learningPathId !== 'all') {
+      whereClauseParts.push('learningPath: { id: { equals: $learningPathId } }');
+      variables.learningPathId = learningPathId;
+    }
+    
+    if (languageId && languageId !== 'all') {
+      whereClauseParts.push('languages_some: { id: { equals: $languageId } }');
+      variables.languageId = languageId;
+    }
+    
+    if (projectType && projectType !== 'all') {
+      whereClauseParts.push('projectType: { equals: $projectType }');
+      variables.projectType = projectType;
+    }
+    
+    if (featured === true) {
+      whereClauseParts.push('featured: { equals: true }');
+      // For boolean filters, we don't need to use variables since they're fixed values
+    }
+    
+    // Join the where clause parts
+    const whereClause = whereClauseParts.length > 0
+      ? `where: { ${whereClauseParts.join(', ')} }`
+      : '';
 
-  // Build variable definitions based on what's actually used
-  const variableDefinitions = [];
-  if ('studentId' in variables) variableDefinitions.push('$studentId: ID');
-  if ('assignmentId' in variables) variableDefinitions.push('$assignmentId: ID');
-  if ('learningPathId' in variables) variableDefinitions.push('$learningPathId: ID');
-  if ('languageId' in variables) variableDefinitions.push('$languageId: ID');
-  if ('projectType' in variables) variableDefinitions.push('$projectType: String');
-  if ('deliverableType' in variables) variableDefinitions.push('$deliverableType: String');
-  if ('featured' in variables) variableDefinitions.push('$featured: Boolean');
+    // Build variable definitions based on what's actually used
+    const variableDefinitions = [];
+    if ('studentId' in variables) variableDefinitions.push('$studentId: ID');
+    if ('assignmentId' in variables) variableDefinitions.push('$assignmentId: ID');
+    if ('learningPathId' in variables) variableDefinitions.push('$learningPathId: ID');
+    if ('languageId' in variables) variableDefinitions.push('$languageId: ID');
+    if ('projectType' in variables) variableDefinitions.push('$projectType: ProjectProjectTypeType');
 
-  const variableDefString = variableDefinitions.length > 0
-    ? `(${variableDefinitions.join(', ')})`
-    : '';
+    const variableDefString = variableDefinitions.length > 0
+      ? `(${variableDefinitions.join(', ')})`
+      : '';
 
-  const query = `
-    query GetProjects${variableDefString} {
-      projects${whereClause ? ` (${whereClause})` : ''} {
-        id
-        title
-        description {
-          document
-        }
-        projectType
-        deliverableType
-        demoUrl
-        embedCode
-        featured
-        createdAt
-        student {
-          id
-          name
-          class
-        }
-        languages {
-          id
-          name
-        }
-        assignment {
+    const query = `
+      query GetProjects${variableDefString} {
+        projects${whereClause ? ` (${whereClause})` : ''} {
           id
           title
-        }
-        learningPath {
-          id
-          title
-        }
-        screenshots {
-          id
-          caption
-          image {
-            url
-            width
-            height
-            filesize
+          description {
+            document
+          }
+          projectType
+          demoUrl
+          embedCode
+          featured
+          createdAt
+          student {
+            id
+            name
+            class
+          }
+          languages {
+            id
+            name
+          }
+          assignment {
+            id
+            title
+          }
+          learningPath {
+            id
+            title
+          }
+          screenshots {
+            id
+            caption
+            image {
+              url
+              width
+              height
+              filesize
+            }
           }
         }
       }
-    }
-  `;
+    `;
 
-  console.log("GraphQL Query:", query);
-  console.log("GraphQL Variables:", variables);
+    console.log("GraphQL Query:", query);
+    console.log("GraphQL Variables:", variables);
 
-  // Make the request
-  const data = await fetchGraphQL(query, variables);
-  console.log("GraphQL Response:", JSON.stringify(data, null, 2));
-  return data;
+    // Make the request
+    const data = await fetchGraphQL(query, variables);
+    console.log("GraphQL Response:", JSON.stringify(data, null, 2));
+    return data;
+  } catch (error) {
+    console.error('Error in getProjects:', error);
+    
+    // Return empty data structure to avoid further errors
+    return { projects: [] };
+  }
 }
-
 
 // Query to get all students
 export async function getStudents() {
@@ -207,6 +199,10 @@ export async function getAssignments() {
           document
         }
         dueDate
+        learningPath {
+          id
+          title
+        }
         screenshots {
           id
           caption

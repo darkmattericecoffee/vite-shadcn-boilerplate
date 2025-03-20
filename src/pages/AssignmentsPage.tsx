@@ -46,7 +46,6 @@ const AssignmentsPage = () => {
     dueDate?: string;
     screenshots?: Screenshot[];
     learningPath?: LearningPath;
-    orderInPath?: number;
   }
 
   interface LearningPathOption {
@@ -233,11 +232,6 @@ const AssignmentsPage = () => {
                         <Badge variant="secondary" className="flex items-center gap-1.5 bg-background/80 backdrop-blur-sm">
                           <LayersIcon size={12} />
                           {assignment.learningPath.title}
-                          {assignment.orderInPath !== undefined && (
-                            <span className="ml-1 px-1.5 py-0.5 rounded-full bg-muted text-xs">
-                              Step {assignment.orderInPath}
-                            </span>
-                          )}
                         </Badge>
                       </div>
                     )}
@@ -255,10 +249,7 @@ const AssignmentsPage = () => {
                      assignment.learningPath && (
                       <Badge variant="secondary" className="flex items-center gap-1.5 ml-2 flex-shrink-0">
                         <LayersIcon size={12} />
-                        {assignment.orderInPath !== undefined 
-                          ? `Step ${assignment.orderInPath}`
-                          : "Learning Path"
-                        }
+                        Learning Path
                       </Badge>
                     )}
                   </div>

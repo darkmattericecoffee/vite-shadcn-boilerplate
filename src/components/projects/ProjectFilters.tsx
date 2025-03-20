@@ -15,18 +15,26 @@ type FilterOption = {
   name: string;
 };
 
+type LearningPathOption = {
+  id: string;
+  title: string;
+};
+
 type ProjectFiltersProps = {
   students: FilterOption[];
   assignments: FilterOption[];
   languages: FilterOption[];
+  learningPaths: LearningPathOption[];
   selectedStudent: string;
   selectedAssignment: string;
   selectedLanguage: string;
   selectedType: string;
+  selectedLearningPath: string;
   onStudentChange: (value: string) => void;
   onAssignmentChange: (value: string) => void;
   onLanguageChange: (value: string) => void;
   onTypeChange: (value: string) => void;
+  onLearningPathChange: (value: string) => void;
   onClearFilters: () => void;
 };
 
@@ -34,14 +42,17 @@ export const ProjectFilters: React.FC<ProjectFiltersProps> = ({
   students,
   assignments,
   languages,
+  learningPaths,
   selectedStudent,
   selectedAssignment,
   selectedLanguage,
   selectedType,
+  selectedLearningPath,
   onStudentChange,
   onAssignmentChange,
   onLanguageChange,
   onTypeChange,
+  onLearningPathChange,
   onClearFilters,
 }) => {
   // Updated 'data-viz' to 'data_viz' to match the backend change
@@ -59,7 +70,8 @@ export const ProjectFilters: React.FC<ProjectFiltersProps> = ({
     selectedStudent !== 'all' || 
     selectedAssignment !== 'all' || 
     selectedLanguage !== 'all' || 
-    selectedType !== 'all';
+    selectedType !== 'all' ||
+    selectedLearningPath !== 'all';
 
   return (
     <div className="bg-card border rounded-lg p-4 mb-6">
@@ -82,7 +94,7 @@ export const ProjectFilters: React.FC<ProjectFiltersProps> = ({
         )}
       </div>
       
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         <div>
           <label className="text-sm font-medium block mb-2">Student</label>
           <Select value={selectedStudent} onValueChange={onStudentChange}>
@@ -111,6 +123,23 @@ export const ProjectFilters: React.FC<ProjectFiltersProps> = ({
               {assignments.map((assignment) => (
                 <SelectItem key={assignment.id} value={assignment.id}>
                   {assignment.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        
+        <div>
+          <label className="text-sm font-medium block mb-2">Learning Path</label>
+          <Select value={selectedLearningPath} onValueChange={onLearningPathChange}>
+            <SelectTrigger>
+              <SelectValue placeholder="All learning paths" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All learning paths</SelectItem>
+              {learningPaths.map((learningPath) => (
+                <SelectItem key={learningPath.id} value={learningPath.id}>
+                  {learningPath.title}
                 </SelectItem>
               ))}
             </SelectContent>
