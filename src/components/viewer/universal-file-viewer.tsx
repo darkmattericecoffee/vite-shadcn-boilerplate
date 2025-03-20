@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import DocViewer, { DocViewerRenderers } from "react-doc-viewer";
+import DocViewer, { DocViewerRenderers, IDocument } from "react-doc-viewer";
 import { 
   FileIcon, 
   FileTextIcon, 
@@ -98,15 +98,26 @@ export const UniversalFileViewer: React.FC<FileViewerProps> = ({
   fileType: declaredFileType
 }) => {
   const [activeTab, setActiveTab] = useState<string>('preview');
-  const fileUrl = file.url ? getFullUrl(file.url) : '';
+  // Configure DocViewer document
+  const fileUrl = getFullUrl(file.url);
   const fileName = file.filename;
   const fileType = determineFileType(fileName, declaredFileType);
   
-  // Configure DocViewer document
-  const docs = fileUrl ? [{ uri: fileUrl, fileName: fileName }] : [];
+  // Create properly typed documents array for DocViewer
+  const docs: IDocument[] = fileUrl 
+    ? [{ 
+        uri: fileUrl,
+        fileType: getFileExtension(fileName) || undefined
+      }] 
+    : [];
 
   // Function to render the appropriate preview based on file type
   const renderPreview = () => {
+    // If no fileUrl is available, show fallback view
+    if (!fileUrl) {
+      return renderFallbackView();
+    }
+    
     return (
       <div className="w-full h-full" style={{ minHeight: '300px' }}>
         <DocViewer
