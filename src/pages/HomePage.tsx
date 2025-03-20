@@ -20,7 +20,16 @@ interface Project {
     name: string;
   }[];
   projectType: string;
-  screenshots?: { url: string }[];
+  screenshots?: {
+    id: string;
+    caption: string;
+    image: {
+      url: string;
+      width?: number;
+      height?: number;
+      filesize?: number;
+    };
+  }[];
   createdAt: string;
 }
 
@@ -52,7 +61,7 @@ export const HomePage = () => {
           Student Project Showcase
         </h1>
         <p className="text-xl text-muted-foreground max-w-2xl mx-auto mb-8">
-          Discover amazing projects created by IT students. From games and apps 
+          Discover amazing projects created by IT students. From games and apps
           to websites and data visualizations.
         </p>
         <div className="flex justify-center gap-4">
@@ -90,7 +99,8 @@ export const HomePage = () => {
                 assignment={project.assignment}
                 languages={project.languages}
                 projectType={project.projectType}
-                thumbnailUrl={project.screenshots?.[0]?.url}
+                // The issue is fixed: screenshots have image.url, not url directly
+                thumbnailUrl={project.screenshots && project.screenshots.length > 0 && project.screenshots[0].image ? project.screenshots[0].image.url : undefined}
                 createdAt={project.createdAt}
               />
             ))}

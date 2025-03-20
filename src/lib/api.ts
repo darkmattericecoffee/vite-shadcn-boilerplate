@@ -198,6 +198,27 @@ export async function getAssignmentById(id: string) {
           document
         }
         dueDate
+        files {
+          id
+          title
+          description
+          fileType
+          file {
+            filename
+            url
+            filesize
+          }
+        }
+        screenshots {
+          id
+          caption
+          image {
+            url
+            width
+            height
+            filesize
+          }
+        }
         projects {
           id
           title
