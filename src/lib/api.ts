@@ -82,7 +82,8 @@ export async function getProjects({
     }
     
     if (languageId && languageId !== 'all') {
-      whereClauseParts.push('languages_some: { id: { equals: $languageId } }');
+      // Fix: Change languages_some to languages with proper syntax
+      whereClauseParts.push('languages: { some: { id: { equals: $languageId } } }');
       variables.languageId = languageId;
     }
     
@@ -93,7 +94,6 @@ export async function getProjects({
     
     if (featured === true) {
       whereClauseParts.push('featured: { equals: true }');
-      // For boolean filters, we don't need to use variables since they're fixed values
     }
     
     // Join the where clause parts

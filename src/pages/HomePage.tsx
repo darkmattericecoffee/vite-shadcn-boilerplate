@@ -1,4 +1,4 @@
-// src/pages/HomePage.tsx
+// src/pages/HomePage.tsx - Fixed Project interface
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -6,17 +6,22 @@ import { ProjectCard } from '@/components/projects/ProjectCard';
 import { getProjects } from '@/lib/api';
 import { ArrowRightIcon } from 'lucide-react';
 
+// Import the Project type from your types file if you have one
+// If not, make sure this matches exactly with the Project type expected by ProjectCard
 interface Project {
   id: string;
   title: string;
   student: {
+    id: string; // Added missing id field
     name: string;
     class?: string;
   };
   assignment: {
+    id: string; // Added missing id field
     title: string;
   };
   languages: {
+    id: string; // Added missing id field
     name: string;
   }[];
   projectType: string;
@@ -41,10 +46,30 @@ export const HomePage = () => {
     const fetchFeaturedProjects = async () => {
       try {
         setLoading(true);
+        
+        // We need to explicitly pass featured: true to the API
         const data = await getProjects({ featured: true });
-        setFeaturedProjects(data.projects.slice(0, 6)); // Limit to 6 projects for the homepage
+        
+        if (data && data.projects) {
+          // Ensure all required fields are present
+          const validProjects = data.projects
+            .filter((project: any) => 
+              project && 
+              project.student && 
+              project.student.id && 
+              project.assignment && 
+              project.assignment.id
+            )
+            .slice(0, 6); // Limit to 6 projects for the homepage
+            
+          setFeaturedProjects(validProjects);
+        } else {
+          console.error('Invalid data structure from getProjects');
+          setFeaturedProjects([]);
+        }
       } catch (error) {
         console.error('Error fetching featured projects:', error);
+        setFeaturedProjects([]);
       } finally {
         setLoading(false);
       }
@@ -58,7 +83,7 @@ export const HomePage = () => {
       {/* Hero Section */}
       <section className="text-center py-12 px-4">
         <h1 className="text-4xl font-bold tracking-tight sm:text-5xl mb-6">
-          Student Project Showcase
+          Informatica Showcase
         </h1>
         <p className="text-xl text-muted-foreground max-w-2xl mx-auto mb-8">
           Discover amazing projects created by IT students. From games and apps
@@ -93,15 +118,7 @@ export const HomePage = () => {
             {featuredProjects.map((project) => (
               <ProjectCard
                 key={project.id}
-                id={project.id}
-                title={project.title}
-                student={project.student}
-                assignment={project.assignment}
-                languages={project.languages}
-                projectType={project.projectType}
-                // The issue is fixed: screenshots have image.url, not url directly
-                thumbnailUrl={project.screenshots && project.screenshots.length > 0 && project.screenshots[0].image ? project.screenshots[0].image.url : undefined}
-                createdAt={project.createdAt}
+                project={project}
               />
             ))}
           </div>
