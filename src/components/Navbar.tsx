@@ -14,7 +14,7 @@ export const Navbar = () => {
       <div className="container mx-auto py-4 flex items-center justify-between">
         <div className="flex items-center space-x-2">
         <Link to="/">
-        <h1 className="text-xl font-bold">Student Project Showcase</h1>
+        <h1 className="text-xl font-bold">Informatica Showcase</h1>
               </Link>
           
         </div>
