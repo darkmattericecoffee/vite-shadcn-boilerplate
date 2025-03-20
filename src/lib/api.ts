@@ -46,17 +46,22 @@ export async function fetchGraphQL(query: string, variables = {}) {
 // Query to get all projects with filtering options
 // Update to the getProjects function in src/lib/api.ts
 
+// Update getProjects to include filtering by learningPath and deliverableType
 export async function getProjects({
   studentId,
   assignmentId,
+  learningPathId,
   languageId,
   projectType,
+  deliverableType,
   featured,
 }: {
   studentId?: string;
   assignmentId?: string;
+  learningPathId?: string;
   languageId?: string;
   projectType?: string;
+  deliverableType?: string;
   featured?: boolean;
 }) {
   // Create a clean variables object with only the variables that are used
@@ -75,6 +80,11 @@ export async function getProjects({
     variables.assignmentId = assignmentId;
   }
   
+  if (learningPathId && learningPathId !== 'all') {
+    whereClauseParts.push('learningPath: { id: { equals: $learningPathId } }');
+    variables.learningPathId = learningPathId;
+  }
+  
   if (languageId && languageId !== 'all') {
     whereClauseParts.push('languages_some: { id: { equals: $languageId } }');
     variables.languageId = languageId;
@@ -83,6 +93,11 @@ export async function getProjects({
   if (projectType && projectType !== 'all') {
     whereClauseParts.push('projectType: { equals: $projectType }');
     variables.projectType = projectType;
+  }
+  
+  if (deliverableType && deliverableType !== 'all') {
+    whereClauseParts.push('deliverableType: { equals: $deliverableType }');
+    variables.deliverableType = deliverableType;
   }
   
   if (featured !== undefined) {
@@ -99,8 +114,10 @@ export async function getProjects({
   const variableDefinitions = [];
   if ('studentId' in variables) variableDefinitions.push('$studentId: ID');
   if ('assignmentId' in variables) variableDefinitions.push('$assignmentId: ID');
+  if ('learningPathId' in variables) variableDefinitions.push('$learningPathId: ID');
   if ('languageId' in variables) variableDefinitions.push('$languageId: ID');
   if ('projectType' in variables) variableDefinitions.push('$projectType: String');
+  if ('deliverableType' in variables) variableDefinitions.push('$deliverableType: String');
   if ('featured' in variables) variableDefinitions.push('$featured: Boolean');
 
   const variableDefString = variableDefinitions.length > 0
@@ -116,6 +133,7 @@ export async function getProjects({
           document
         }
         projectType
+        deliverableType
         demoUrl
         embedCode
         featured
@@ -130,6 +148,10 @@ export async function getProjects({
           name
         }
         assignment {
+          id
+          title
+        }
+        learningPath {
           id
           title
         }
@@ -180,7 +202,20 @@ export async function getAssignments() {
       assignments {
         id
         title
+        description {
+          document
+        }
         dueDate
+        screenshots {
+          id
+          caption
+          image {
+            url
+            width
+            height
+            filesize
+          }
+        }
       }
     }
   `;
@@ -188,6 +223,7 @@ export async function getAssignments() {
   return fetchGraphQL(query);
 }
 
+// Update getAssignmentById to include learningPath information
 export async function getAssignmentById(id: string) {
   const query = `
     query GetAssignment($id: ID!) {
@@ -198,6 +234,16 @@ export async function getAssignmentById(id: string) {
           document
         }
         dueDate
+        orderInPath
+        learningPath {
+          id
+          title
+          assignments {
+            id
+            title
+            orderInPath
+          }
+        }
         files {
           id
           title
@@ -222,6 +268,7 @@ export async function getAssignmentById(id: string) {
         projects {
           id
           title
+          deliverableType
           student {
             name
             class
@@ -256,6 +303,7 @@ export async function getProgrammingLanguages() {
 }
 
 // Query to get a single project by ID
+// Update getProjectById to include learningPath information
 export async function getProjectById(id: string) {
   const query = `
     query GetProject($id: ID!) {
@@ -266,6 +314,7 @@ export async function getProjectById(id: string) {
           document
         }
         projectType
+        deliverableType
         demoUrl
         embedCode
         featured
@@ -285,6 +334,18 @@ export async function getProjectById(id: string) {
           title
           description {
             document
+          }
+        }
+        learningPath {
+          id
+          title
+          description {
+            document
+          }
+          assignments {
+            id
+            title
+            orderInPath
           }
         }
         screenshots {
@@ -324,3 +385,104 @@ export async function getProjectById(id: string) {
   console.log("GetProjectById Response:", JSON.stringify(data, null, 2));
   return data;
 }
+
+
+export async function getLearningPaths() {
+  const query = `
+    query GetLearningPaths {
+      learningPaths {
+        id
+        title
+        description {
+          document
+        }
+        coverImage {
+          url
+          width
+          height
+        }
+        createdAt
+        assignments {
+          id
+          title
+          orderInPath
+        }
+      }
+    }
+  `;
+
+  return fetchGraphQL(query);
+}
+
+// Query to get a single learning path by ID
+export async function getLearningPathById(id: string) {
+  const query = `
+    query GetLearningPath($id: ID!) {
+      learningPath(where: { id: $id }) {
+        id
+        title
+        description {
+          document
+        }
+        coverImage {
+          url
+          width
+          height
+        }
+        createdAt
+        createdBy {
+          name
+        }
+        assignments {
+          id
+          title
+          description {
+            document
+          }
+          dueDate
+          orderInPath
+          screenshots {
+            id
+            caption
+            image {
+              url
+              width
+              height
+            }
+          }
+          files {
+            id
+            title
+            description
+            fileType
+            file {
+              filename
+              url
+              filesize
+            }
+          }
+        }
+        projects(where: { deliverableType: { equals: "final" } }) {
+          id
+          title
+          student {
+            id
+            name
+            class
+          }
+          screenshots {
+            image {
+              url
+            }
+          }
+          deliverableType
+        }
+      }
+    }
+  `;
+
+  const data = await fetchGraphQL(query, { id });
+  console.log("GetLearningPathById Response:", JSON.stringify(data, null, 2));
+  return data;
+}
+
