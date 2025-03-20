@@ -13,7 +13,9 @@ import {
   ProjectDetailPage,
   StudentsPage,
   AssignmentsPage,
-  AssignmentDetailPage // Import the new component
+  AssignmentDetailPage,
+  LearningPathsPage,
+  LearningPathDetailPage // Import the new component
 } from './pages';
 import './index.css';
 
@@ -45,6 +47,14 @@ const router = createBrowserRouter([
       {
         path: 'assignments/:id', // Add the new route
         element: <AssignmentDetailPage />,
+      },
+      {
+        path: 'learning-paths',
+        element: <LearningPathsPage />,
+      },
+      {
+        path: 'learning-paths/:id', // Add the new route
+        element: <LearningPathDetailPage />,
       },
       {
         path: '*',

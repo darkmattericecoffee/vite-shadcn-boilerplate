@@ -1,6 +1,7 @@
 // src/lib/api.ts
 export const API_URL = 'http://localhost:3000/api/graphql';
 export const API_BASE_URL = 'http://localhost:3000';
+import { Project } from "@/types/learning-path";
 
 // Helper function to get the full URL for images or files
 export const getFullUrl = (url?: string) => {
@@ -414,7 +415,6 @@ export async function getLearningPaths() {
   return fetchGraphQL(query);
 }
 
-// Query to get a single learning path by ID
 export async function getLearningPathById(id: string) {
   const query = `
     query GetLearningPath($id: ID!) {
@@ -450,19 +450,8 @@ export async function getLearningPathById(id: string) {
               height
             }
           }
-          files {
-            id
-            title
-            description
-            fileType
-            file {
-              filename
-              url
-              filesize
-            }
-          }
         }
-        projects(where: { deliverableType: { equals: "final" } }) {
+        projects {
           id
           title
           student {
@@ -482,6 +471,14 @@ export async function getLearningPathById(id: string) {
   `;
 
   const data = await fetchGraphQL(query, { id });
+  
+  // Filter final projects in JavaScript rather than in GraphQL
+  if (data.learningPath && data.learningPath.projects) {
+    data.learningPath.projects = data.learningPath.projects.filter(
+      (project: Project) => project.deliverableType === 'final'
+    );
+  }
+  
   console.log("GetLearningPathById Response:", JSON.stringify(data, null, 2));
   return data;
 }

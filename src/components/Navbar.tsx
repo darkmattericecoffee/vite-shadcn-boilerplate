@@ -1,7 +1,6 @@
-
 import { Link, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { HomeIcon, BookOpenIcon, GraduationCapIcon, CodeIcon } from 'lucide-react';
+import { HomeIcon, BookOpenIcon, GraduationCapIcon, CodeIcon, LayersIcon } from 'lucide-react';
 
 export const Navbar = () => {
   const location = useLocation();
@@ -14,7 +13,10 @@ export const Navbar = () => {
     <header className="border-b">
       <div className="container mx-auto py-4 flex items-center justify-between">
         <div className="flex items-center space-x-2">
-          <h1 className="text-xl font-bold">Student Project Showcase</h1>
+        <Link to="/">
+        <h1 className="text-xl font-bold">Student Project Showcase</h1>
+              </Link>
+          
         </div>
         
         <nav>
@@ -36,10 +38,10 @@ export const Navbar = () => {
               </Link>
             </li>
             <li>
-              <Link to="/students">
-                <Button variant={isActive('/students') ? 'default' : 'ghost'} className="flex items-center gap-2">
-                  <GraduationCapIcon size={16} />
-                  <span>Students</span>
+              <Link to="/learning-paths">
+                <Button variant={isActive('/learning-paths') ? 'default' : 'ghost'} className="flex items-center gap-2">
+                  <LayersIcon size={16} />
+                  <span>Learning Paths</span>
                 </Button>
               </Link>
             </li>
@@ -48,6 +50,14 @@ export const Navbar = () => {
                 <Button variant={isActive('/assignments') ? 'default' : 'ghost'} className="flex items-center gap-2">
                   <BookOpenIcon size={16} />
                   <span>Assignments</span>
+                </Button>
+              </Link>
+            </li>
+            <li>
+              <Link to="/students">
+                <Button variant={isActive('/students') ? 'default' : 'ghost'} className="flex items-center gap-2">
+                  <GraduationCapIcon size={16} />
+                  <span>Students</span>
                 </Button>
               </Link>
             </li>
