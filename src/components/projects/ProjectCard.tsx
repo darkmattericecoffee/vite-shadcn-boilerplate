@@ -110,7 +110,7 @@ export function ProjectCard({ project }: ProjectCardProps) {
   return (
     <Link to={`/projects/${project.id}`} className="block group">
       <Card className="h-full flex flex-col overflow-hidden hover:shadow-md transition-shadow">
-        {/* Card media area */}
+        {/* Card media area with title overlay */}
         <div className="relative aspect-video bg-muted">
           {coverImage ? (
             <img 
@@ -124,58 +124,51 @@ export function ProjectCard({ project }: ProjectCardProps) {
             </div>
           )}
           
-          {/* Featured badge */}
-          {project.featured && (
-            <div className="absolute top-2 left-2">
+          {/* Title overlay at bottom of image */}
+          <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/80 to-transparent">
+            <h3 className="text-white font-medium text-lg">{project.title}</h3>
+          </div>
+          
+          {/* Top badges area */}
+          <div className="absolute top-2 left-2 flex flex-wrap gap-1">
+            {/* Featured badge */}
+            {project.featured && (
               <Badge variant="default" className="flex items-center gap-1">
                 <StarIcon size={12} />
                 <span>Uitgelicht</span>
               </Badge>
-            </div>
-          )}
-          
-          {/* Learning Path badge */}
-          {project.learningPath && (
-            <div className="absolute top-2 right-2">
-              <Badge 
-                variant="secondary" 
-                className="flex items-center gap-1 bg-background/80 backdrop-blur-sm"
-              >
-                <LayersIcon size={12} />
-                <span>{project.learningPath.title}</span>
-              </Badge>
-            </div>
-          )}
-        </div>
-        
-        {/* Card header */}
-        <CardHeader className="pb-2">
-          <CardTitle className="group-hover:text-primary transition-colors">
-            {project.title}
-          </CardTitle>
-        </CardHeader>
-        
-        {/* Card content */}
-        <CardContent className="flex-grow">
-          <div className="flex flex-wrap items-center gap-2 mb-3">
+            )}
+            
             {/* Project type badge */}
             {project.projectType && (
-              <Badge variant="outline" className="text-xs">
+              <Badge variant="secondary" className="text-xs bg-background/80 backdrop-blur-sm">
                 {getProjectTypeName(project.projectType)}
               </Badge>
             )}
             
-            {/* Student info */}
-            {project.student && (
-              <div className="flex items-center text-sm text-muted-foreground ml-auto">
-                <InitialsAvatar name={project.student.name} size='s' />
-                <span>{project.student.name}</span>
-                {project.student.class && (
-                  <span className="ml-1 text-xs opacity-70">({project.student.class})</span>
-                )}
-              </div>
+            {/* Programming languages (limited to 2 in the image) */}
+            {project.languages && project.languages.length > 0 && (
+              project.languages.slice(0, 2).map(language => (
+                <Badge key={language.id} className="text-xs bg-background/80 backdrop-blur-sm text-indigo-900 border-none">
+                  {language.name}
+                </Badge>
+              ))
             )}
           </div>
+        </div>
+        
+        {/* Card content */}
+        <CardContent className="flex-grow pt-4">
+          {/* Student info */}
+          {project.student && (
+            <div className="flex items-center text-sm text-muted-foreground mb-3">
+              <InitialsAvatar name={project.student.name} size='s' />
+              <span className="ml-1">{project.student.name}</span>
+              {project.student.class && (
+                <span className="ml-1 text-xs opacity-70">({project.student.class})</span>
+              )}
+            </div>
+          )}
           
           {/* Project description excerpt */}
           {project.description && (
@@ -184,34 +177,38 @@ export function ProjectCard({ project }: ProjectCardProps) {
             </p>
           )}
           
-          {/* Assignment and learning path info */}
-          <div className="space-y-1 mb-3">
-            {project.assignment && (
-              <div className="flex items-center text-xs text-muted-foreground">
-                <BookOpenIcon size={14} className="mr-1 flex-shrink-0" />
-                <span className="truncate">Opdracht: {project.assignment.title}</span>
+          {/* Learning path and assignment on same level */}
+          {(project.learningPath || project.assignment) && (
+            <div className="mb-3 border-l-2 border-muted pl-3">
+              <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
+                {project.learningPath && (
+                  <div className="flex items-center">
+                    <LayersIcon size={14} className="mr-1 flex-shrink-0" />
+                    <span className="truncate font-medium">{project.learningPath.title}</span>
+                  </div>
+                )}
+                
+                {project.assignment && (
+                  <div className="flex items-center">
+                    <BookOpenIcon size={14} className="mr-1 flex-shrink-0" />
+                    <span className="truncate">{project.assignment.title}</span>
+                  </div>
+                )}
               </div>
-            )}
-            
-            {project.learningPath && !project.assignment && (
-              <div className="flex items-center text-xs text-muted-foreground">
-                <LayersIcon size={14} className="mr-1 flex-shrink-0" />
-                <span className="truncate">Leerpad: {project.learningPath.title}</span>
-              </div>
-            )}
-          </div>
+            </div>
+          )}
           
-          {/* Programming languages */}
-          {project.languages && project.languages.length > 0 && (
+          {/* All programming languages (if more than shown in the image) */}
+          {project.languages && project.languages.length > 2 && (
             <div className="flex flex-wrap gap-1 mt-2">
-              {project.languages.slice(0, 3).map(language => (
-                <Badge key={language.id} variant="secondary" className="text-xs">
+              {project.languages.slice(0, 5).map(language => (
+                <Badge key={language.id} className="text-xs bg-purple-800 text-white">
                   {language.name}
                 </Badge>
               ))}
-              {project.languages.length > 3 && (
-                <Badge variant="secondary" className="text-xs">
-                  +{project.languages.length - 3} meer
+              {project.languages.length > 5 && (
+                <Badge className="text-xs bg-purple-500/70 text-white">
+                  +{project.languages.length - 5} meer
                 </Badge>
               )}
             </div>
@@ -219,7 +216,7 @@ export function ProjectCard({ project }: ProjectCardProps) {
         </CardContent>
         
         {/* Card footer */}
-        <CardFooter className="pt-0">
+        <CardFooter>
           <div className="w-full flex items-center gap-2">
             <Button variant="default" className="flex-1 pointer-events-none">
               <div className="flex items-center justify-center">

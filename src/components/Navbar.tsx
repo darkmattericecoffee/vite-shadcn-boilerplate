@@ -1,6 +1,6 @@
 import { Link, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { HomeIcon, BookOpenIcon, GraduationCapIcon, CodeIcon, LayersIcon } from 'lucide-react';
+import { HomeIcon, BookOpenIcon, GraduationCapIcon, CodeIcon, LayersIcon, GemIcon } from 'lucide-react';
 
 export const Navbar = () => {
   const location = useLocation();
@@ -14,7 +14,10 @@ export const Navbar = () => {
       <div className="container mx-auto py-4 flex items-center justify-between">
         <div className="flex items-center space-x-2">
         <Link to="/">
-        <h1 className="text-xl font-bold">Informatica Showcase</h1>
+        <h1 className="text-xl font-bold flex items-center gap-2">
+          <GemIcon size={20} />
+          Informatica Podium
+        </h1>
               </Link>
           
         </div>

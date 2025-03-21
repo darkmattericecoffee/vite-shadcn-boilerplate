@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { ProjectCard } from '@/components/projects/ProjectCard';
 import { getProjects } from '@/lib/api';
-import { ArrowRightIcon } from 'lucide-react';
+import { ArrowRightIcon, GemIcon } from 'lucide-react';
 
 // Import the Project type from your types file if you have one
 // If not, make sure this matches exactly with the Project type expected by ProjectCard
@@ -82,16 +82,18 @@ export const HomePage = () => {
     <div className="space-y-12">
       {/* Hero Section */}
       <section className="text-center py-12 px-4">
-        <h1 className="text-4xl font-bold tracking-tight sm:text-5xl mb-6">
-          Informatica Showcase
+        <h1 className="text-4xl font-bold tracking-tight sm:text-5xl mb-6 flex items-center justify-center">
+        <GemIcon size={32} className="mr-2" />
+          Informatica Podium
+         
         </h1>
         <p className="text-xl text-muted-foreground max-w-2xl mx-auto mb-8">
-          Ontdek geweldige projecten gemaakt door IT-studenten. Van games en apps
+          Ontdek geweldige projecten gemaakt door leerlingen. Van games en apps
           tot websites en datavisualisaties.
         </p>
         <div className="flex justify-center gap-4">
           <Button asChild size="lg">
-            <Link to="/projects">Browse All Projects</Link>
+            <Link to="/projects">Bekijk alle projecten</Link>
           </Button>
         </div>
       </section>
