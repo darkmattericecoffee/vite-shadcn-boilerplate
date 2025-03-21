@@ -128,78 +128,12 @@ export function ProjectSidebar({ project, onSectionChange }: ProjectSidebarProps
   </CardContent>
 </Card>
 
-      {/* Project Details Card */}
-      <Card>
-        <CardHeader className="pb-2">
-          <CardTitle className="flex items-center text-lg">
-            <TagIcon size={18} className="mr-2" />
-            Project Details
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {/* Creation Date */}
-          {formattedCreationDate && (
-            <div className="flex items-center gap-2">
-              <CalendarIcon size={16} className="text-muted-foreground" />
-              <span className="text-sm">Gemaakt op: {formattedCreationDate}</span>
-            </div>
-          )}
-          {/* Connected Learning Path */}
-          {project.learningPath && (
-            <div className="flex items-center gap-2">
-              <BookOpenIcon size={16} className="text-muted-foreground" />
-              <span className="text-sm">
-                Learning Path:{' '}
-                <Link to={`/learning-paths/${project.learningPath.id}`} className="text-primary hover:underline">
-                  {project.learningPath.title}
-                </Link>
-              </span>
-            </div>
-          )}
-          {/* Assignment link if available */}
-          {project.assignment && (
-            <div className="space-y-2 pt-2">
-              <h3 className="text-sm font-medium">Opdracht</h3>
-              <Button variant="outline" className="w-full flex items-center justify-between" asChild>
-                <Link to={`/assignments/${project.assignment.id}`}>
-                  <div className="flex items-center">
-                    <BookOpenIcon size={16} className="mr-2" />
-                    <span className="truncate">{project.assignment.title}</span>
-                  </div>
-                  <ChevronRightIcon size={16} />
-                </Link>
-              </Button>
-            </div>
-          )}
-          {/* Project Type */}
-          {project.projectType && (
-            <div className="flex flex-col gap-2">
-              <h3 className="text-sm font-medium">Project Type</h3>
-              <Badge variant="secondary" className="w-fit">{project.projectType}</Badge>
-            </div>
-          )}
-          {/* Languages */}
-          {project.languages && project.languages.length > 0 && (
-            <div className="flex flex-col gap-2">
-              <h3 className="text-sm font-medium">Talen</h3>
-              <div className="flex flex-wrap gap-2">
-                {project.languages.map((lang) => (
-                  <Badge key={lang.id} variant="outline" className="w-fit">
-                    {lang.name}
-                  </Badge>
-                ))}
-              </div>
-            </div>
-          )}
-        </CardContent>
-      </Card>
-      
-      {/* Project Resources Card */}
-      <Card>
+{/* Project Resources Card */}
+<Card>
         <CardHeader className="pb-2">
           <CardTitle className="flex items-center text-lg">
             <FileIcon size={18} className="mr-2" />
-            Benodigdheden
+            Inhoud
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -241,7 +175,7 @@ export function ProjectSidebar({ project, onSectionChange }: ProjectSidebarProps
             </div>
           )}
           <div className="space-y-2 pt-2">
-            <h3 className="text-sm font-medium">Benodigheden</h3>
+            <h3 className="text-sm font-medium">Inhoud</h3>
             <div className="grid grid-cols-2 gap-2">
               {hasFiles && (
                 <Button
@@ -267,6 +201,74 @@ export function ProjectSidebar({ project, onSectionChange }: ProjectSidebarProps
           </div>
         </CardContent>
       </Card>
+
+      {/* Project Details Card */}
+      <Card>
+        <CardHeader className="pb-2">
+          <CardTitle className="flex items-center text-lg">
+            <TagIcon size={18} className="mr-2" />
+            Project Details
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {/* Creation Date */}
+          {formattedCreationDate && (
+            <div className="flex items-center gap-2">
+              <CalendarIcon size={16} className="text-muted-foreground" />
+              <span className="text-sm">Gemaakt op: {formattedCreationDate}</span>
+            </div>
+          )}
+          {/* Connected Learning Path */}
+          {project.learningPath && (
+            <div className="flex items-center gap-2">
+              <BookOpenIcon size={16} className="text-muted-foreground" />
+              <span className="text-sm">
+                Leerpad:{' '}
+                <Link to={`/learning-paths/${project.learningPath.id}`} className="text-primary hover:underline">
+                  {project.learningPath.title}
+                </Link>
+              </span>
+            </div>
+          )}
+          {/* Assignment link if available */}
+          {project.assignment && (
+            <div className="space-y-2 pt-2">
+              <h3 className="text-sm font-medium">Opdracht</h3>
+              <Button variant="outline" className="w-full flex items-center justify-between" asChild>
+                <Link to={`/assignments/${project.assignment.id}`}>
+                  <div className="flex items-center">
+                    <BookOpenIcon size={16} className="mr-2" />
+                    <span className="truncate">{project.assignment.title}</span>
+                  </div>
+                  <ChevronRightIcon size={16} />
+                </Link>
+              </Button>
+            </div>
+          )}
+          {/* Project Type */}
+          {project.projectType && (
+            <div className="flex flex-col gap-2">
+              <h3 className="text-sm font-medium">Project Type</h3>
+              <Badge variant="secondary" className="w-fit">{project.projectType}</Badge>
+            </div>
+          )}
+          {/* Languages */}
+          {project.languages && project.languages.length > 0 && (
+            <div className="flex flex-col gap-2">
+              <h3 className="text-sm font-medium">Programmeertalen</h3>
+              <div className="flex flex-wrap gap-2">
+                {project.languages.map((lang) => (
+                  <Badge key={lang.id} variant="outline" className="w-fit">
+                    {lang.name}
+                  </Badge>
+                ))}
+              </div>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+      
+      
     </>
   );
 }
