@@ -2,7 +2,7 @@
 import React from 'react';
 import { DocumentRenderer } from '@keystone-6/document-renderer';
 import { Badge } from '@/components/ui/badge';
-import { CalendarIcon, UserIcon } from 'lucide-react';
+import { CalendarIcon } from 'lucide-react';
 import { Project } from '@/types/project';
 import InitialsAvatar from '../ui/InitialsAvatar';
 
@@ -12,6 +12,9 @@ interface ProjectHeaderProps {
 
 export function ProjectHeader({ project }: ProjectHeaderProps) {
   const [isScrolled, setIsScrolled] = React.useState(false);
+  
+  // Handle both students (array) or legacy student (single object)
+  const projectStudents = project.students || (project.student ? [project.student] : []);
   
   // Track scroll position to create a compact header when scrolled
   React.useEffect(() => {
@@ -32,6 +35,14 @@ export function ProjectHeader({ project }: ProjectHeaderProps) {
         day: 'numeric' 
       })
     : null;
+    
+  // Helper for class name display
+  const getClassName = (student: any) => {
+    if (!student) return null;
+    if (typeof student.class === 'string') return student.class;
+    if (student.class?.name) return student.class.name;
+    return null;
+  };
 
   return (
     <div className={`space-y-1 transition-all duration-200 ${isScrolled ? 'pb-1' : 'pb-2'}`}>
@@ -41,15 +52,16 @@ export function ProjectHeader({ project }: ProjectHeaderProps) {
         </h1>
         
         <div className="flex flex-wrap gap-2">
-          {/* Student badge */}
-          <Badge variant="secondary" className="flex items-center whitespace-nowrap">
-            <InitialsAvatar name={project.student.name} size='s' />
-            
-            {project.student.name}
-            {project.student.class && (
-              <span className="ml-1">({project.student.class})</span>
-            )}
-          </Badge>
+          {/* Student badges */}
+          {projectStudents.map((student, index) => (
+            <Badge key={student.id || index} variant="secondary" className="flex items-center whitespace-nowrap">
+              <InitialsAvatar name={student.name} size='s' />
+              <span className="ml-1">{student.name}</span>
+              {getClassName(student) && (
+                <span className="ml-1">({getClassName(student)})</span>
+              )}
+            </Badge>
+          ))}
           
           {/* Submission date badge */}
           {formattedSubmissionDate && (

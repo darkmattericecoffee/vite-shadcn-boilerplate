@@ -26,14 +26,28 @@ export interface AssignmentScreenshot {
   };
 }
 
+// Updated to support multiple students
 export interface AssignmentProject {
   id: string;
   title: string;
   deliverableType?: string;
-  student: {
+  description?: {
+    document: Document;
+  };
+  // Keep the old student property for backward compatibility
+  student?: {
     name: string;
     class?: string;
   };
+  // Add the new students array property
+  students?: {
+    id: string;
+    name: string;
+    class?: {
+      id?: string;
+      name: string;
+    };
+  }[];
   screenshots?: {
     image?: {
       url: string;

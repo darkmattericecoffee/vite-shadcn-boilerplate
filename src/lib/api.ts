@@ -1,4 +1,4 @@
-// src/lib/api.ts - Updated API methods for group projects
+// src/lib/api.ts - Refactored API methods with graduationYear handling
 export const API_URL = 'http://localhost:3000/api/graphql';
 export const API_BASE_URL = 'http://localhost:3000';
 import { Project } from "@/types/learning-path";
@@ -42,6 +42,46 @@ export async function fetchGraphQL(query: string, variables = {}) {
     console.error('Failed to fetch from GraphQL API:', error);
     throw error;
   }
+}
+
+// Updated getStudents function to handle year_ prefixed enum values
+export async function getStudents() {
+  const query = `
+    query GetStudents {
+      students {
+        id
+        name
+        class {
+          id
+          name
+        }
+        graduationYear
+      }
+    }
+  `;
+
+  try {
+    const data = await fetchGraphQL(query);
+    // The API returns enum values like "year_2025", we'll keep these as is
+    // and handle the formatting at display time using extractYearFromEnum
+    return data;
+  } catch (error) {
+    console.error('Error in getStudents:', error);
+    return { students: [] };
+  }
+}
+
+// Helper function to convert number to enum value format with year_ prefix
+export function formatGraduationYearForApi(year: number): string {
+  if (!year) return "";
+  return `year_${year}`;
+}
+
+// Helper function to extract year from enum value with year_ prefix
+export function extractYearFromEnum(enumValue: string): number | null {
+  if (!enumValue) return null;
+  const match = enumValue.match(/year_(\d{4})/);
+  return match ? parseInt(match[1], 10) : null;
 }
 
 export async function getProjects({
@@ -132,6 +172,7 @@ export async function getProjects({
             class {
               name
             }
+            graduationYear
           }
           languages {
             id
@@ -174,18 +215,116 @@ export async function getProjects({
   }
 }
 
-// Query to get all students
-export async function getStudents() {
+// Updated getProjectById to include graduationYear
+export async function getProjectById(id: string) {
   const query = `
-    query GetStudents {
-      students {
+    query GetProject($id: ID!) {
+      project(where: { id: $id }) {
         id
-        name
-        class {
+        title
+        description {
+          document
+        }
+        projectType
+        deliverableType
+        demoUrl
+        embedCode
+        featured
+        createdAt
+        students {
+          id
+          name
+          class {
+            id
+            name
+          }
+          graduationYear
+        }
+        languages {
           id
           name
         }
-        graduationYear
+        assignment {
+          id
+          title
+          description {
+            document
+          }
+          learningObjectives {
+            id
+            title
+            description
+            order
+          }
+        }
+        learningPath {
+          id
+          title
+          description {
+            document
+          }
+          assignments {
+            id
+            title
+            orderInPath
+            learningObjectives {
+              id
+              title
+              description
+              order
+            }
+          }
+        }
+        screenshots {
+          id
+          caption
+          image {
+            url
+            width
+            height
+            filesize
+          }
+        }
+        codeFiles {
+          id
+          description
+          file {
+            filename
+            url
+            filesize
+          }
+        }
+        zipArchives {
+          id
+          description
+          extractedPath
+          archive {
+            filename
+            url
+            filesize
+          }
+        }
+      }
+    }
+  `;
+
+  try {
+    const data = await fetchGraphQL(query, { id });
+    console.log("GetProjectById Response:", JSON.stringify(data, null, 2));
+    return data;
+  } catch (error) {
+    console.error('Error in getProjectById:', error);
+    return { project: null };
+  }
+}
+
+// Query to get all programming languages
+export async function getProgrammingLanguages() {
+  const query = `
+    query GetProgrammingLanguages {
+      programmingLanguages {
+        id
+        name
       }
     }
   `;
@@ -287,6 +426,7 @@ export async function getAssignmentById(id: string) {
             class {
               name
             }
+            graduationYear
           }
           screenshots {
             image {
@@ -303,20 +443,6 @@ export async function getAssignmentById(id: string) {
   return data;
 }
 
-// Query to get all programming languages
-export async function getProgrammingLanguages() {
-  const query = `
-    query GetProgrammingLanguages {
-      programmingLanguages {
-        id
-        name
-      }
-    }
-  `;
-
-  return fetchGraphQL(query);
-}
-
 // Get classes for filtering
 export async function getClasses() {
   const query = `
@@ -329,104 +455,6 @@ export async function getClasses() {
   `;
 
   return fetchGraphQL(query);
-}
-
-// Updated getProjectById to use students (plural)
-export async function getProjectById(id: string) {
-  const query = `
-    query GetProject($id: ID!) {
-      project(where: { id: $id }) {
-        id
-        title
-        description {
-          document
-        }
-        projectType
-        deliverableType
-        demoUrl
-        embedCode
-        featured
-        createdAt
-        students {
-          id
-          name
-          class {
-            id
-            name
-          }
-          graduationYear
-        }
-        languages {
-          id
-          name
-        }
-        assignment {
-          id
-          title
-          description {
-            document
-          }
-          learningObjectives {
-            id
-            title
-            description
-            order
-          }
-        }
-        learningPath {
-          id
-          title
-          description {
-            document
-          }
-          assignments {
-            id
-            title
-            orderInPath
-            learningObjectives {
-              id
-              title
-              description
-              order
-            }
-          }
-        }
-        screenshots {
-          id
-          caption
-          image {
-            url
-            width
-            height
-            filesize
-          }
-        }
-        codeFiles {
-          id
-          description
-          file {
-            filename
-            url
-            filesize
-          }
-        }
-        zipArchives {
-          id
-          description
-          extractedPath
-          archive {
-            filename
-            url
-            filesize
-          }
-        }
-      }
-    }
-  `;
-
-  const data = await fetchGraphQL(query, { id });
-  console.log("GetProjectById Response:", JSON.stringify(data, null, 2));
-  return data;
 }
 
 // Updated getLearningPaths
@@ -463,7 +491,7 @@ export async function getLearningPaths() {
   return fetchGraphQL(query);
 }
 
-// Updated getLearningPathById to use students (plural)
+// Updated getLearningPathById to include graduationYear
 export async function getLearningPathById(id: string) {
   const query = `
     query GetLearningPath($id: ID!) {
@@ -515,6 +543,7 @@ export async function getLearningPathById(id: string) {
             class {
               name
             }
+            graduationYear
           }
           screenshots {
             image {
@@ -527,15 +556,106 @@ export async function getLearningPathById(id: string) {
     }
   `;
 
-  const data = await fetchGraphQL(query, { id });
-  
-  // Filter final projects in JavaScript rather than in GraphQL
-  if (data.learningPath && data.learningPath.projects) {
-    data.learningPath.projects = data.learningPath.projects.filter(
-      (project: Project) => project.deliverableType === 'final'
-    );
+  try {
+    const data = await fetchGraphQL(query, { id });
+    
+    // Filter final projects in JavaScript rather than in GraphQL
+    if (data.learningPath && data.learningPath.projects) {
+      data.learningPath.projects = data.learningPath.projects.filter(
+        (project: Project) => project.deliverableType === 'final'
+      );
+    }
+    
+    console.log("GetLearningPathById Response:", JSON.stringify(data, null, 2));
+    return data;
+  } catch (error) {
+    console.error('Error in getLearningPathById:', error);
+    return { learningPath: null };
   }
-  
-  console.log("GetLearningPathById Response:", JSON.stringify(data, null, 2));
-  return data;
+}
+
+// Function to create or update a student with proper graduationYear handling
+export async function createOrUpdateStudent(studentData: {
+  id?: string;
+  name: string;
+  email?: string;
+  classId?: string;
+  graduationYear?: number;
+}) {
+  // Format graduation year for the API if it exists
+  const formattedGraduationYear = studentData.graduationYear 
+    ? formatGraduationYearForApi(studentData.graduationYear)
+    : null;
+
+  const variables: any = {
+    name: studentData.name,
+    email: studentData.email || null,
+    classId: studentData.classId || null,
+    graduationYear: formattedGraduationYear,
+  };
+
+  // If updating an existing student
+  if (studentData.id) {
+    const query = `
+      mutation UpdateStudent(
+        $id: ID!
+        $name: String!
+        $email: String
+        $classId: ID
+        $graduationYear: StudentGraduationYearType
+      ) {
+        updateStudent(
+          where: { id: $id }
+          data: {
+            name: $name,
+            email: $email,
+            class: { connect: { id: $classId } },
+            graduationYear: $graduationYear
+          }
+        ) {
+          id
+          name
+          email
+          graduationYear
+          class {
+            id
+            name
+          }
+        }
+      }
+    `;
+    
+    return fetchGraphQL(query, { ...variables, id: studentData.id });
+  } 
+  // If creating a new student
+  else {
+    const query = `
+      mutation CreateStudent(
+        $name: String!
+        $email: String
+        $classId: ID
+        $graduationYear: StudentGraduationYearType
+      ) {
+        createStudent(
+          data: {
+            name: $name,
+            email: $email,
+            class: { connect: { id: $classId } },
+            graduationYear: $graduationYear
+          }
+        ) {
+          id
+          name
+          email
+          graduationYear
+          class {
+            id
+            name
+          }
+        }
+      }
+    `;
+    
+    return fetchGraphQL(query, variables);
+  }
 }

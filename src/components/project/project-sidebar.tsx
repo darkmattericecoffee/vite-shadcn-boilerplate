@@ -30,7 +30,10 @@ interface ProjectSidebarProps {
 }
 
 export function ProjectSidebar({ project, onSectionChange }: ProjectSidebarProps) {
-  // Format submission date if available
+  // Handle both students (array) or legacy student (single object)
+  const projectStudents = project.students || (project.student ? [project.student] : []);
+  
+  // Format dates
   const formattedSubmissionDate = project.submissionDate
     ? new Date(project.submissionDate).toLocaleDateString(undefined, {
         weekday: 'long',
@@ -40,7 +43,6 @@ export function ProjectSidebar({ project, onSectionChange }: ProjectSidebarProps
       })
     : null;
 
-  // Format creation date
   const formattedCreationDate = project.createdAt
     ? new Date(project.createdAt).toLocaleDateString(undefined, {
         weekday: 'long',
@@ -53,10 +55,11 @@ export function ProjectSidebar({ project, onSectionChange }: ProjectSidebarProps
   const hasFiles = Boolean(project.files && project.files.length > 0);
   const hasScreenshots = Boolean(project.screenshots && project.screenshots.length > 0);
   const hasLink = Boolean(project.link);
+  const hasStudents = projectStudents.length > 0;
 
   // Get the primary screenshot if available
   const featuredScreenshot =
-    hasScreenshots && project.screenshots && project.screenshots[0].image
+    hasScreenshots && project.screenshots && project.screenshots[0]?.image?.url
       ? getFullUrl(project.screenshots[0].image.url)
       : null;
 
@@ -72,6 +75,14 @@ export function ProjectSidebar({ project, onSectionChange }: ProjectSidebarProps
 
   const featuredFile = getFeaturedFile();
 
+  // Helper for class name display
+  const getClassName = (student: any) => {
+    if (!student) return null;
+    if (typeof student.class === 'string') return student.class;
+    if (student.class?.name) return student.class.name;
+    return null;
+  };
+
   return (
     <>
       {/* Student Information Card */}
@@ -79,21 +90,26 @@ export function ProjectSidebar({ project, onSectionChange }: ProjectSidebarProps
         <CardHeader className="pb-2">
           <CardTitle className="flex items-center text-lg">
             <UserIcon size={18} className="mr-2" />
-            Maker
+            Maker{projectStudents.length > 1 ? 's' : ''}
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="space-y-2">
-            <h3 className="text-sm font-medium">Leerling</h3>
-            <div className="flex items-center p-3 bg-muted rounded-md">
-                              <InitialsAvatar name={project.student.name} size='s' />
-              
-              <span className="font-medium">{project.student.name}</span>
-              {project.student.class && (
-                <span className="ml-2 text-muted-foreground">({project.student.class})</span>
-              )}
+          {hasStudents ? (
+            <div className="space-y-2">
+              <h3 className="text-sm font-medium">Leerling{projectStudents.length > 1 ? 'en' : ''}</h3>
+              {projectStudents.map((student, index) => (
+                <div key={student.id || index} className="flex items-center p-3 bg-muted rounded-md mb-2">
+                  <InitialsAvatar name={student.name} size='s' />
+                  <span className="font-medium ml-2">{student.name}</span>
+                  {getClassName(student) && (
+                    <span className="ml-2 text-muted-foreground">({getClassName(student)})</span>
+                  )}
+                </div>
+              ))}
             </div>
-          </div>
+          ) : (
+            <div className="text-sm text-muted-foreground">Geen leerlingen gekoppeld</div>
+          )}
           
           {/* Submission Date */}
           {formattedSubmissionDate && (
@@ -108,9 +124,7 @@ export function ProjectSidebar({ project, onSectionChange }: ProjectSidebarProps
         </CardContent>
       </Card>
 
-      
-
-      {/* New Project Details Card */}
+      {/* Project Details Card */}
       <Card>
         <CardHeader className="pb-2">
           <CardTitle className="flex items-center text-lg">
@@ -154,10 +168,12 @@ export function ProjectSidebar({ project, onSectionChange }: ProjectSidebarProps
             </div>
           )}
           {/* Project Type */}
-          <div className="flex flex-col gap-2">
-            <h3 className="text-sm font-medium">Project Type</h3>
-            <Badge variant="secondary" className="w-fit">{project.projectType}</Badge>
-          </div>
+          {project.projectType && (
+            <div className="flex flex-col gap-2">
+              <h3 className="text-sm font-medium">Project Type</h3>
+              <Badge variant="secondary" className="w-fit">{project.projectType}</Badge>
+            </div>
+          )}
           {/* Languages */}
           {project.languages && project.languages.length > 0 && (
             <div className="flex flex-col gap-2">
@@ -173,6 +189,7 @@ export function ProjectSidebar({ project, onSectionChange }: ProjectSidebarProps
           )}
         </CardContent>
       </Card>
+      
       {/* Project Resources Card */}
       <Card>
         <CardHeader className="pb-2">

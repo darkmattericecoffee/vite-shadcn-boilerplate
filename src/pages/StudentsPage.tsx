@@ -14,11 +14,8 @@ import { Button } from '@/components/ui/button';
 import { GraduationCapIcon } from 'lucide-react';
 import { InitialsAvatar } from '@/components/ui/InitialsAvatar';
 
-interface Student {
-  id: number;
-  name: string;
-  class?: string;
-}
+// Import our updated Student interface and helper
+import { Student, formatGraduationYear } from '@/types/student';
 
 export const StudentsPage = () => {
   const [students, setStudents] = useState<Student[]>([]);
@@ -36,6 +33,7 @@ export const StudentsPage = () => {
         setLoading(false);
       }
     };
+    
     fetchStudents();
   }, []);
 
@@ -63,7 +61,12 @@ export const StudentsPage = () => {
                   <div>
                     <CardTitle>{student.name}</CardTitle>
                     {student.class && (
-                      <CardDescription>Klas: {student.class}</CardDescription>
+                      <CardDescription>Klas: {student.class.name}</CardDescription>
+                    )}
+                    {student.graduationYear && (
+                      <CardDescription>
+                        Afstudeerjaar: {formatGraduationYear(student.graduationYear)}
+                      </CardDescription>
                     )}
                   </div>
                 </div>

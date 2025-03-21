@@ -17,12 +17,13 @@ import {
   GraduationCapIcon,
   LayersIcon,
   StarIcon,
-  BookOpenIcon 
+  BookOpenIcon,
+  UsersIcon
 } from "lucide-react";
 import { getFullUrl } from '@/lib/api';
 import InitialsAvatar from '../ui/InitialsAvatar';
 
-// Define the Project interface - update with learning path information
+// Define the Project interface - updated to support multiple students
 interface Project {
   id: string;
   title: string;
@@ -32,11 +33,13 @@ interface Project {
   projectType?: string;
   demoUrl?: string;
   featured?: boolean;
-  student?: {
+  students?: {
     id: string;
     name: string;
-    class?: string;
-  };
+    class?: {
+      name: string;
+    };
+  }[];
   assignment?: {
     id: string;
     title: string;
@@ -107,6 +110,48 @@ export function ProjectCard({ project }: ProjectCardProps) {
     }
   };
 
+  // Format the student names for display
+  const formatStudentInfo = () => {
+    // If there are no students, return empty string
+    if (!project.students || project.students.length === 0) {
+      return '';
+    }
+    
+    // If there's just one student, show the full name and class
+    if (project.students.length === 1) {
+      const student = project.students[0];
+      return (
+        <div className="flex items-center text-sm text-muted-foreground mb-3">
+          <InitialsAvatar name={student.name} size='s' />
+          <span className="ml-1">{student.name}</span>
+          {student.class && (
+            <span className="ml-1 text-xs opacity-70">({student.class.name})</span>
+          )}
+        </div>
+      );
+    }
+    
+    // If there are multiple students, handle the display differently
+    return (
+      <div className="flex flex-col text-sm text-muted-foreground mb-3">
+        <div className="flex items-center mb-1">
+          <UsersIcon size={14} className="mr-1" />
+          <span className="font-medium">Group Project</span>
+          <span className="ml-1 text-xs opacity-70">({project.students.length} students)</span>
+        </div>
+        <div className="flex flex-wrap gap-1">
+          {project.students.map((student, index) => (
+            <div key={student.id} className="flex items-center">
+              <InitialsAvatar name={student.name} size='s' />
+              <span className="ml-1 text-xs">{student.name}</span>
+              {index < project.students!.length - 1 && <span className="ml-1">+</span>}
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  };
+
   return (
     <Link to={`/projects/${project.id}`} className="block group">
       <Card className="h-full flex flex-col overflow-hidden hover:shadow-md transition-shadow">
@@ -146,6 +191,14 @@ export function ProjectCard({ project }: ProjectCardProps) {
               </Badge>
             )}
             
+            {/* Group project indicator badge */}
+            {project.students && project.students.length > 1 && (
+              <Badge variant="secondary" className="text-xs bg-background/80 backdrop-blur-sm flex items-center gap-1">
+                <UsersIcon size={10} />
+                <span>Groep</span>
+              </Badge>
+            )}
+            
             {/* Programming languages (limited to 2 in the image) */}
             {project.languages && project.languages.length > 0 && (
               project.languages.slice(0, 2).map(language => (
@@ -159,16 +212,8 @@ export function ProjectCard({ project }: ProjectCardProps) {
         
         {/* Card content */}
         <CardContent className="flex-grow pt-4">
-          {/* Student info */}
-          {project.student && (
-            <div className="flex items-center text-sm text-muted-foreground mb-3">
-              <InitialsAvatar name={project.student.name} size='s' />
-              <span className="ml-1">{project.student.name}</span>
-              {project.student.class && (
-                <span className="ml-1 text-xs opacity-70">({project.student.class})</span>
-              )}
-            </div>
-          )}
+          {/* Student info - now with support for multiple students */}
+          {formatStudentInfo()}
           
           {/* Project description excerpt */}
           {project.description && (

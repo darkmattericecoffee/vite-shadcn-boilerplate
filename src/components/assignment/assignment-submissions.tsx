@@ -9,7 +9,7 @@ import {
   CardFooter
 } from "@/components/ui/card";
 import { Button } from '@/components/ui/button';
-import { ChevronRightIcon, GraduationCapIcon, UserIcon } from 'lucide-react';
+import { ChevronRightIcon, GraduationCapIcon, UserIcon, UsersIcon } from 'lucide-react';
 import { getFullUrl } from '@/lib/api';
 import { Assignment } from '@/types/assignment';
 
@@ -75,6 +75,62 @@ export function AssignmentSubmissions({ projects }: AssignmentSubmissionsProps) 
 
             const descriptionExcerpt = getDescriptionExcerpt();
 
+            // Format student information
+            const formatStudentInfo = () => {
+              // Check if students is available and is an array (new API structure)
+              if (project.students && Array.isArray(project.students)) {
+                // Multiple students case
+                if (project.students.length > 1) {
+                  return (
+                    <div className="flex flex-col text-sm text-muted-foreground mb-2">
+                      <div className="flex items-center">
+                        <UsersIcon size={14} className="mr-1" />
+                        <span className="font-medium">Group Project</span>
+                        <span className="ml-1">({project.students.length} students)</span>
+                      </div>
+                      <div className="text-xs mt-1">
+                        {project.students.map((student, index) => (
+                          <React.Fragment key={student.id || index}>
+                            <span>{student.name}</span>
+                            {project.students && index < project.students.length - 1 && <span>, </span>}
+                          </React.Fragment>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                }
+                // Single student in the new format
+                else if (project.students.length === 1) {
+                  const student = project.students[0];
+                  return (
+                    <div className="flex items-center text-sm text-muted-foreground mb-2">
+                      <UserIcon size={14} className="mr-1" />
+                      <span>{student.name}</span>
+                      {student.class && (
+                        <span className="ml-1">({student.class.name})</span>
+                      )}
+                    </div>
+                  );
+                }
+              }
+              
+              // Fallback to old API structure (single student)
+              if (project.student) {
+                return (
+                  <div className="flex items-center text-sm text-muted-foreground mb-2">
+                    <UserIcon size={14} className="mr-1" />
+                    <span>{project.student.name}</span>
+                    {project.student.class && (
+                      <span className="ml-1">({typeof project.student.class === 'string' ? project.student.class : (project.student.class as { name: string }).name})</span>
+                    )}
+                  </div>
+                );
+              }
+              
+              // No student information available
+              return null;
+            };
+
             return (
               <Link 
                 to={`/projects/${project.id}`} 
@@ -110,13 +166,7 @@ export function AssignmentSubmissions({ projects }: AssignmentSubmissionsProps) 
                   </CardHeader>
                   
                   <CardContent className="space-y-2 flex-grow">
-                    <div className="flex items-center text-sm text-muted-foreground mb-2">
-                      <UserIcon size={14} className="mr-1" />
-                      <span>{project.student.name}</span>
-                      {project.student.class && (
-                        <span className="ml-1">({project.student.class})</span>
-                      )}
-                    </div>
+                    {formatStudentInfo()}
                     
                     {descriptionExcerpt && (
                       <p className="text-sm text-muted-foreground line-clamp-3">

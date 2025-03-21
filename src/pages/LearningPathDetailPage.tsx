@@ -84,6 +84,31 @@ const LearningPathDetailPage = () => {
     assignment => assignment.learningObjectives && assignment.learningObjectives.length > 0
   );
 
+  // Helper function to get student name and class
+  const getStudentDisplay = (project:any) => {
+    // First try to use the students array (new format)
+    if (project.students && project.students.length > 0) {
+      const student = project.students[0];
+      return {
+        name: student.name,
+        class: student.class?.name || (typeof student.class === 'string' ? student.class : null)
+      };
+    }
+    
+    // Fall back to student property (old format)
+    if (project.student) {
+      return {
+        name: project.student.name,
+        class: typeof project.student.class === 'string' 
+          ? project.student.class 
+          : project.student.class?.name || null
+      };
+    }
+    
+    // No student info available
+    return { name: "Unknown Student", class: null };
+  };
+
   return (
     <div className="space-y-12">
       {/* Header with back button */}
@@ -312,6 +337,9 @@ const LearningPathDetailPage = () => {
                       getFullUrl(project.screenshots[0].image.url) : 
                       undefined;
                     
+                    // Get student info
+                    const studentDisplay = getStudentDisplay(project);
+                    
                     return (
                       <Link 
                         to={`/projects/${project.id}`} 
@@ -340,9 +368,9 @@ const LearningPathDetailPage = () => {
                               </h3>
                               
                               <div className="flex items-center text-xs text-muted-foreground mt-1">
-                                <span className="line-clamp-1">{project.student.name}</span>
-                                {project.student.class && (
-                                  <span className="ml-1 text-xs opacity-70">({project.student.class})</span>
+                                <span className="line-clamp-1">{studentDisplay.name}</span>
+                                {studentDisplay.class && (
+                                  <span className="ml-1 text-xs opacity-70">({studentDisplay.class})</span>
                                 )}
                               </div>
                             </div>
@@ -446,6 +474,9 @@ const LearningPathDetailPage = () => {
                 getFullUrl(project.screenshots[0].image.url) : 
                 undefined;
               
+              // Get student info
+              const studentDisplay = getStudentDisplay(project);
+              
               return (
                 <Link 
                   to={`/projects/${project.id}`} 
@@ -476,9 +507,9 @@ const LearningPathDetailPage = () => {
                     <CardContent className="py-2">
                       <div className="flex items-center text-sm text-muted-foreground">
                         <GraduationCapIcon size={14} className="mr-1" />
-                        <span>{project.student.name}</span>
-                        {project.student.class && (
-                          <span className="ml-1">({project.student.class})</span>
+                        <span>{studentDisplay.name}</span>
+                        {studentDisplay.class && (
+                          <span className="ml-1">({studentDisplay.class})</span>
                         )}
                       </div>
                       
