@@ -12,42 +12,13 @@ import {
 } from "@/components/ui/card";
 import { Button } from '@/components/ui/button';
 import { GraduationCapIcon } from 'lucide-react';
+import { InitialsAvatar } from '@/components/ui/InitialsAvatar';
 
 interface Student {
   id: number;
   name: string;
   class?: string;
 }
-
-// Helper function to get initials from name
-const getInitials = (name: string): string => {
-  return name
-    .split(' ')
-    .map(part => part.charAt(0))
-    .join('')
-    .toUpperCase()
-    .substring(0, 2); // Limit to 2 characters
-};
-
-// Helper function to generate a consistent color based on name
-const getAvatarColor = (name: string): string => {
-  const colors = [
-    'bg-blue-500',
-    'bg-green-500',
-    'bg-purple-500',
-    'bg-yellow-500',
-    'bg-pink-500',
-    'bg-indigo-500',
-    'bg-red-500',
-    'bg-orange-500',
-    'bg-teal-500',
-    'bg-cyan-500',
-  ];
-  
-  // Simple hash function to pick a consistent color
-  const charSum = name.split('').reduce((sum, char) => sum + char.charCodeAt(0), 0);
-  return colors[charSum % colors.length];
-};
 
 export const StudentsPage = () => {
   const [students, setStudents] = useState<Student[]>([]);
@@ -87,10 +58,8 @@ export const StudentsPage = () => {
             <Card key={student.id} className="overflow-hidden hover:shadow-md transition-shadow">
               <CardHeader>
                 <div className="flex items-center gap-4">
-                  {/* Avatar circle with initials */}
-                  <div className={`flex items-center justify-center w-12 h-12 rounded-full text-white font-medium ${getAvatarColor(student.name)}`}>
-                    {getInitials(student.name)}
-                  </div>
+                  {/* Avatar circle with initials using our component */}
+                  <InitialsAvatar name={student.name} />
                   <div>
                     <CardTitle>{student.name}</CardTitle>
                     {student.class && (

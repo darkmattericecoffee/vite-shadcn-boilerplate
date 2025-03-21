@@ -20,6 +20,7 @@ import {
   BookOpenIcon 
 } from "lucide-react";
 import { getFullUrl } from '@/lib/api';
+import InitialsAvatar from '../ui/InitialsAvatar';
 
 // Define the Project interface - update with learning path information
 interface Project {
@@ -167,7 +168,7 @@ export function ProjectCard({ project }: ProjectCardProps) {
             {/* Student info */}
             {project.student && (
               <div className="flex items-center text-sm text-muted-foreground ml-auto">
-                <GraduationCapIcon size={14} className="mr-1" />
+                <InitialsAvatar name={project.student.name} size='s' />
                 <span>{project.student.name}</span>
                 {project.student.class && (
                   <span className="ml-1 text-xs opacity-70">({project.student.class})</span>

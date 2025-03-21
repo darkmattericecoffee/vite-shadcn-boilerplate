@@ -4,6 +4,7 @@ import { DocumentRenderer } from '@keystone-6/document-renderer';
 import { Badge } from '@/components/ui/badge';
 import { CalendarIcon, UserIcon } from 'lucide-react';
 import { Project } from '@/types/project';
+import InitialsAvatar from '../ui/InitialsAvatar';
 
 interface ProjectHeaderProps {
   project: Project;
@@ -42,7 +43,8 @@ export function ProjectHeader({ project }: ProjectHeaderProps) {
         <div className="flex flex-wrap gap-2">
           {/* Student badge */}
           <Badge variant="secondary" className="flex items-center whitespace-nowrap">
-            <UserIcon size={14} className="mr-2" />
+            <InitialsAvatar name={project.student.name} size='s' />
+            
             {project.student.name}
             {project.student.class && (
               <span className="ml-1">({project.student.class})</span>

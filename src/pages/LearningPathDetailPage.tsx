@@ -163,10 +163,12 @@ const LearningPathDetailPage = () => {
           
           {/* Learning Objectives - Aggregated from all assignments */}
           {hasLearningObjectives && (
-            <LearningPathObjectives 
-              learningPath={learningPath}
-              className="border-none shadow-md mt-6"
-            />
+            <div id="all-objectives">
+              <LearningPathObjectives 
+                learningPath={learningPath}
+                className="border-none shadow-md mt-6 LearningPathObjectives"
+              />
+            </div>
           )}
           
           {/* Assignments Section with improved spacing */}
@@ -197,9 +199,10 @@ const LearningPathDetailPage = () => {
                     
                   return (
                     <Link 
-                    to={`/assignments/${assignment.id}`}
-                    state={{ from: 'learning-path' }} >
-                      
+                      to={`/assignments/${assignment.id}`} 
+                      key={assignment.id}
+                      className="block group"
+                    >
                       <Card className="hover:shadow-lg transition-all border-muted/70 hover:border-primary/30 h-full flex flex-col">
                         {thumbnailImage ? (
                           <div className="h-40 overflow-hidden relative">
@@ -289,7 +292,7 @@ const LearningPathDetailPage = () => {
             <div className="flex items-center justify-between pb-2 border-b">
               <h2 className="text-xl font-bold flex items-center">
                 <GraduationCapIcon size={18} className="mr-2" />
-                Final Deliverables
+                End Results
               </h2>
               <Badge variant="secondary" className="px-3 py-1">
                 {finalProjects.length} Project{finalProjects.length !== 1 ? 's' : ''}
@@ -370,34 +373,6 @@ const LearningPathDetailPage = () => {
               </div>
             )}
             
-            {/* Quick Info Card */}
-            <Card className="bg-primary/5 border-primary/20 mt-6">
-              <CardHeader className="pb-2">
-                <CardTitle className="text-base">Path Overview</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <ul className="space-y-2 text-sm">
-                  <li className="flex items-start">
-                    <BookOpenIcon size={14} className="mr-2 mt-1 text-primary" />
-                    <span>{sortedAssignments.length} step-by-step assignments</span>
-                  </li>
-                  <li className="flex items-start">
-                    <GraduationCapIcon size={14} className="mr-2 mt-1 text-primary" />
-                    <span>Create your own final project</span>
-                  </li>
-                  {hasLearningObjectives && (
-                    <li className="flex items-start">
-                      <LayersIcon size={14} className="mr-2 mt-1 text-primary" />
-                      <span>
-                        {sortedAssignments.reduce((total, assignment) => 
-                          total + (assignment.learningObjectives?.length || 0), 0)
-                        } total learning objectives
-                      </span>
-                    </li>
-                  )}
-                </ul>
-              </CardContent>
-            </Card>
             
             {/* Preview of Learning Objectives if available */}
             {hasLearningObjectives && (
@@ -406,7 +381,7 @@ const LearningPathDetailPage = () => {
                   <CardHeader className="pb-2">
                     <CardTitle className="text-base flex items-center">
                       <BookOpenIcon size={16} className="mr-2 text-primary" />
-                      You'll learn
+                      Objectives
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
@@ -436,7 +411,7 @@ const LearningPathDetailPage = () => {
                       variant="ghost" 
                       size="sm" 
                       className="w-full mt-3 text-xs"
-                      onClick={() => document.querySelector('.LearningPathObjectives')?.scrollIntoView({ behavior: 'smooth' })}
+                      onClick={() => document.getElementById('all-objectives')?.scrollIntoView({ behavior: 'smooth' })}
                     >
                       View All Objectives
                     </Button>

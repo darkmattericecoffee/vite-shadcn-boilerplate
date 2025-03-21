@@ -38,6 +38,10 @@ const AssignmentDetailPage = () => {
     ? "Back to Learning Paths"  // Plural, going to the listing page
     : "Back to Assignments";
 
+  // Determine learning path ID from the URL if it exists
+  const learningPathIdMatch = location.pathname.match(/\/learning-paths\/([^/]+)\/assignments/);
+  const learningPathId = learningPathIdMatch ? learningPathIdMatch[1] : undefined;
+
   // References to scroll to sections
   const contentRef = useRef<HTMLDivElement>(null);
   const filesRef = useRef<HTMLDivElement>(null);
@@ -54,7 +58,7 @@ const AssignmentDetailPage = () => {
 
     const observerOptions = {
       root: null,
-      rootMargin: '-32px 0px -70% 0px', // Adjusted for reduced sticky header height
+      rootMargin: '-100px 0px -70% 0px', // Adjusted for sticky header
       threshold: 0
     };
 
@@ -154,31 +158,37 @@ const AssignmentDetailPage = () => {
   const hasFiles = Boolean(assignment.files && assignment.files.length > 0);
   const hasScreenshots = Boolean(assignment.screenshots && assignment.screenshots.length > 0);
   const hasProjects = Boolean(assignment.projects && assignment.projects.length > 0);
+  
+  // Check if the assignment has a cover image to adjust navigation positioning
+  const hasCoverImage = assignment.screenshots && 
+    assignment.screenshots.length > 0 && 
+    assignment.screenshots[0].image;
 
   return (
-    <div className="space-y-8">
-      {/* Hero section - sticky at the top with back button */}
-      <div className="sticky top-0 z-20 pt-2 bg-background pb-2 border-b">
+    <div className="space-y-6">
+      {/* Back button - now part of main page, outside the header */}
+      <div className="pt-2 pb-2">
         <Button 
           variant="outline" 
           size="sm" 
-          asChild 
-          className="mb-2"
+          asChild
         >
           <Link to={backLink} className="flex items-center">
             <ArrowLeftIcon size={16} className="mr-2" />
             {backText}
           </Link>
         </Button>
-        <AssignmentHeader assignment={assignment} />
       </div>
       
+      {/* Header - handles its own stickiness */}
+      <AssignmentHeader assignment={assignment} learningPathId={learningPathId} />
+      
       {/* Main content grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 pt-4">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 pt-2">
         {/* Media content - left side takes 2/3 */}
         <div className="lg:col-span-8 space-y-6">
-          {/* Sticky navigation - just below the header - reduced top margin */}
-          <div className="sticky top-24 z-10 bg-background pt-2 pb-2">
+          {/* Sticky navigation - adjust top position based on whether there's a cover image */}
+          <div className={`sticky z-10 bg-background pt-2 pb-2 ${hasCoverImage ? 'top-20' : 'top-16'}`}>
             <AssignmentNavigation 
               activeSection={activeSection} 
               onSectionChange={scrollToSection}
@@ -188,33 +198,33 @@ const AssignmentDetailPage = () => {
             />
           </div>
 
-          {/* Content sections - adjusted scroll margin */}
-          <div id="content" ref={contentRef} className="scroll-mt-32">
+          {/* Content sections - adjust scroll margin based on navigation position */}
+          <div id="content" ref={contentRef} className={`${hasCoverImage ? 'scroll-mt-28' : 'scroll-mt-24'}`}>
             <AssignmentContent assignment={assignment} />
           </div>
           
           {hasFiles && (
-            <div id="files" ref={filesRef} className="scroll-mt-32">
+            <div id="files" ref={filesRef} className={`${hasCoverImage ? 'scroll-mt-28' : 'scroll-mt-24'}`}>
               <AssignmentFiles files={assignment.files} />
             </div>
           )}
           
           {hasScreenshots && (
-            <div id="screenshots" ref={screenshotsRef} className="scroll-mt-32">
+            <div id="screenshots" ref={screenshotsRef} className={`${hasCoverImage ? 'scroll-mt-28' : 'scroll-mt-24'}`}>
               <AssignmentScreenshots screenshots={assignment.screenshots} />
             </div>
           )}
           
           {hasProjects && (
-            <div id="submissions" ref={submissionsRef} className="scroll-mt-32">
+            <div id="submissions" ref={submissionsRef} className={`${hasCoverImage ? 'scroll-mt-28' : 'scroll-mt-24'}`}>
               <AssignmentSubmissions projects={assignment.projects} />
             </div>
           )}
         </div>
         
-        {/* Sidebar content - right side takes 1/3 - sticky with reduced top */}
+        {/* Sidebar content - right side takes 1/3 */}
         <div className="lg:col-span-4">
-          <div className="sticky top-24 space-y-6 pt-2">
+          <div className={`sticky space-y-6 ${hasCoverImage ? 'top-28' : 'top-24'}`}>
             <AssignmentSidebar 
               assignment={assignment} 
               onSectionChange={scrollToSection}

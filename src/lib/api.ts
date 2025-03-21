@@ -1,4 +1,4 @@
-// src/lib/api.ts - Updated API methods with learning objectives
+// src/lib/api.ts - Fixed API methods with learning objectives
 export const API_URL = 'http://localhost:3000/api/graphql';
 export const API_BASE_URL = 'http://localhost:3000';
 import { Project } from "@/types/learning-path";
@@ -310,7 +310,7 @@ export async function getProgrammingLanguages() {
   return fetchGraphQL(query);
 }
 
-// Update getProjectById to include learning objectives via related entities
+// Fixed getProjectById to remove querying learningObjectives directly on LearningPath
 export async function getProjectById(id: string) {
   const query = `
     query GetProject($id: ID!) {
@@ -355,16 +355,16 @@ export async function getProjectById(id: string) {
           description {
             document
           }
-          learningObjectives {
-            id
-            title
-            description
-            order
-          }
           assignments {
             id
             title
             orderInPath
+            learningObjectives {
+              id
+              title
+              description
+              order
+            }
           }
         }
         screenshots {
@@ -405,7 +405,7 @@ export async function getProjectById(id: string) {
   return data;
 }
 
-// Update getLearningPaths to include learning objectives
+// Updated getLearningPaths to access learning objectives via assignments
 export async function getLearningPaths() {
   const query = `
     query GetLearningPaths {
@@ -439,7 +439,7 @@ export async function getLearningPaths() {
   return fetchGraphQL(query);
 }
 
-// Get learning path by ID - now includes assignment learning objectives
+// Fixed getLearningPathById to remove querying learningObjectives directly on LearningPath
 export async function getLearningPathById(id: string) {
   const query = `
     query GetLearningPath($id: ID!) {

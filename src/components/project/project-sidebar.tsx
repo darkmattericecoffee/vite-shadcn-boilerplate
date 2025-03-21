@@ -22,6 +22,7 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { getFullUrl } from '@/lib/api';
 import { Project } from '@/types/project';
+import InitialsAvatar from '../ui/InitialsAvatar';
 
 interface ProjectSidebarProps {
   project: Project;
@@ -85,6 +86,8 @@ export function ProjectSidebar({ project, onSectionChange }: ProjectSidebarProps
           <div className="space-y-2">
             <h3 className="text-sm font-medium">Student</h3>
             <div className="flex items-center p-3 bg-muted rounded-md">
+                              <InitialsAvatar name={project.student.name} size='s' />
+              
               <span className="font-medium">{project.student.name}</span>
               {project.student.class && (
                 <span className="ml-2 text-muted-foreground">({project.student.class})</span>
