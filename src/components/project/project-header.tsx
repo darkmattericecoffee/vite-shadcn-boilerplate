@@ -4,7 +4,6 @@ import { DocumentRenderer } from '@keystone-6/document-renderer';
 import { Badge } from '@/components/ui/badge';
 import { CalendarIcon } from 'lucide-react';
 import { Project } from '@/types/project';
-import InitialsAvatar from '../ui/InitialsAvatar';
 
 interface ProjectHeaderProps {
   project: Project;
@@ -52,16 +51,7 @@ export function ProjectHeader({ project }: ProjectHeaderProps) {
         </h1>
         
         <div className="flex flex-wrap gap-2">
-          {/* Student badges */}
-          {projectStudents.map((student, index) => (
-            <Badge key={student.id || index} variant="secondary" className="flex items-center whitespace-nowrap">
-              <InitialsAvatar name={student.name} size='s' />
-              <span className="ml-1">{student.name}</span>
-              {getClassName(student) && (
-                <span className="ml-1">({getClassName(student)})</span>
-              )}
-            </Badge>
-          ))}
+         
           
           {/* Submission date badge */}
           {formattedSubmissionDate && (

@@ -7,6 +7,7 @@ interface InitialsAvatarProps {
   size?: 's' | 'sm' | 'md' | 'lg' | 'xl';
   className?: string;
   fallbackClassName?: string;
+  colorIndex?: number; // Add optional colorIndex prop
 }
 
 /**
@@ -15,7 +16,7 @@ interface InitialsAvatarProps {
 export const InitialsAvatar = React.forwardRef<
   React.ElementRef<typeof Avatar>,
   InitialsAvatarProps & React.ComponentPropsWithoutRef<typeof Avatar>
->(({ name, size = 'md', className, fallbackClassName, ...props }, ref) => {
+>(({ name, size = 'md', className, fallbackClassName, colorIndex, ...props }, ref) => {
   // Get initials from name (up to 2 characters)
   const getInitials = (name: string): string => {
     return name
@@ -26,20 +27,25 @@ export const InitialsAvatar = React.forwardRef<
       .substring(0, 2);
   };
 
-  // Generate a consistent color based on name
-  const getAvatarColor = (name: string): string => {
-    const colors = [
-      'bg-blue-500 text-white',
-      'bg-green-500 text-white',
-      'bg-purple-500 text-white',
-      'bg-yellow-500 text-black',
-      'bg-pink-500 text-white',
-      'bg-indigo-500 text-white',
-      'bg-red-500 text-white',
-      'bg-orange-500 text-white',
-      'bg-teal-500 text-white',
-      'bg-cyan-500 text-white',
-    ];
+  // Colors array
+  const colors = [
+    'bg-blue-500 text-white',
+    'bg-green-500 text-white',
+    'bg-purple-500 text-white',
+    'bg-yellow-500 text-black',
+    'bg-pink-500 text-white',
+    'bg-indigo-500 text-white',
+    'bg-red-500 text-white',
+    'bg-orange-500 text-white',
+    'bg-teal-500 text-white',
+    'bg-cyan-500 text-white',
+  ];
+
+  // Generate a consistent color based on name or use provided colorIndex
+  const getAvatarColor = (name: string, index?: number): string => {
+    if (index !== undefined) {
+      return colors[index % colors.length];
+    }
     
     // Simple hash function to pick a consistent color
     const charSum = name.split('').reduce((sum, char) => sum + char.charCodeAt(0), 0);
@@ -56,15 +62,15 @@ export const InitialsAvatar = React.forwardRef<
   };
 
   return (
-    <Avatar 
-      ref={ref} 
+    <Avatar
+      ref={ref}
       className={cn(sizeClasses[size], className)}
       {...props}
     >
-      <AvatarFallback 
+      <AvatarFallback
         className={cn(
-          "font-medium", 
-          getAvatarColor(name),
+          "font-medium",
+          getAvatarColor(name, colorIndex),
           fallbackClassName
         )}
       >
@@ -75,5 +81,4 @@ export const InitialsAvatar = React.forwardRef<
 });
 
 InitialsAvatar.displayName = "InitialsAvatar";
-
 export default InitialsAvatar;

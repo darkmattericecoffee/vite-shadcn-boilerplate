@@ -86,43 +86,47 @@ export function ProjectSidebar({ project, onSectionChange }: ProjectSidebarProps
   return (
     <>
       {/* Student Information Card */}
-      <Card>
-        <CardHeader className="pb-2">
-          <CardTitle className="flex items-center text-lg">
-            <UserIcon size={18} className="mr-2" />
-            Maker{projectStudents.length > 1 ? 's' : ''}
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {hasStudents ? (
-            <div className="space-y-2">
-              <h3 className="text-sm font-medium">Leerling{projectStudents.length > 1 ? 'en' : ''}</h3>
-              {projectStudents.map((student, index) => (
-                <div key={student.id || index} className="flex items-center p-3 bg-muted rounded-md mb-2">
-                  <InitialsAvatar name={student.name} size='s' />
-                  <span className="font-medium ml-2">{student.name}</span>
-                  {getClassName(student) && (
-                    <span className="ml-2 text-muted-foreground">({getClassName(student)})</span>
-                  )}
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="text-sm text-muted-foreground">Geen leerlingen gekoppeld</div>
-          )}
-          
-          {/* Submission Date */}
-          {formattedSubmissionDate && (
-            <div className="pt-2">
-              <h3 className="text-sm font-medium mb-2">Ingezonden op:</h3>
-              <div className="flex items-center p-3 bg-muted rounded-md">
-                <CalendarIcon size={18} className="mr-2 text-muted-foreground" />
-                <span>{formattedSubmissionDate}</span>
-              </div>
-            </div>
-          )}
-        </CardContent>
-      </Card>
+      {/* Student Information Card */}
+<Card>
+  <CardHeader className="pb-2">
+    <CardTitle className="flex items-center text-lg">
+      <UserIcon size={18} className="mr-2" />
+      Maker{projectStudents.length > 1 ? 's' : ''}
+    </CardTitle>
+  </CardHeader>
+  <CardContent className="space-y-4">
+    {hasStudents ? (
+      <div className="space-y-2">
+        <h3 className="text-sm font-medium">Leerling{projectStudents.length > 1 ? 'en' : ''}</h3>
+        {projectStudents.map((student, index) => (
+          <div key={student.id || index} className="flex items-center p-3 bg-muted rounded-md mb-2">
+            <InitialsAvatar 
+              name={student.name} 
+              size='s' 
+              colorIndex={index} 
+            />
+            <span className="font-medium ml-2">{student.name}</span>
+            {getClassName(student) && (
+              <span className="ml-2 text-muted-foreground">({getClassName(student)})</span>
+            )}
+          </div>
+        ))}
+      </div>
+    ) : (
+      <div className="text-sm text-muted-foreground">Geen leerlingen gekoppeld</div>
+    )}
+    {/* Submission Date */}
+    {formattedSubmissionDate && (
+      <div className="pt-2">
+        <h3 className="text-sm font-medium mb-2">Ingezonden op:</h3>
+        <div className="flex items-center p-3 bg-muted rounded-md">
+          <CalendarIcon size={18} className="mr-2 text-muted-foreground" />
+          <span>{formattedSubmissionDate}</span>
+        </div>
+      </div>
+    )}
+  </CardContent>
+</Card>
 
       {/* Project Details Card */}
       <Card>

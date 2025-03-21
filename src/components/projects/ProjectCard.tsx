@@ -133,22 +133,26 @@ export function ProjectCard({ project }: ProjectCardProps) {
     
     // If there are multiple students, handle the display differently
     return (
-      <div className="flex flex-col text-sm text-muted-foreground mb-3">
-        <div className="flex items-center mb-1">
-          <UsersIcon size={14} className="mr-1" />
-          <span className="font-medium">Group Project</span>
-          <span className="ml-1 text-xs opacity-70">({project.students.length} students)</span>
+<div className="flex flex-col text-sm text-muted-foreground mb-3">
+    <div className="flex items-center mb-1">
+      <UsersIcon size={14} className="mr-1" />
+      <span className="font-medium">Groep Project</span>
+      <span className="ml-1 text-xs opacity-70">({project.students.length} leerlingen)</span>
+    </div>
+    <div className="flex flex-wrap gap-1">
+      {project.students.map((student, index) => (
+        <div key={student.id} className="flex items-center">
+          <InitialsAvatar 
+            name={student.name} 
+            size='s' 
+            colorIndex={index} // Use the array index for color selection
+          />
+          <span className="ml-1 text-xs">{student.name}</span>
+          {project.students && index < project.students.length - 1 && <span className="ml-1">+</span>}
         </div>
-        <div className="flex flex-wrap gap-1">
-          {project.students.map((student, index) => (
-            <div key={student.id} className="flex items-center">
-              <InitialsAvatar name={student.name} size='s' />
-              <span className="ml-1 text-xs">{student.name}</span>
-              {index < project.students!.length - 1 && <span className="ml-1">+</span>}
-            </div>
-          ))}
-        </div>
-      </div>
+      ))}
+    </div>
+  </div>
     );
   };
 
