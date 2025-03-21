@@ -1,4 +1,4 @@
-// src/lib/api.ts - Fixed API methods with learning objectives
+// src/lib/api.ts - Updated API methods for group projects
 export const API_URL = 'http://localhost:3000/api/graphql';
 export const API_BASE_URL = 'http://localhost:3000';
 import { Project } from "@/types/learning-path";
@@ -67,7 +67,8 @@ export async function getProjects({
     let whereClauseParts = [];
     
     if (studentId && studentId !== 'all') {
-      whereClauseParts.push('student: { id: { equals: $studentId } }');
+      // Updated to use students (plural) with some condition
+      whereClauseParts.push('students: { some: { id: { equals: $studentId } } }');
       variables.studentId = studentId;
     }
     
@@ -82,7 +83,6 @@ export async function getProjects({
     }
     
     if (languageId && languageId !== 'all') {
-      // Fix: Change languages_some to languages with proper syntax
       whereClauseParts.push('languages: { some: { id: { equals: $languageId } } }');
       variables.languageId = languageId;
     }
@@ -126,10 +126,12 @@ export async function getProjects({
           embedCode
           featured
           createdAt
-          student {
+          students {
             id
             name
-            class
+            class {
+              name
+            }
           }
           languages {
             id
@@ -179,7 +181,10 @@ export async function getStudents() {
       students {
         id
         name
-        class
+        class {
+          id
+          name
+        }
         graduationYear
       }
     }
@@ -277,9 +282,11 @@ export async function getAssignmentById(id: string) {
           id
           title
           deliverableType
-          student {
+          students {
             name
-            class
+            class {
+              name
+            }
           }
           screenshots {
             image {
@@ -310,7 +317,21 @@ export async function getProgrammingLanguages() {
   return fetchGraphQL(query);
 }
 
-// Fixed getProjectById to remove querying learningObjectives directly on LearningPath
+// Get classes for filtering
+export async function getClasses() {
+  const query = `
+    query GetClasses {
+      classes {
+        id
+        name
+      }
+    }
+  `;
+
+  return fetchGraphQL(query);
+}
+
+// Updated getProjectById to use students (plural)
 export async function getProjectById(id: string) {
   const query = `
     query GetProject($id: ID!) {
@@ -326,10 +347,13 @@ export async function getProjectById(id: string) {
         embedCode
         featured
         createdAt
-        student {
+        students {
           id
           name
-          class
+          class {
+            id
+            name
+          }
           graduationYear
         }
         languages {
@@ -405,7 +429,7 @@ export async function getProjectById(id: string) {
   return data;
 }
 
-// Updated getLearningPaths to access learning objectives via assignments
+// Updated getLearningPaths
 export async function getLearningPaths() {
   const query = `
     query GetLearningPaths {
@@ -439,7 +463,7 @@ export async function getLearningPaths() {
   return fetchGraphQL(query);
 }
 
-// Fixed getLearningPathById to remove querying learningObjectives directly on LearningPath
+// Updated getLearningPathById to use students (plural)
 export async function getLearningPathById(id: string) {
   const query = `
     query GetLearningPath($id: ID!) {
@@ -485,10 +509,12 @@ export async function getLearningPathById(id: string) {
         projects {
           id
           title
-          student {
+          students {
             id
             name
-            class
+            class {
+              name
+            }
           }
           screenshots {
             image {

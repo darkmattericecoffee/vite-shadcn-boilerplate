@@ -365,7 +365,7 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({ project }) => {
                         className="flex items-center gap-1"
                       >
                         <ExternalLinkIcon size={14} />
-                        <span>Nieuwe tab</span>
+                        <span>Open Tab</span>
                       </Button>
                     </a>
                   </div>
@@ -503,7 +503,7 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({ project }) => {
                         className="flex items-center gap-1"
                       >
                         <ExternalLinkIcon size={14} />
-                        <span>Nieuwe tab</span>
+                        <span>Open Tab</span>
                       </Button>
                     </a>
                   )}
@@ -538,7 +538,7 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({ project }) => {
                     className="flex items-center gap-1"
                   >
                     <ExternalLinkIcon size={14} />
-                    <span>Nieuwe tab</span>
+                    <span>Open Tab</span>
                   </Button>
                 </a>
               </div>

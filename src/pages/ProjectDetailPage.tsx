@@ -253,7 +253,7 @@ export const ProjectDetailPage = () => {
                       >
                         <Button variant="outline" size="sm" className="flex items-center gap-1">
                           <ExternalLinkIcon size={14} />
-                          <span>Nieuwe tab</span>
+                          <span>Open Tab</span>
                         </Button>
                       </a>
                     </div>
