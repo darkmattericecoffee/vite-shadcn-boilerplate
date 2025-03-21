@@ -1,5 +1,4 @@
 // src/types/project.ts
-import { Assignment } from './assignment';
 
 export interface Project {
   id: string;

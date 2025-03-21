@@ -181,7 +181,7 @@ export const ProjectDetailPage = () => {
         {/* Left side: main content */}
         <div className="lg:col-span-8 space-y-6">
           {/* Navigation bar including interactive section when available */}
-          <div className="sticky top-24 z-10 bg-background pt-2 pb-2 border-b">
+          <div className="sticky top-24 z-10 bg-background pt-2 pb-2">
             <ProjectNavigation
               activeSection={activeSection}
               onSectionChange={scrollToSection}

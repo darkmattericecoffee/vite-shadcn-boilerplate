@@ -14,6 +14,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from '@/components/ui/badge';
+import { LearningPathObjectives } from '@/components/learning-path/learning-objectives';
 
 const LearningPathDetailPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -76,6 +77,11 @@ const LearningPathDetailPage = () => {
 
   // Filter projects to show only final deliverables - should now be pre-filtered by the API
   const finalProjects = learningPath.projects || [];
+
+  // Check if there are any learning objectives across all assignments
+  const hasLearningObjectives = sortedAssignments.some(
+    assignment => assignment.learningObjectives && assignment.learningObjectives.length > 0
+  );
 
   return (
     <div className="space-y-12">
@@ -155,6 +161,14 @@ const LearningPathDetailPage = () => {
             </Card>
           )}
           
+          {/* Learning Objectives - Aggregated from all assignments */}
+          {hasLearningObjectives && (
+            <LearningPathObjectives 
+              learningPath={learningPath}
+              className="border-none shadow-md mt-6"
+            />
+          )}
+          
           {/* Assignments Section with improved spacing */}
           <div className="space-y-6">
             <div className="flex items-center justify-between pb-2 border-b">
@@ -177,12 +191,15 @@ const LearningPathDetailPage = () => {
                     getFullUrl(assignment.screenshots[0].image.url) : 
                     null;
                     
+                  // Check if this assignment has learning objectives
+                  const hasObjectives = assignment.learningObjectives && 
+                    assignment.learningObjectives.length > 0;
+                    
                   return (
                     <Link 
-                      to={`/assignments/${assignment.id}`} 
-                      key={assignment.id}
-                      className="block group"
-                    >
+                    to={`/assignments/${assignment.id}`}
+                    state={{ from: 'learning-path' }} >
+                      
                       <Card className="hover:shadow-lg transition-all border-muted/70 hover:border-primary/30 h-full flex flex-col">
                         {thumbnailImage ? (
                           <div className="h-40 overflow-hidden relative">
@@ -202,6 +219,11 @@ const LearningPathDetailPage = () => {
                         <CardHeader className="pb-2">
                           <div className="flex items-center justify-between">
                             <Badge variant="outline" className="mb-2">Step {index + 1}</Badge>
+                            {hasObjectives && (
+                              <Badge variant="secondary" className="mb-2">
+                                {assignment.learningObjectives!.length} Objective{assignment.learningObjectives!.length !== 1 ? 's' : ''}
+                              </Badge>
+                            )}
                           </div>
                           <CardTitle className="text-lg group-hover:text-primary transition-colors">
                             {assignment.title}
@@ -212,8 +234,31 @@ const LearningPathDetailPage = () => {
                           {assignment.description && (
                             <p className="text-sm text-muted-foreground line-clamp-2 leading-relaxed">
                               {/* Simple text extraction - could be improved */}
-                              {assignment.description.document[0]?.children?.[0]?.text || "No description available"}
+                              {assignment.description.document?.[0]?.children?.[0]?.text || "No description available"}
                             </p>
+                          )}
+                          
+                          {/* Preview learning objectives if available */}
+                          {hasObjectives && (
+                            <div className="mt-3 pt-3 border-t border-dashed">
+                              <p className="text-xs font-medium text-muted-foreground mb-1">Key objectives:</p>
+                              <ul className="text-xs text-muted-foreground">
+                                {assignment.learningObjectives!
+                                  .sort((a, b) => a.order - b.order)
+                                  .slice(0, 2) // Show only first 2 objectives as preview
+                                  .map(obj => (
+                                    <li key={obj.id} className="flex items-start mt-1">
+                                      <span className="text-primary mr-1">•</span>
+                                      <span className="line-clamp-1">{obj.title}</span>
+                                    </li>
+                                  ))}
+                                {assignment.learningObjectives!.length > 2 && (
+                                  <li className="text-xs italic mt-1">
+                                    + {assignment.learningObjectives!.length - 2} more
+                                  </li>
+                                )}
+                              </ul>
+                            </div>
                           )}
                         </CardContent>
                         
@@ -328,7 +373,7 @@ const LearningPathDetailPage = () => {
             {/* Quick Info Card */}
             <Card className="bg-primary/5 border-primary/20 mt-6">
               <CardHeader className="pb-2">
-                <CardTitle className="text-base">What you'll learn</CardTitle>
+                <CardTitle className="text-base">Path Overview</CardTitle>
               </CardHeader>
               <CardContent>
                 <ul className="space-y-2 text-sm">
@@ -340,13 +385,65 @@ const LearningPathDetailPage = () => {
                     <GraduationCapIcon size={14} className="mr-2 mt-1 text-primary" />
                     <span>Create your own final project</span>
                   </li>
-                  <li className="flex items-start">
-                    <LayersIcon size={14} className="mr-2 mt-1 text-primary" />
-                    <span>See examples from other students</span>
-                  </li>
+                  {hasLearningObjectives && (
+                    <li className="flex items-start">
+                      <LayersIcon size={14} className="mr-2 mt-1 text-primary" />
+                      <span>
+                        {sortedAssignments.reduce((total, assignment) => 
+                          total + (assignment.learningObjectives?.length || 0), 0)
+                        } total learning objectives
+                      </span>
+                    </li>
+                  )}
                 </ul>
               </CardContent>
             </Card>
+            
+            {/* Preview of Learning Objectives if available */}
+            {hasLearningObjectives && (
+              <div className="mt-6 hidden lg:block">
+                <Card className="bg-primary/5 border-primary/20">
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-base flex items-center">
+                      <BookOpenIcon size={16} className="mr-2 text-primary" />
+                      You'll learn
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <ul className="space-y-2 text-sm">
+                      {/* Get first objective from each of the first 3 assignments */}
+                      {sortedAssignments
+                        .filter(a => a.learningObjectives && a.learningObjectives.length > 0)
+                        .slice(0, 3)
+                        .map(assignment => {
+                          const objective = assignment.learningObjectives?.[0];
+                          if (!objective) return null;
+                          
+                          return (
+                            <li key={objective.id} className="flex items-start">
+                              <span className="text-primary mr-2">•</span>
+                              <div>
+                                <span className="line-clamp-1">{objective.title}</span>
+                                <span className="text-xs text-muted-foreground block mt-0.5">
+                                  From: {assignment.title}
+                                </span>
+                              </div>
+                            </li>
+                          );
+                        })}
+                    </ul>
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      className="w-full mt-3 text-xs"
+                      onClick={() => document.querySelector('.LearningPathObjectives')?.scrollIntoView({ behavior: 'smooth' })}
+                    >
+                      View All Objectives
+                    </Button>
+                  </CardContent>
+                </Card>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -409,12 +506,6 @@ const LearningPathDetailPage = () => {
                         )}
                       </div>
                       
-                      {project.description && (
-                        <p className="text-sm text-muted-foreground line-clamp-2 mt-2 leading-relaxed">
-                          {/* Simple text extraction */}
-                          {project.description.document[0]?.children?.[0]?.text || ""}
-                        </p>
-                      )}
                     </CardContent>
                     
                     <CardFooter className="pt-2">

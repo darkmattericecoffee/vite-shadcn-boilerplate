@@ -1,13 +1,19 @@
 // src/types/learning-path.ts
-
-import { Assignment } from './assignment';
+type Document = any;
+export interface LearningObjective {
+  id: string;
+  title: string;
+  description?: string;
+  order: number;
+}
 
 export interface LearningPathAssignment {
   id: string;
   title: string;
   description?: {
-    document: any;
+    document: Document;
   };
+  learningObjectives?: LearningObjective[];
   dueDate?: string;
   orderInPath?: number;
   screenshots?: {
@@ -15,22 +21,39 @@ export interface LearningPathAssignment {
     caption?: string;
     image?: {
       url: string;
-      width?: number;
-      height?: number;
+      width: number;
+      height: number;
     };
   }[];
+}
+
+export interface Project {
+  id: string;
+  title: string;
+  student: {
+    id: string;
+    name: string;
+    class?: string;
+  };
+  screenshots?: {
+    image?: {
+      url: string;
+    };
+  }[];
+  deliverableType?: string;
 }
 
 export interface LearningPath {
   id: string;
   title: string;
   description?: {
-    document: any;
+    document: Document;
   };
+  learningObjectives?: LearningObjective[];
   coverImage?: {
     url: string;
-    width?: number;
-    height?: number;
+    width: number;
+    height: number;
   };
   createdAt?: string;
   createdBy?: {
@@ -38,27 +61,4 @@ export interface LearningPath {
   };
   assignments?: LearningPathAssignment[];
   projects?: Project[];
-}
-
-export interface Project {
-  id: string;
-  title: string;
-  description?: {
-    document: any;
-  };
-  student: {
-    id: string;
-    name: string;
-    class?: string;
-  };
-  deliverableType?: string;
-  screenshots?: {
-    id: string;
-    caption?: string;
-    image?: {
-      url: string;
-      width?: number;
-      height?: number;
-    };
-  }[];
 }

@@ -145,6 +145,7 @@ const LearningPathsPage = () => {
                             key={assignment.id} 
                             to={`/assignments/${assignment.id}`}
                             className="flex items-start gap-2 p-2 rounded-md hover:bg-muted transition-colors"
+                            state={{ from: 'learning-path' }}  // Add this state parameter
                           >
                             <Badge variant="outline" className="mt-0.5 flex-shrink-0">
                               {index + 1}

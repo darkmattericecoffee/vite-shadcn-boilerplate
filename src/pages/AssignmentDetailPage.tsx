@@ -1,11 +1,11 @@
 // src/pages/AssignmentDetailPage.tsx
 import React, { useEffect, useState, useRef } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useLocation } from 'react-router-dom';
 import { getAssignmentById } from '@/lib/api';
 import { Button } from '@/components/ui/button';
 import { ArrowLeftIcon } from 'lucide-react';
 
-// Import our new components
+// Import our components
 import { AssignmentHeader } from '@/components/assignment/assignment-header';
 import { AssignmentNavigation } from '@/components/assignment/assignment-navigation';
 import { AssignmentContent } from '@/components/assignment/assignment-content';
@@ -19,10 +19,24 @@ import { Assignment } from '@/types/assignment';
 
 const AssignmentDetailPage = () => {
   const { id } = useParams<{ id: string }>();
+  const location = useLocation();
   const [assignment, setAssignment] = useState<Assignment | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeSection, setActiveSection] = useState<string>("content");
+  
+  // Check if we're coming from a learning path
+  const isFromLearningPath = location.state?.from === 'learning-path' || 
+                            location.pathname.includes('/learning-paths/');
+  
+  // Set the back link and text based on where we came from
+  const backLink = isFromLearningPath 
+    ? "/learning-paths"  // Go to learning paths listing, not specific path
+    : "/assignments";
+  
+  const backText = isFromLearningPath
+    ? "Back to Learning Paths"  // Plural, going to the listing page
+    : "Back to Assignments";
 
   // References to scroll to sections
   const contentRef = useRef<HTMLDivElement>(null);
@@ -151,9 +165,9 @@ const AssignmentDetailPage = () => {
           asChild 
           className="mb-2"
         >
-          <Link to="/assignments" className="flex items-center">
+          <Link to={backLink} className="flex items-center">
             <ArrowLeftIcon size={16} className="mr-2" />
-            Back to Assignments
+            {backText}
           </Link>
         </Button>
         <AssignmentHeader assignment={assignment} />
@@ -164,7 +178,7 @@ const AssignmentDetailPage = () => {
         {/* Media content - left side takes 2/3 */}
         <div className="lg:col-span-8 space-y-6">
           {/* Sticky navigation - just below the header - reduced top margin */}
-          <div className="sticky top-24 z-10 bg-background pt-2 pb-2 border-b">
+          <div className="sticky top-24 z-10 bg-background pt-2 pb-2">
             <AssignmentNavigation 
               activeSection={activeSection} 
               onSectionChange={scrollToSection}
