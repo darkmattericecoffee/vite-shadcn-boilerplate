@@ -34,7 +34,7 @@ export function ProjectNavigation({
           isActive={activeSection === 'interactive'}
           onClick={() => onSectionChange('interactive')}
           icon={<ActivityIcon size={16} />}
-          label="Interactive"
+          label="Interactief"
         />
       )}
       <NavigationButton
@@ -42,7 +42,7 @@ export function ProjectNavigation({
         isActive={activeSection === 'content'}
         onClick={() => onSectionChange('content')}
         icon={<BookOpenIcon size={16} />}
-        label="Content"
+        label="Inhoud"
       />
       {hasFiles && (
         <NavigationButton
@@ -50,7 +50,7 @@ export function ProjectNavigation({
           isActive={activeSection === 'files'}
           onClick={() => onSectionChange('files')}
           icon={<FileIcon size={16} />}
-          label="Files"
+          label="Bestanden"
         />
       )}
       {hasScreenshots && (

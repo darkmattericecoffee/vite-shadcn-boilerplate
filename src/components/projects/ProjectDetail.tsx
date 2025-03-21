@@ -314,14 +314,14 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({ project }) => {
                   />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center">
-                    <span className="text-muted-foreground">No interactive content available</span>
+                    <span className="text-muted-foreground">Geen interactive inhoud beschikbaar</span>
                   </div>
                 )}
               </div>
               
               {interactiveContentUrl && (
                 <div className="flex justify-between items-center p-2 bg-muted/30">
-                  <span className="text-sm font-medium">Interactive Demo</span>
+                  <span className="text-sm font-medium">Interactieve Demo</span>
                   
                   <div className="flex gap-2">
                     <Dialog>
@@ -365,7 +365,7 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({ project }) => {
                         className="flex items-center gap-1"
                       >
                         <ExternalLinkIcon size={14} />
-                        <span>New Tab</span>
+                        <span>Nieuwe tab</span>
                       </Button>
                     </a>
                   </div>
@@ -467,7 +467,7 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({ project }) => {
               </div>
               
               <div className="flex justify-between items-center p-2 bg-muted/30">
-                <span className="text-sm font-medium">Video Preview</span>
+                <span className="text-sm font-medium">Video Voorbeeld</span>
                 
                 <div className="flex gap-2">
                   <Dialog>
@@ -503,7 +503,7 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({ project }) => {
                         className="flex items-center gap-1"
                       >
                         <ExternalLinkIcon size={14} />
-                        <span>New Tab</span>
+                        <span>Nieuwe tab</span>
                       </Button>
                     </a>
                   )}
@@ -538,7 +538,7 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({ project }) => {
                     className="flex items-center gap-1"
                   >
                     <ExternalLinkIcon size={14} />
-                    <span>New Tab</span>
+                    <span>Nieuwe tab</span>
                   </Button>
                 </a>
               </div>
@@ -553,7 +553,7 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({ project }) => {
             <div className="bg-card rounded-lg border p-4 space-y-3">
               <div className="flex items-center gap-2">
                 <BookOpenIcon size={18} className="text-muted-foreground" />
-                <h3 className="font-semibold">Assignment</h3>
+                <h3 className="font-semibold">Opdracht</h3>
               </div>
               
               <h4 className="font-medium">{project.assignment.title}</h4>
@@ -563,7 +563,7 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({ project }) => {
                 href={`/assignments/${project.assignment.title}`} 
                 className="text-primary hover:underline text-sm inline-block"
               >
-                View full assignment
+                Bekijk hele les
               </a>
             </div>
           )}
@@ -573,7 +573,7 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({ project }) => {
             <div className="bg-card rounded-lg border p-4 space-y-3">
               <div className="flex items-center gap-2">
                 <FolderIcon size={18} className="text-muted-foreground" />
-                <h3 className="font-semibold">Project Archives</h3>
+                <h3 className="font-semibold">Project Archieven</h3>
               </div>
               
               <div className="space-y-3">
@@ -604,7 +604,7 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({ project }) => {
                             rel="noopener noreferrer" 
                             className="text-xs text-primary hover:underline block mt-1"
                           >
-                            View extracted files
+                            Bekijk uitgepakte bestanden
                           </a>
                         )}
                       </div>
@@ -620,7 +620,7 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({ project }) => {
             <div className="bg-card rounded-lg border p-4 space-y-3">
               <div className="flex items-center gap-2">
                 <FileIcon size={18} className="text-muted-foreground" />
-                <h3 className="font-semibold">Project Files</h3>
+                <h3 className="font-semibold">Project bestanden</h3>
               </div>
               
               <div className="space-y-3">
@@ -648,7 +648,7 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({ project }) => {
                                   })}
                                 >
                                   <Code2Icon size={14} />
-                                  <span>View</span>
+                                  <span>Toon</span>
                                 </Button>
                               </DialogTrigger>
                               <DialogContent className="max-w-[90vw] w-[90vw] max-h-[90vh]">
@@ -688,13 +688,13 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({ project }) => {
             <TabsTrigger value="reflection">
               <div className="flex items-center gap-2">
                 <UserIcon size={16} />
-                <span>Development Process</span>
+                <span>Ontwikkelproces</span>
               </div>
             </TabsTrigger>
             <TabsTrigger value="description">
               <div className="flex items-center gap-2">
                 <InfoIcon size={16} />
-                <span>About This Project</span>
+                <span>Over dit project</span>
               </div>
             </TabsTrigger>
           </TabsList>

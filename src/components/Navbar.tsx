@@ -33,7 +33,7 @@ export const Navbar = () => {
               <Link to="/projects">
                 <Button variant={isActive('/projects') ? 'default' : 'ghost'} className="flex items-center gap-2">
                   <CodeIcon size={16} />
-                  <span>Projects</span>
+                  <span>Projecten</span>
                 </Button>
               </Link>
             </li>
@@ -41,7 +41,7 @@ export const Navbar = () => {
               <Link to="/learning-paths">
                 <Button variant={isActive('/learning-paths') ? 'default' : 'ghost'} className="flex items-center gap-2">
                   <LayersIcon size={16} />
-                  <span>Learning Paths</span>
+                  <span>Leerpaden</span>
                 </Button>
               </Link>
             </li>
@@ -49,7 +49,7 @@ export const Navbar = () => {
               <Link to="/assignments">
                 <Button variant={isActive('/assignments') ? 'default' : 'ghost'} className="flex items-center gap-2">
                   <BookOpenIcon size={16} />
-                  <span>Assignments</span>
+                  <span>Opdrachten</span>
                 </Button>
               </Link>
             </li>
@@ -57,7 +57,7 @@ export const Navbar = () => {
               <Link to="/students">
                 <Button variant={isActive('/students') ? 'default' : 'ghost'} className="flex items-center gap-2">
                   <GraduationCapIcon size={16} />
-                  <span>Students</span>
+                  <span>Leerlingen</span>
                 </Button>
               </Link>
             </li>

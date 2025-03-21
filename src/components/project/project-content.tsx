@@ -1,6 +1,5 @@
 // src/components/project/project-content.tsx
 import React from 'react';
-import { DocumentRenderer } from '@keystone-6/document-renderer';
 import {
   Card,
   CardContent,
@@ -9,6 +8,7 @@ import {
 } from "@/components/ui/card";
 import { BookOpenIcon } from 'lucide-react';
 import { Project } from '@/types/project';
+import { CustomDocumentRenderer } from '@/components/ui/document-renderer';
 
 interface ProjectContentProps {
   project: Project;
@@ -20,14 +20,16 @@ export function ProjectContent({ project }: ProjectContentProps) {
       <CardHeader>
         <CardTitle className="flex items-center">
           <BookOpenIcon size={18} className="mr-2" />
-          Project Description
+          Projectbeschrijving
         </CardTitle>
       </CardHeader>
-      <CardContent className="prose dark:prose-invert max-w-none">
+      <CardContent>
         {project.description && project.description.document ? (
-          <DocumentRenderer document={project.description.document} />
+          <div className="prose dark:prose-invert max-w-none text-left">
+            <CustomDocumentRenderer document={project.description.document} />
+          </div>
         ) : (
-          <p className="text-muted-foreground">No detailed description available for this project.</p>
+          <p className="text-muted-foreground">Geen gedetailleerde beschrijving beschikbaar voor dit project.</p>
         )}
       </CardContent>
     </Card>

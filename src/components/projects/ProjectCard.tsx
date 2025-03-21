@@ -129,7 +129,7 @@ export function ProjectCard({ project }: ProjectCardProps) {
             <div className="absolute top-2 left-2">
               <Badge variant="default" className="flex items-center gap-1">
                 <StarIcon size={12} />
-                <span>Featured</span>
+                <span>Uitgelicht</span>
               </Badge>
             </div>
           )}
@@ -189,14 +189,14 @@ export function ProjectCard({ project }: ProjectCardProps) {
             {project.assignment && (
               <div className="flex items-center text-xs text-muted-foreground">
                 <BookOpenIcon size={14} className="mr-1 flex-shrink-0" />
-                <span className="truncate">Assignment: {project.assignment.title}</span>
+                <span className="truncate">Opdracht: {project.assignment.title}</span>
               </div>
             )}
             
             {project.learningPath && !project.assignment && (
               <div className="flex items-center text-xs text-muted-foreground">
                 <LayersIcon size={14} className="mr-1 flex-shrink-0" />
-                <span className="truncate">Learning Path: {project.learningPath.title}</span>
+                <span className="truncate">Leerpad: {project.learningPath.title}</span>
               </div>
             )}
           </div>
@@ -211,7 +211,7 @@ export function ProjectCard({ project }: ProjectCardProps) {
               ))}
               {project.languages.length > 3 && (
                 <Badge variant="secondary" className="text-xs">
-                  +{project.languages.length - 3} more
+                  +{project.languages.length - 3} meer
                 </Badge>
               )}
             </div>
@@ -224,7 +224,7 @@ export function ProjectCard({ project }: ProjectCardProps) {
             <Button variant="default" className="flex-1 pointer-events-none">
               <div className="flex items-center justify-center">
                 <ChevronRightIcon size={16} className="mr-2" />
-                View Project
+                Bekijk Project
               </div>
             </Button>
             

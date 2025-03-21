@@ -79,7 +79,7 @@ const LearningPathsPage = () => {
 
   return (
     <div>
-      <h1 className="text-3xl font-bold tracking-tight mb-8">Learning Paths</h1>
+      <h1 className="text-3xl font-bold tracking-tight mb-8">Leerpaden</h1>
       {learningPaths.length > 0 ? (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {learningPaths.map((path) => {
@@ -117,7 +117,7 @@ const LearningPathsPage = () => {
                   {path.createdAt && (
                     <div className="flex items-center text-muted-foreground mb-3">
                       <CalendarIcon size={16} className="mr-2" />
-                      <span>Created: {new Date(path.createdAt).toLocaleDateString()}</span>
+                      <span>Gemaakt op: {new Date(path.createdAt).toLocaleDateString()}</span>
                     </div>
                   )}
                   
@@ -132,7 +132,7 @@ const LearningPathsPage = () => {
                     <div className="mt-auto">
                       <div className="flex items-center mb-3">
                         <BookOpenIcon size={16} className="mr-2" />
-                        <h3 className="font-medium">Assignments</h3>
+                        <h3 className="font-medium">Opdrachten</h3>
                         <Badge variant="secondary" className="ml-2">
                           {sortedAssignments.length}
                         </Badge>
@@ -171,7 +171,7 @@ const LearningPathsPage = () => {
                   <Button variant="default" asChild className="w-full">
                     <Link to={`/learning-paths/${path.id}`} className="flex items-center justify-center">
                       <ChevronRightIcon size={16} className="mr-2" />
-                      View Learning Path
+                      Toon leerpad
                     </Link>
                   </Button>
                 </CardFooter>
@@ -181,7 +181,7 @@ const LearningPathsPage = () => {
         </div>
       ) : (
         <div className="text-center py-12 border rounded-lg">
-          <p className="text-muted-foreground">No learning paths found.</p>
+          <p className="text-muted-foreground">Geen leerpaden gevonden</p>
         </div>
       )}
     </div>

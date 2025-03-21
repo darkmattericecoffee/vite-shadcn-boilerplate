@@ -59,7 +59,7 @@ export function AssignmentHeader({ assignment, learningPathId }: AssignmentHeade
           >
             <Link to={`/learning-paths/${learningPathId}`} className="flex items-center">
               <ArrowLeftIcon size={16} className="mr-2" />
-              Back to Learning Path
+              Terug naar Leerpad
             </Link>
           </Button>
         )}
@@ -105,7 +105,7 @@ export function AssignmentHeader({ assignment, learningPathId }: AssignmentHeade
                     
                     {assignment.learningObjectives && assignment.learningObjectives.length > 0 && (
                       <Badge variant="secondary" className="flex items-center bg-white/20 text-white border-none">
-                        {assignment.learningObjectives.length} Learning Objective{assignment.learningObjectives.length !== 1 ? 's' : ''}
+                        {assignment.learningObjectives.length} Leerdoel {assignment.learningObjectives.length !== 1 ? 's' : ''}
                       </Badge>
                     )}
                   </div>
@@ -133,13 +133,13 @@ export function AssignmentHeader({ assignment, learningPathId }: AssignmentHeade
                   {formattedDueDate && (
                     <Badge variant="secondary" className="flex items-center whitespace-nowrap">
                       <CalendarIcon size={14} className="mr-2" />
-                      Due: {formattedDueDate}
+                      Deadline: {formattedDueDate}
                     </Badge>
                   )}
                   
                   {!isScrolled && assignment.learningObjectives && assignment.learningObjectives.length > 0 && (
                     <Badge variant="secondary" className="flex items-center whitespace-nowrap">
-                      {assignment.learningObjectives.length} Learning Objective{assignment.learningObjectives.length !== 1 ? 's' : ''}
+                      {assignment.learningObjectives.length} Leerdoel{assignment.learningObjectives.length !== 1 ? 's' : ''}
                     </Badge>
                   )}
                 </div>

@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/card";
 import { Badge } from '@/components/ui/badge';
 import { LearningPathObjectives } from '@/components/learning-path/learning-objectives';
+import { CustomDocumentRenderer } from '@/components/ui/document-renderer';
 
 const LearningPathDetailPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -95,7 +96,7 @@ const LearningPathDetailPage = () => {
         >
           <Link to="/learning-paths" className="flex items-center">
             <ArrowLeftIcon size={16} className="mr-2" />
-            Back to Learning Paths
+            Terug naar leerpaden
           </Link>
         </Button>
         
@@ -119,7 +120,7 @@ const LearningPathDetailPage = () => {
                 
                 {learningPath.createdBy && (
                   <p className="text-white/90 mt-3 flex items-center">
-                    Created by <span className="font-medium ml-1">{learningPath.createdBy.name}</span>
+                    Gemaakt door <span className="font-medium ml-1">{learningPath.createdBy.name}</span>
                   </p>
                 )}
               </div>
@@ -134,7 +135,7 @@ const LearningPathDetailPage = () => {
               </h1>
               {learningPath.createdBy && (
                 <p className="text-muted-foreground mt-2">
-                  Created by {learningPath.createdBy.name}
+                  Gemaakt door {learningPath.createdBy.name}
                 </p>
               )}
             </div>
@@ -148,15 +149,15 @@ const LearningPathDetailPage = () => {
         <div className="lg:col-span-2 space-y-10">
           {/* Description with improved spacing */}
           {learningPath.description && (
-            <Card className="overflow-hidden border-none shadow-md">
+            <Card className="overflow-hidden border-none shadow-sm">
               <CardHeader className="bg-muted/50 border-b">
                 <CardTitle className="flex items-center text-xl">
                   <LayersIcon size={18} className="mr-2" />
-                  About this Learning Path
+                  Over dit leerpad
                 </CardTitle>
               </CardHeader>
               <CardContent className="prose dark:prose-invert max-w-none p-6">
-                <DocumentRenderer document={learningPath.description.document} />
+              <CustomDocumentRenderer document={learningPath.description.document} />
               </CardContent>
             </Card>
           )}
@@ -176,10 +177,10 @@ const LearningPathDetailPage = () => {
             <div className="flex items-center justify-between pb-2 border-b">
               <h2 className="text-2xl font-bold flex items-center">
                 <BookOpenIcon size={20} className="mr-2" />
-                Assignments
+                Opdrachten
               </h2>
               <Badge variant="secondary" className="px-3 py-1">
-                {sortedAssignments.length} Assignment{sortedAssignments.length !== 1 ? 's' : ''}
+                {sortedAssignments.length} Opdracht{sortedAssignments.length !== 1 ? 's' : ''}
               </Badge>
             </div>
             
@@ -244,7 +245,7 @@ const LearningPathDetailPage = () => {
                           {/* Preview learning objectives if available */}
                           {hasObjectives && (
                             <div className="mt-3 pt-3 border-t border-dashed">
-                              <p className="text-xs font-medium text-muted-foreground mb-1">Key objectives:</p>
+                              <p className="text-xs font-medium text-muted-foreground mb-1">Leerdoelen:</p>
                               <ul className="text-xs text-muted-foreground">
                                 {assignment.learningObjectives!
                                   .sort((a, b) => a.order - b.order)
@@ -268,7 +269,7 @@ const LearningPathDetailPage = () => {
                         <CardFooter className="pt-4">
                           <Button variant="outline" className="w-full group-hover:bg-primary/5 transition-colors pointer-events-none">
                             <div className="flex items-center justify-center">
-                              <span className="mr-1">View Assignment</span>
+                              <span className="mr-1">Toon opdracht</span>
                               <ChevronRightIcon size={16} className="ml-1 transition-transform group-hover:translate-x-1" />
                             </div>
                           </Button>
@@ -280,7 +281,7 @@ const LearningPathDetailPage = () => {
               </div>
             ) : (
               <div className="text-center py-8 border rounded-lg">
-                <p className="text-muted-foreground">No assignments available for this learning path.</p>
+                <p className="text-muted-foreground">Geen opdrachten beschikbaar voor dit leerpad.</p>
               </div>
             )}
           </div>
@@ -292,7 +293,7 @@ const LearningPathDetailPage = () => {
             <div className="flex items-center justify-between pb-2 border-b">
               <h2 className="text-xl font-bold flex items-center">
                 <GraduationCapIcon size={18} className="mr-2" />
-                End Results
+                Eindresultaten
               </h2>
               <Badge variant="secondary" className="px-3 py-1">
                 {finalProjects.length} Project{finalProjects.length !== 1 ? 's' : ''}
@@ -361,7 +362,7 @@ const LearningPathDetailPage = () => {
                     onClick={() => document.getElementById('all-projects')?.scrollIntoView({ behavior: 'smooth' })}
                   >
                     <div className="flex items-center justify-center">
-                      <span>Show All {finalProjects.length} Projects</span>
+                      <span>Toon alle {finalProjects.length} Projecten</span>
                       <ChevronRightIcon size={14} className="ml-2" />
                     </div>
                   </Button>
@@ -369,7 +370,7 @@ const LearningPathDetailPage = () => {
               </>
             ) : (
               <div className="text-center py-6 border rounded-lg">
-                <p className="text-muted-foreground text-sm">No final deliverables available for this learning path yet.</p>
+                <p className="text-muted-foreground text-sm">Nog geen eindresultaten beschikbaar voor dit leerpad.</p>
               </div>
             )}
             
@@ -381,7 +382,7 @@ const LearningPathDetailPage = () => {
                   <CardHeader className="pb-2">
                     <CardTitle className="text-base flex items-center">
                       <BookOpenIcon size={16} className="mr-2 text-primary" />
-                      Objectives
+                      Leerdoelen
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
@@ -400,7 +401,7 @@ const LearningPathDetailPage = () => {
                               <div>
                                 <span className="line-clamp-1">{objective.title}</span>
                                 <span className="text-xs text-muted-foreground block mt-0.5">
-                                  From: {assignment.title}
+                                  Van: {assignment.title}
                                 </span>
                               </div>
                             </li>
@@ -413,7 +414,7 @@ const LearningPathDetailPage = () => {
                       className="w-full mt-3 text-xs"
                       onClick={() => document.getElementById('all-objectives')?.scrollIntoView({ behavior: 'smooth' })}
                     >
-                      View All Objectives
+                      Toon alle leerdoelen
                     </Button>
                   </CardContent>
                 </Card>
@@ -429,7 +430,7 @@ const LearningPathDetailPage = () => {
           <div className="flex items-center justify-between pb-4">
             <h2 className="text-2xl font-bold flex items-center">
               <GraduationCapIcon size={22} className="mr-2" />
-              All Final Deliverables
+              Alle eindresultaten
             </h2>
             <Badge variant="secondary" className="px-3 py-1">
               {finalProjects.length} Project{finalProjects.length !== 1 ? 's' : ''}
@@ -461,7 +462,7 @@ const LearningPathDetailPage = () => {
                         />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center">
-                          <span className="text-muted-foreground">No preview available</span>
+                          <span className="text-muted-foreground">Geen voorvertoning beschikbaar</span>
                         </div>
                       )}
                     </div>
@@ -486,7 +487,7 @@ const LearningPathDetailPage = () => {
                     <CardFooter className="pt-2">
                       <Button variant="outline" size="sm" className="w-full group-hover:bg-primary/5 transition-colors pointer-events-none">
                         <div className="flex items-center justify-center">
-                          <span className="mr-1">View Project</span>
+                          <span className="mr-1">Toon project</span>
                           <ChevronRightIcon size={14} className="ml-1 transition-transform group-hover:translate-x-1" />
                         </div>
                       </Button>

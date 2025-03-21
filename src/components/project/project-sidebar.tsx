@@ -79,12 +79,12 @@ export function ProjectSidebar({ project, onSectionChange }: ProjectSidebarProps
         <CardHeader className="pb-2">
           <CardTitle className="flex items-center text-lg">
             <UserIcon size={18} className="mr-2" />
-            Student Information
+            Maker
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
-            <h3 className="text-sm font-medium">Student</h3>
+            <h3 className="text-sm font-medium">Leerling</h3>
             <div className="flex items-center p-3 bg-muted rounded-md">
                               <InitialsAvatar name={project.student.name} size='s' />
               
@@ -98,7 +98,7 @@ export function ProjectSidebar({ project, onSectionChange }: ProjectSidebarProps
           {/* Submission Date */}
           {formattedSubmissionDate && (
             <div className="pt-2">
-              <h3 className="text-sm font-medium mb-2">Submission Date</h3>
+              <h3 className="text-sm font-medium mb-2">Ingezonden op:</h3>
               <div className="flex items-center p-3 bg-muted rounded-md">
                 <CalendarIcon size={18} className="mr-2 text-muted-foreground" />
                 <span>{formattedSubmissionDate}</span>
@@ -123,7 +123,7 @@ export function ProjectSidebar({ project, onSectionChange }: ProjectSidebarProps
           {formattedCreationDate && (
             <div className="flex items-center gap-2">
               <CalendarIcon size={16} className="text-muted-foreground" />
-              <span className="text-sm">Created on: {formattedCreationDate}</span>
+              <span className="text-sm">Gemaakt op: {formattedCreationDate}</span>
             </div>
           )}
           {/* Connected Learning Path */}
@@ -141,7 +141,7 @@ export function ProjectSidebar({ project, onSectionChange }: ProjectSidebarProps
           {/* Assignment link if available */}
           {project.assignment && (
             <div className="space-y-2 pt-2">
-              <h3 className="text-sm font-medium">Assignment</h3>
+              <h3 className="text-sm font-medium">Opdracht</h3>
               <Button variant="outline" className="w-full flex items-center justify-between" asChild>
                 <Link to={`/assignments/${project.assignment.id}`}>
                   <div className="flex items-center">
@@ -161,7 +161,7 @@ export function ProjectSidebar({ project, onSectionChange }: ProjectSidebarProps
           {/* Languages */}
           {project.languages && project.languages.length > 0 && (
             <div className="flex flex-col gap-2">
-              <h3 className="text-sm font-medium">Languages</h3>
+              <h3 className="text-sm font-medium">Talen</h3>
               <div className="flex flex-wrap gap-2">
                 {project.languages.map((lang) => (
                   <Badge key={lang.id} variant="outline" className="w-fit">
@@ -178,13 +178,13 @@ export function ProjectSidebar({ project, onSectionChange }: ProjectSidebarProps
         <CardHeader className="pb-2">
           <CardTitle className="flex items-center text-lg">
             <FileIcon size={18} className="mr-2" />
-            Project Resources
+            Benodigdheden
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           {featuredScreenshot && (
             <div className="space-y-2">
-              <h3 className="text-sm font-medium">Preview</h3>
+              <h3 className="text-sm font-medium">Voorbeeld</h3>
               <div className="aspect-video bg-muted rounded-md overflow-hidden">
                 <img
                   src={featuredScreenshot}
@@ -198,7 +198,7 @@ export function ProjectSidebar({ project, onSectionChange }: ProjectSidebarProps
                   className="w-full text-sm text-muted-foreground hover:text-foreground"
                   onClick={() => onSectionChange('screenshots')}
                 >
-                  View all {project.screenshots!.length} screenshots
+                  Toon alle {project.screenshots!.length} screenshots
                 </Button>
               )}
             </div>
@@ -213,14 +213,14 @@ export function ProjectSidebar({ project, onSectionChange }: ProjectSidebarProps
               >
                 <div className="flex items-center">
                   <LinkIcon size={16} className="mr-2" />
-                  <span className="truncate">View Live Project</span>
+                  <span className="truncate">Toon Live Project</span>
                 </div>
                 <ExternalLinkIcon size={16} />
               </Button>
             </div>
           )}
           <div className="space-y-2 pt-2">
-            <h3 className="text-sm font-medium">Resources</h3>
+            <h3 className="text-sm font-medium">Benodigheden</h3>
             <div className="grid grid-cols-2 gap-2">
               {hasFiles && (
                 <Button
@@ -239,7 +239,7 @@ export function ProjectSidebar({ project, onSectionChange }: ProjectSidebarProps
                   onClick={() => onSectionChange('screenshots')}
                 >
                   <ImageIcon size={16} className="mr-2" />
-                  <span>{project.screenshots!.length} Image{project.screenshots!.length !== 1 ? 's' : ''}</span>
+                  <span>{project.screenshots!.length} Afbeelding{project.screenshots!.length !== 1 ? 's' : ''}</span>
                 </Button>
               )}
             </div>

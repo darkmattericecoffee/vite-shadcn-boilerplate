@@ -157,7 +157,7 @@ export const ProjectDetailPage = () => {
       <div className="text-center py-12 border rounded-lg">
         <p className="text-muted-foreground">{error || 'This project does not exist.'}</p>
         <Button asChild className="mt-4">
-          <Link to="/projects">Back to Projects</Link>
+          <Link to="/projects">Terug naar projecten</Link>
         </Button>
       </div>
     );
@@ -170,7 +170,7 @@ export const ProjectDetailPage = () => {
         <Button variant="outline" size="sm" asChild className="mb-4">
           <Link to="/projects" className="flex items-center">
             <ArrowLeftIcon size={16} className="mr-2" />
-            Back to Projects
+            Terug naar projecten
           </Link>
         </Button>
         <ProjectHeader project={project} />
@@ -213,13 +213,13 @@ export const ProjectDetailPage = () => {
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center">
-                      <span className="text-muted-foreground">No interactive content available</span>
+                        <span className="text-muted-foreground">Geen interactieve inhoud beschikbaar</span>
                     </div>
                   )}
                 </div>
                 {interactiveContentUrl && (
                   <div className="flex justify-between items-center p-2 bg-muted/30">
-                    <span className="text-sm font-medium">Interactive Demo</span>
+                    <span className="text-sm font-medium">Interactieve Demo</span>
                     <div className="flex gap-2">
                       <Dialog>
                         <DialogTrigger asChild>
@@ -253,7 +253,7 @@ export const ProjectDetailPage = () => {
                       >
                         <Button variant="outline" size="sm" className="flex items-center gap-1">
                           <ExternalLinkIcon size={14} />
-                          <span>New Tab</span>
+                          <span>Nieuwe tab</span>
                         </Button>
                       </a>
                     </div>

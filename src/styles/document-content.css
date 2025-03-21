@@ -1,0 +1,59 @@
+/* src/styles/document-content.css */
+.document-content ul {
+    list-style-type: disc;
+    padding-left: 2rem;
+    margin-bottom: 1rem;
+  }
+  
+  .document-content ol {
+    list-style-type: decimal;
+    padding-left: 2rem;
+    margin-bottom: 1rem;
+  }
+  
+  .document-content li {
+    display: list-item;
+    margin-bottom: 0.25rem;
+  }
+  
+  /* Restore other potentially useful default styles */
+  .document-content h1, 
+  .document-content h2, 
+  .document-content h3, 
+  .document-content h4, 
+  .document-content h5, 
+  .document-content h6 {
+    margin-top: 1.5rem;
+    margin-bottom: 1rem;
+    font-weight: bold;
+  }
+  
+  .document-content p {
+    margin-bottom: 1rem;
+  }
+  
+  .document-content blockquote {
+    padding-left: 1rem;
+    border-left: 4px solid #e2e8f0;
+    font-style: italic;
+    margin: 1rem 0;
+  }
+  
+  .document-content pre {
+    background-color: #f8f9fa;
+    padding: 1rem;
+    overflow-x: auto;
+    border-radius: 0.25rem;
+    margin: 1rem 0;
+  }
+  
+  /* Dark mode adjustments */
+  @media (prefers-color-scheme: dark) {
+    .document-content blockquote {
+      border-left-color: #4a5568;
+    }
+    
+    .document-content pre {
+      background-color: #2d3748;
+    }
+  }

@@ -22,7 +22,7 @@ export function AssignmentFiles({ files }: AssignmentFilesProps) {
       <CardHeader>
         <CardTitle className="flex items-center">
           <FileIcon size={18} className="mr-2" />
-          Assignment Materials
+          Opdracht Materialen
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">

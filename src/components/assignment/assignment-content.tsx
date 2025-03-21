@@ -1,6 +1,5 @@
 // src/components/assignment/assignment-content.tsx
 import React from 'react';
-import { DocumentRenderer } from '@keystone-6/document-renderer';
 import {
   Card,
   CardContent,
@@ -9,6 +8,7 @@ import {
 } from "@/components/ui/card";
 import { BookOpenIcon } from 'lucide-react';
 import { Assignment } from '@/types/assignment';
+import { CustomDocumentRenderer } from '@/components/ui/document-renderer';
 
 interface AssignmentContentProps {
   assignment: Assignment;
@@ -20,14 +20,16 @@ export function AssignmentContent({ assignment }: AssignmentContentProps) {
       <CardHeader>
         <CardTitle className="flex items-center">
           <BookOpenIcon size={18} className="mr-2" />
-          Assignment Details
+          Opdracht Details
         </CardTitle>
       </CardHeader>
-      <CardContent className="prose dark:prose-invert max-w-none">
+      <CardContent>
         {assignment.description && assignment.description.document ? (
-          <DocumentRenderer document={assignment.description.document} />
+          <div className="prose dark:prose-invert max-w-none text-left">
+            <CustomDocumentRenderer document={assignment.description.document} />
+          </div>
         ) : (
-          <p className="text-muted-foreground">No detailed description available for this assignment.</p>
+          <p className="text-muted-foreground">Geen gedetailleerde beschrijving beschikbaar voor deze opdracht.</p>
         )}
       </CardContent>
     </Card>

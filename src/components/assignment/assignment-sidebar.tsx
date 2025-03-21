@@ -69,14 +69,14 @@ export function AssignmentSidebar({ assignment, onSectionChange }: AssignmentSid
         <CardHeader className="pb-2">
           <CardTitle className="flex items-center text-lg">
             <ListTodoIcon size={18} className="mr-2" />
-            Assignment Resources
+            Benodigdheden
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           {/* If we have a featured screenshot, show it */}
           {featuredScreenshot && (
             <div className="space-y-2">
-              <h3 className="text-sm font-medium">Preview</h3>
+              <h3 className="text-sm font-medium">Voorbeeld</h3>
               <div className="aspect-video bg-muted rounded-md overflow-hidden">
                 <img 
                   src={featuredScreenshot} 
@@ -90,35 +90,35 @@ export function AssignmentSidebar({ assignment, onSectionChange }: AssignmentSid
                   className="w-full text-sm text-muted-foreground hover:text-foreground"
                   onClick={() => onSectionChange("screenshots")}
                 >
-                  View all {assignment.screenshots!.length} screenshots
+                  Bekijk alle {assignment.screenshots!.length} screenshots
                 </Button>
               )}
             </div>
           )}
           
           {/* If we have a featured file, add a preview card */}
-          {featuredFile && featuredFile.file && (
-            <div className="space-y-2">
-              <h3 className="text-sm font-medium">Primary Document</h3>
-              <Button
-                variant="outline"
-                className="w-full flex items-center justify-between"
-                onClick={() => onSectionChange("files")}
-              >
-                <div className="flex items-center">
-                  <FileIcon size={16} className="mr-2" />
-                  <span className="truncate">
-                    {featuredFile.title || featuredFile.file.filename}
-                  </span>
-                </div>
-                <ChevronRightIcon size={16} />
-              </Button>
-            </div>
-          )}
+            {featuredFile && featuredFile.file && (
+              <div className="space-y-2">
+                <h3 className="text-sm font-medium">Hoofd Document</h3>
+                <Button
+                  variant="outline"
+                  className="w-full flex items-center justify-between"
+                  onClick={() => onSectionChange("files")}
+                >
+                  <div className="flex items-center">
+                    <FileIcon size={16} className="mr-2" />
+                    <span className="max-w-xs truncate">
+                      {featuredFile.title || featuredFile.file.filename}
+                    </span>
+                  </div>
+                  <ChevronRightIcon size={16} />
+                </Button>
+              </div>
+            )}
           
           {/* Generic resource counts */}
           <div className="space-y-2 pt-2">
-            <h3 className="text-sm font-medium">Resources</h3>
+            <h3 className="text-sm font-medium">Bestanden</h3>
             <div className="grid grid-cols-2 gap-2">
               {hasFiles && (
                 <Button 
@@ -138,7 +138,7 @@ export function AssignmentSidebar({ assignment, onSectionChange }: AssignmentSid
                   onClick={() => onSectionChange("screenshots")}
                 >
                   <ImageIcon size={16} className="mr-2" />
-                  <span>{assignment.screenshots!.length} Image{assignment.screenshots!.length !== 1 ? 's' : ''}</span>
+                  <span>{assignment.screenshots!.length} Afbeelding{assignment.screenshots!.length !== 1 ? 's' : ''}</span>
                 </Button>
               )}
             </div>
@@ -163,12 +163,12 @@ export function AssignmentSidebar({ assignment, onSectionChange }: AssignmentSid
           <CardHeader>
             <CardTitle className="flex items-center text-lg">
               <GraduationCapIcon size={18} className="mr-2" />
-              Student Submissions
+              Inzendingen
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex justify-between items-center">
-              <span className="font-medium">Total Submissions</span>
+              <span className="font-medium">Alle inzendingen</span>
               <Badge variant="secondary">{assignment.projects!.length}</Badge>
             </div>
             
@@ -177,7 +177,7 @@ export function AssignmentSidebar({ assignment, onSectionChange }: AssignmentSid
               variant="default"
               onClick={() => onSectionChange("submissions")}
             >
-              View All Submissions
+              Toon alle inzendingen
             </Button>
           </CardContent>
         </Card>

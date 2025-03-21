@@ -51,7 +51,7 @@ export const StudentsPage = () => {
 
   return (
     <div>
-      <h1 className="text-3xl font-bold tracking-tight mb-8">Students</h1>
+      <h1 className="text-3xl font-bold tracking-tight mb-8">Leerlingen</h1>
       {students.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {students.map((student) => (
@@ -63,7 +63,7 @@ export const StudentsPage = () => {
                   <div>
                     <CardTitle>{student.name}</CardTitle>
                     {student.class && (
-                      <CardDescription>Class: {student.class}</CardDescription>
+                      <CardDescription>Klas: {student.class}</CardDescription>
                     )}
                   </div>
                 </div>
@@ -72,7 +72,7 @@ export const StudentsPage = () => {
                 <Button asChild variant="outline" className="w-full" size="sm">
                   <Link to={`/projects?student=${student.id}`} className="flex items-center justify-center gap-2">
                     <GraduationCapIcon size={16} />
-                    View Projects
+                    Toon projecten
                   </Link>
                 </Button>
               </CardFooter>
@@ -81,7 +81,7 @@ export const StudentsPage = () => {
         </div>
       ) : (
         <div className="text-center py-12 border rounded-lg">
-          <p className="text-muted-foreground">No students found.</p>
+          <p className="text-muted-foreground">Geen leerlingen gevonden</p>
         </div>
       )}
     </div>

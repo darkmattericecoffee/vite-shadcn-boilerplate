@@ -52,7 +52,7 @@ export function LearningPathObjectives({ learningPath, className = "" }: Learnin
       <CardHeader className="bg-primary/5 border-b pb-3">
         <CardTitle className="flex items-center text-xl">
           <LightbulbIcon size={20} className="mr-2 text-primary" />
-          What You'll Learn
+          Wat Je Zal Leren
         </CardTitle>
       </CardHeader>
       <CardContent className="p-6">
@@ -69,7 +69,7 @@ export function LearningPathObjectives({ learningPath, className = "" }: Learnin
                   <div className="flex items-center mt-2">
                     <BookOpenIcon size={14} className="mr-1 text-muted-foreground" />
                     <span className="text-xs text-muted-foreground">
-                      From: {(objective as any).assignmentTitle}
+                      Van: {(objective as any).assignmentTitle}
                     </span>
                   </div>
                 )}

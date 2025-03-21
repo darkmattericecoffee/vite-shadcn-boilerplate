@@ -30,7 +30,7 @@ export function AssignmentNavigation({
         isActive={activeSection === "content"}
         onClick={() => onSectionChange("content")}
         icon={<BookOpenIcon size={16} />}
-        label="Content"
+        label="Inhoud"
       />
       
       {hasFiles && (
@@ -39,7 +39,7 @@ export function AssignmentNavigation({
           isActive={activeSection === "files"}
           onClick={() => onSectionChange("files")}
           icon={<FileIcon size={16} />}
-          label="Files"
+          label="Bestanden"
         />
       )}
       
@@ -59,7 +59,7 @@ export function AssignmentNavigation({
           isActive={activeSection === "submissions"}
           onClick={() => onSectionChange("submissions")}
           icon={<PinIcon size={16} />}
-          label="Submissions"
+          label="Inzendingen"
         />
       )}
     </div>

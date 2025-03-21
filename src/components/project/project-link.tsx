@@ -38,7 +38,7 @@ export function ProjectLink({ link }: ProjectLinkProps) {
       </CardHeader>
       <CardContent>
         <p className="text-sm text-muted-foreground mb-4">
-          This project is available online. Click the button below to view the live project.
+          Dit project is online beschikbaar. Klik op de knop hieronder om het live project te bekijken.
         </p>
         <div className="bg-muted p-3 rounded-md mb-4 truncate">
           <code className="text-sm">{formatUrl(link)}</code>
@@ -52,7 +52,7 @@ export function ProjectLink({ link }: ProjectLinkProps) {
             rel="noopener noreferrer" 
             className="flex items-center justify-center"
           >
-            <span>Visit Live Project</span>
+            <span>Bezoek Live Project</span>
             <ExternalLinkIcon size={16} className="ml-2" />
           </a>
         </Button>

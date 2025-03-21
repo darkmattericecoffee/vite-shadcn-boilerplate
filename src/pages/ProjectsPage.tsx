@@ -249,7 +249,7 @@ const ProjectsPage = () => {
   return (
     <div>
       <div className="flex flex-col md:flex-row md:items-center justify-between mb-8">
-        <h1 className="text-3xl font-bold tracking-tight mb-4 md:mb-0">Student Projects</h1>
+        <h1 className="text-3xl font-bold tracking-tight mb-4 md:mb-0">Leerling Projecten</h1>
         
         <div className="flex flex-col md:flex-row md:items-center gap-4">
           <Button
@@ -259,13 +259,13 @@ const ProjectsPage = () => {
             className="flex items-center"
           >
             <StarIcon size={16} className={`mr-2 ${showFeaturedOnly ? "text-yellow-500" : ""}`} />
-            {showFeaturedOnly ? "Featured Only" : "Show Featured"}
+            {showFeaturedOnly ? "Alleen Uitgelicht" : "Toon Uitgelicht"}
           </Button>
           
           <Tabs value={sortBy} onValueChange={handleSortChange} className="w-full md:w-auto">
             <TabsList>
-              <TabsTrigger value="newest">Newest</TabsTrigger>
-              <TabsTrigger value="oldest">Oldest</TabsTrigger>
+              <TabsTrigger value="newest">Niewste</TabsTrigger>
+              <TabsTrigger value="oldest">Oudste</TabsTrigger>
               <TabsTrigger value="title-asc">A-Z</TabsTrigger>
               <TabsTrigger value="title-desc">Z-A</TabsTrigger>
             </TabsList>
@@ -309,7 +309,7 @@ const ProjectsPage = () => {
         </div>
       ) : projects.length === 0 ? (
         <div className="text-center py-12 border rounded-lg">
-          <p className="text-muted-foreground">No projects found matching your filters.</p>
+            <p className="text-muted-foreground">Geen projecten gevonden die overeenkomen met je filters.</p>
           {(selectedStudent !== 'all' || 
             selectedAssignment !== 'all' || 
             selectedLanguage !== 'all' || 
@@ -320,7 +320,7 @@ const ProjectsPage = () => {
               onClick={clearFilters}
               className="mt-4"
             >
-              Clear Filters
+              Filters wissen
             </Button>
           )}
         </div>

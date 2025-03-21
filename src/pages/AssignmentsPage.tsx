@@ -164,14 +164,14 @@ const AssignmentsPage = () => {
 
   return (
     <div>
-      <h1 className="text-3xl font-bold tracking-tight mb-8">Assignments</h1>
+      <h1 className="text-3xl font-bold tracking-tight mb-8">Opdrachten</h1>
       
       {/* Filters section */}
       <div className="bg-card border rounded-lg p-4 mb-6">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-medium flex items-center">
             <FilterIcon size={18} className="mr-2" />
-            Filter Assignments
+            Filter Opdrachten
           </h2>
           
           {selectedLearningPath !== 'all' && (
@@ -182,20 +182,20 @@ const AssignmentsPage = () => {
               className="flex items-center text-muted-foreground hover:text-foreground"
             >
               <XIcon size={14} className="mr-1" />
-              Clear filters
+              Wis filters
             </Button>
           )}
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="text-sm font-medium block mb-2">Learning Path</label>
+            <label className="text-sm font-medium block mb-2">Leerpad</label>
             <Select value={selectedLearningPath} onValueChange={handleLearningPathChange}>
               <SelectTrigger>
                 <SelectValue placeholder="All learning paths" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All learning paths</SelectItem>
+                <SelectItem value="all">Alle leerpaden</SelectItem>
                 {learningPaths.map((path) => (
                   <SelectItem key={path.id} value={path.id}>
                     {path.title}
@@ -249,7 +249,7 @@ const AssignmentsPage = () => {
                      assignment.learningPath && (
                       <Badge variant="secondary" className="flex items-center gap-1.5 ml-2 flex-shrink-0">
                         <LayersIcon size={12} />
-                        Learning Path
+                        Leerpad
                       </Badge>
                     )}
                   </div>
@@ -258,7 +258,7 @@ const AssignmentsPage = () => {
                   {assignment.dueDate && (
                     <div className="flex items-center text-muted-foreground mb-3">
                       <CalendarIcon size={16} className="mr-2" />
-                      <span>Due: {new Date(assignment.dueDate).toLocaleDateString()}</span>
+                      <span>Deadline: {new Date(assignment.dueDate).toLocaleDateString()}</span>
                     </div>
                   )}
                   
@@ -267,7 +267,7 @@ const AssignmentsPage = () => {
                    assignment.learningPath && (
                     <div className="flex items-center text-muted-foreground mb-3">
                       <LayersIcon size={16} className="mr-2" />
-                      <span>Path: {assignment.learningPath.title}</span>
+                      <span>Leerpad: {assignment.learningPath.title}</span>
                     </div>
                   )}
                   
@@ -281,7 +281,7 @@ const AssignmentsPage = () => {
                   <Button variant="default" className="flex-1 pointer-events-none">
                     <div className="flex items-center justify-center">
                       <FileTextIcon size={16} className="mr-2" />
-                      View Details
+                      Toon Details
                     </div>
                   </Button>
                   <Button 
@@ -296,7 +296,7 @@ const AssignmentsPage = () => {
                       onClick={(e) => e.stopPropagation()}
                     >
                       <ChevronRightIcon size={16} className="mr-2" />
-                      View Submissions
+                      Toon inzendingen
                     </Link>
                   </Button>
                 </CardFooter>
@@ -306,14 +306,14 @@ const AssignmentsPage = () => {
         </div>
       ) : (
         <div className="text-center py-12 border rounded-lg">
-          <p className="text-muted-foreground">No assignments found matching the selected filters.</p>
+            <p className="text-muted-foreground">Geen opdrachten gevonden die overeenkomen met de geselecteerde filters.</p>
           {selectedLearningPath !== 'all' && (
             <Button 
               variant="outline" 
               className="mt-4"
               onClick={clearFilters}
             >
-              Clear Filters
+              Wis Filters
             </Button>
           )}
         </div>

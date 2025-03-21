@@ -78,7 +78,7 @@ export const ProjectFilters: React.FC<ProjectFiltersProps> = ({
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-lg font-medium flex items-center">
           <FilterIcon size={18} className="mr-2" />
-          Filter Projects
+          Filter Projecten
         </h2>
         
         {hasActiveFilters && (
@@ -89,20 +89,20 @@ export const ProjectFilters: React.FC<ProjectFiltersProps> = ({
             className="flex items-center text-muted-foreground hover:text-foreground"
           >
             <XIcon size={14} className="mr-1" />
-            Clear filters
+            Wis filters
           </Button>
         )}
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         <div>
-          <label className="text-sm font-medium block mb-2">Student</label>
+          <label className="text-sm font-medium block mb-2">Leerling</label>
           <Select value={selectedStudent} onValueChange={onStudentChange}>
             <SelectTrigger>
               <SelectValue placeholder="All students" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All students</SelectItem>
+              <SelectItem value="all">Alle leerlingen</SelectItem>
               {students.map((student) => (
                 <SelectItem key={student.id} value={student.id}>
                   {student.name}
@@ -113,13 +113,13 @@ export const ProjectFilters: React.FC<ProjectFiltersProps> = ({
         </div>
         
         <div>
-          <label className="text-sm font-medium block mb-2">Assignment</label>
+          <label className="text-sm font-medium block mb-2">Opdrachten</label>
           <Select value={selectedAssignment} onValueChange={onAssignmentChange}>
             <SelectTrigger>
               <SelectValue placeholder="All assignments" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All assignments</SelectItem>
+              <SelectItem value="all">Alle opdrachten</SelectItem>
               {assignments.map((assignment) => (
                 <SelectItem key={assignment.id} value={assignment.id}>
                   {assignment.name}
@@ -130,13 +130,13 @@ export const ProjectFilters: React.FC<ProjectFiltersProps> = ({
         </div>
         
         <div>
-          <label className="text-sm font-medium block mb-2">Learning Path</label>
+          <label className="text-sm font-medium block mb-2">Leerpad</label>
           <Select value={selectedLearningPath} onValueChange={onLearningPathChange}>
             <SelectTrigger>
               <SelectValue placeholder="All learning paths" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All learning paths</SelectItem>
+              <SelectItem value="all">All leerpaden</SelectItem>
               {learningPaths.map((learningPath) => (
                 <SelectItem key={learningPath.id} value={learningPath.id}>
                   {learningPath.title}
@@ -147,13 +147,13 @@ export const ProjectFilters: React.FC<ProjectFiltersProps> = ({
         </div>
         
         <div>
-          <label className="text-sm font-medium block mb-2">Language</label>
+          <label className="text-sm font-medium block mb-2">Taal</label>
           <Select value={selectedLanguage} onValueChange={onLanguageChange}>
             <SelectTrigger>
               <SelectValue placeholder="All languages" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All languages</SelectItem>
+              <SelectItem value="all">Alle talen</SelectItem>
               {languages.map((language) => (
                 <SelectItem key={language.id} value={language.id}>
                   {language.name}

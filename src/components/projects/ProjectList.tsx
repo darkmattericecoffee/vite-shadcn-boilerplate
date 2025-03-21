@@ -48,9 +48,9 @@ const ProjectList: React.FC<ProjectListProps> = ({ projects, loading }) => {
   if (projects.length === 0) {
     return (
       <div className="text-center py-12">
-        <h3 className="text-lg font-medium">No projects found</h3>
+        <h3 className="text-lg font-medium">Geen projecten gevonden</h3>
         <p className="text-muted-foreground mt-1">
-          Try adjusting your filters or check back later for new projects.
+          Probeer je filters aan te passen of kom later terug voor nieuwe projecten.
         </p>
       </div>
     );

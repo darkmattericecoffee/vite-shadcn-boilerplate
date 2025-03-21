@@ -29,14 +29,14 @@ const AssignmentDetailPage = () => {
   const isFromLearningPath = location.state?.from === 'learning-path' || 
                             location.pathname.includes('/learning-paths/');
   
-  // Set the back link and text based on where we came from
+  // Stel de terug-link en tekst in op basis van waar we vandaan kwamen
   const backLink = isFromLearningPath 
-    ? "/learning-paths"  // Go to learning paths listing, not specific path
+    ? "/learning-paths"  // Ga naar de lijst van leerpaden, niet een specifiek pad
     : "/assignments";
   
   const backText = isFromLearningPath
-    ? "Back to Learning Paths"  // Plural, going to the listing page
-    : "Back to Assignments";
+    ? "Terug naar Leerpaden"  // Meervoud, ga naar de lijstpagina
+    : "Terug naar Opdrachten";
 
   // Determine learning path ID from the URL if it exists
   const learningPathIdMatch = location.pathname.match(/\/learning-paths\/([^/]+)\/assignments/);

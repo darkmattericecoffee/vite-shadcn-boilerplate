@@ -25,10 +25,10 @@ export function AssignmentSubmissions({ projects }: AssignmentSubmissionsProps) 
       <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle className="flex items-center">
           <GraduationCapIcon size={18} className="mr-2" />
-          Student Submissions
+          Leerling inzending
         </CardTitle>
         <div className="text-sm text-muted-foreground">
-          {projects.length} submission{projects.length !== 1 ? 's' : ''}
+          {projects.length} inzending{projects.length !== 1 ? 's' : ''}
         </div>
       </CardHeader>
       <CardContent>
@@ -98,7 +98,7 @@ export function AssignmentSubmissions({ projects }: AssignmentSubmissionsProps) 
                       />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center">
-                        <span className="text-muted-foreground">No preview available</span>
+                        <span className="text-muted-foreground">Geen voorvertoning beschikbaar</span>
                       </div>
                     )}
                   </div>
@@ -129,7 +129,7 @@ export function AssignmentSubmissions({ projects }: AssignmentSubmissionsProps) 
                     <Button variant="outline" className="w-full pointer-events-none">
                       <div className="flex items-center justify-center">
                         <ChevronRightIcon size={16} className="mr-2" />
-                        View Project
+                        Toon project
                       </div>
                     </Button>
                   </CardFooter>

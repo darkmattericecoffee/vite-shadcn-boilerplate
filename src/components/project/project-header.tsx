@@ -55,7 +55,7 @@ export function ProjectHeader({ project }: ProjectHeaderProps) {
           {formattedSubmissionDate && (
             <Badge variant="outline" className="flex items-center whitespace-nowrap">
               <CalendarIcon size={14} className="mr-2" />
-              Submitted: {formattedSubmissionDate}
+              Ingeleverd: {formattedSubmissionDate}
             </Badge>
           )}
         </div>

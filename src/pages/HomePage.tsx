@@ -86,8 +86,8 @@ export const HomePage = () => {
           Informatica Showcase
         </h1>
         <p className="text-xl text-muted-foreground max-w-2xl mx-auto mb-8">
-          Discover amazing projects created by IT students. From games and apps
-          to websites and data visualizations.
+          Ontdek geweldige projecten gemaakt door IT-studenten. Van games en apps
+          tot websites en datavisualisaties.
         </p>
         <div className="flex justify-center gap-4">
           <Button asChild size="lg">
@@ -99,32 +99,32 @@ export const HomePage = () => {
       {/* Featured Projects Section */}
       <section>
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-bold tracking-tight">Featured Projects</h2>
+          <h2 className="text-2xl font-bold tracking-tight">Uitgelichte Projecten</h2>
           <Button variant="ghost" asChild>
-            <Link to="/projects" className="flex items-center">
-              View all <ArrowRightIcon size={16} className="ml-1" />
-            </Link>
+        <Link to="/projects" className="flex items-center">
+          Bekijk alle <ArrowRightIcon size={16} className="ml-1" />
+        </Link>
           </Button>
         </div>
 
         {loading ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[...Array(6)].map((_, index) => (
-              <div key={index} className="bg-muted animate-pulse h-64 rounded-lg"></div>
-            ))}
+        {[...Array(6)].map((_, index) => (
+          <div key={index} className="bg-muted animate-pulse h-64 rounded-lg"></div>
+        ))}
           </div>
         ) : featuredProjects.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {featuredProjects.map((project) => (
-              <ProjectCard
-                key={project.id}
-                project={project}
-              />
-            ))}
+        {featuredProjects.map((project) => (
+          <ProjectCard
+            key={project.id}
+            project={project}
+          />
+        ))}
           </div>
         ) : (
           <div className="text-center py-12 border rounded-lg">
-            <p className="text-muted-foreground">No featured projects yet.</p>
+        <p className="text-muted-foreground">Nog geen uitgelichte projecten.</p>
           </div>
         )}
       </section>

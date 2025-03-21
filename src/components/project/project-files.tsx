@@ -22,7 +22,7 @@ export function ProjectFiles({ files }: ProjectFilesProps) {
       <CardHeader>
         <CardTitle className="flex items-center">
           <FileIcon size={18} className="mr-2" />
-          Project Files
+          Project Bestanden
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
