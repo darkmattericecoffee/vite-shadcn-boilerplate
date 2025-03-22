@@ -7,6 +7,7 @@ import {
   ImageIcon,
   LinkIcon,
   ActivityIcon,
+  VideoIcon,
 } from 'lucide-react';
 
 interface ProjectNavigationProps {
@@ -16,6 +17,7 @@ interface ProjectNavigationProps {
   hasFiles: boolean;
   hasScreenshots: boolean;
   hasLink: boolean;
+  hasVideo?: boolean;
 }
 
 export function ProjectNavigation({
@@ -25,6 +27,7 @@ export function ProjectNavigation({
   hasFiles,
   hasScreenshots,
   hasLink,
+  hasVideo = false,
 }: ProjectNavigationProps) {
   return (
     <div className="sticky top-[79px] z-20 bg-background/95 backdrop-blur-sm border-b py-2">
@@ -37,6 +40,15 @@ export function ProjectNavigation({
               onClick={() => onSectionChange('interactive')}
               icon={<ActivityIcon size={16} />}
               label="Interactief"
+            />
+          )}
+          {hasVideo && (
+            <NavigationButton
+              id="video"
+              isActive={activeSection === 'video'}
+              onClick={() => onSectionChange('video')}
+              icon={<VideoIcon size={16} />}
+              label="Video"
             />
           )}
           <NavigationButton

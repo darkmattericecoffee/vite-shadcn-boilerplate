@@ -13,6 +13,7 @@ import {
   LinkIcon,
   ExternalLinkIcon,
   TagIcon,
+  VideoIcon,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { getFullUrl } from "@/lib/api";
@@ -56,6 +57,7 @@ export function ProjectSidebar({
     project.screenshots && project.screenshots.length > 0
   );
   const hasLink = Boolean(project.link);
+  const hasVideo = Boolean(project.embedCode);
   const hasStudents = projectStudents.length > 0;
 
   // Get the primary screenshot if available
@@ -238,6 +240,22 @@ export function ProjectSidebar({
                   <span className="truncate">Toon Live Project</span>
                 </div>
                 <ExternalLinkIcon size={16} />
+              </Button>
+            </div>
+          )}
+          {hasVideo && (
+            <div className="space-y-2">
+              <h3 className="text-sm font-medium">Video</h3>
+              <Button
+                variant="outline"
+                className="w-full flex items-center justify-between"
+                onClick={() => onSectionChange("video")}
+              >
+                <div className="flex items-center">
+                  <VideoIcon size={16} className="mr-2" />
+                  <span className="truncate">Bekijk Video</span>
+                </div>
+                <ChevronRightIcon size={16} />
               </Button>
             </div>
           )}

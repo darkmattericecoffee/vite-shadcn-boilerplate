@@ -14,6 +14,7 @@ import { ProjectFiles } from '@/components/project/project-files';
 import { ProjectScreenshots } from '@/components/project/project-screenshots';
 import { ProjectLink } from '@/components/project/project-link';
 import { ProjectSidebar } from '@/components/project/project-sidebar';
+import { ProjectVideo } from '@/components/project/project-video';
 
 // Import the Project type
 import { Project } from '@/types/project';
@@ -27,6 +28,7 @@ export const ProjectDetailPage = () => {
 
   // References for scroll-to-section functionality
   const interactiveRef = useRef<HTMLDivElement>(null);
+  const videoRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   const filesRef = useRef<HTMLDivElement>(null);
   const screenshotsRef = useRef<HTMLDivElement>(null);
@@ -60,6 +62,7 @@ export const ProjectDetailPage = () => {
     const hasScreenshots = Boolean(project.screenshots && project.screenshots.length > 0);
     const hasLink = Boolean(project.link);
     const hasInteractive = Boolean(hasInteractiveContent);
+    const hasVideo = Boolean(project.embedCode);
 
     const observerOptions = {
       root: null,
@@ -77,6 +80,7 @@ export const ProjectDetailPage = () => {
 
     const observer = new IntersectionObserver(observerCallback, observerOptions);
     if (hasInteractive && interactiveRef.current) observer.observe(interactiveRef.current);
+    if (hasVideo && videoRef.current) observer.observe(videoRef.current);
     if (contentRef.current) observer.observe(contentRef.current);
     if (hasFiles && filesRef.current) observer.observe(filesRef.current);
     if (hasScreenshots && screenshotsRef.current) observer.observe(screenshotsRef.current);
@@ -122,6 +126,9 @@ export const ProjectDetailPage = () => {
     switch (section) {
       case 'interactive':
         ref = interactiveRef;
+        break;
+      case 'video':
+        ref = videoRef;
         break;
       case 'content':
         ref = contentRef;
@@ -193,6 +200,7 @@ export const ProjectDetailPage = () => {
               hasFiles={Boolean(project.files && project.files.length > 0)}
               hasScreenshots={Boolean(project.screenshots && project.screenshots.length > 0)}
               hasLink={Boolean(project.link)}
+              hasVideo={Boolean(project.embedCode)}
             />
           </div>
 
@@ -264,6 +272,13 @@ export const ProjectDetailPage = () => {
                   </div>
                 )}
               </div>
+            </div>
+          )}
+
+          {/* Video section */}
+          {project.embedCode && (
+            <div id="video" ref={videoRef} className="scroll-mt-32">
+              <ProjectVideo embedCode={project.embedCode} title="Video" />
             </div>
           )}
 

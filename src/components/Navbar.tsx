@@ -32,14 +32,7 @@ export const Navbar = () => {
                 </Button>
               </Link>
             </li>
-            <li>
-              <Link to="/projects">
-                <Button variant={isActive('/projects') ? 'default' : 'ghost'} className="flex items-center gap-2">
-                  <CodeIcon size={16} />
-                  <span>Projecten</span>
-                </Button>
-              </Link>
-            </li>
+         
             <li>
               <Link to="/learning-paths">
                 <Button variant={isActive('/learning-paths') ? 'default' : 'ghost'} className="flex items-center gap-2">
@@ -53,6 +46,14 @@ export const Navbar = () => {
                 <Button variant={isActive('/assignments') ? 'default' : 'ghost'} className="flex items-center gap-2">
                   <BookOpenIcon size={16} />
                   <span>Opdrachten</span>
+                </Button>
+              </Link>
+            </li>
+            <li>
+              <Link to="/projects">
+                <Button variant={isActive('/projects') ? 'default' : 'ghost'} className="flex items-center gap-2">
+                  <CodeIcon size={16} />
+                  <span>Projecten</span>
                 </Button>
               </Link>
             </li>
