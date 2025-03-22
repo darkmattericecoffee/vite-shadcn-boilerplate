@@ -55,7 +55,6 @@ export const ProjectFilters: React.FC<ProjectFiltersProps> = ({
   onLearningPathChange,
   onClearFilters,
 }) => {
-  // Updated 'data-viz' to 'data_viz' to match the backend change
   const projectTypes = [
     { value: 'game', label: 'Game' },
     { value: 'app', label: 'Application' },
@@ -74,7 +73,7 @@ export const ProjectFilters: React.FC<ProjectFiltersProps> = ({
     selectedLearningPath !== 'all';
 
   return (
-    <div className="bg-card border rounded-lg p-4 mb-6">
+    <div className="bg-card border rounded-lg p-4 h-full">
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-lg font-medium flex items-center">
           <FilterIcon size={18} className="mr-2" />
@@ -94,7 +93,7 @@ export const ProjectFilters: React.FC<ProjectFiltersProps> = ({
         )}
       </div>
       
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="space-y-4">
         <div>
           <label className="text-sm font-medium block mb-2">Leerling</label>
           <Select value={selectedStudent} onValueChange={onStudentChange}>
@@ -113,23 +112,6 @@ export const ProjectFilters: React.FC<ProjectFiltersProps> = ({
         </div>
         
         <div>
-          <label className="text-sm font-medium block mb-2">Opdrachten</label>
-          <Select value={selectedAssignment} onValueChange={onAssignmentChange}>
-            <SelectTrigger>
-              <SelectValue placeholder="All assignments" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">Alle opdrachten</SelectItem>
-              {assignments.map((assignment) => (
-                <SelectItem key={assignment.id} value={assignment.id}>
-                  {assignment.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-        
-        <div>
           <label className="text-sm font-medium block mb-2">Leerpad</label>
           <Select value={selectedLearningPath} onValueChange={onLearningPathChange}>
             <SelectTrigger>
@@ -140,6 +122,23 @@ export const ProjectFilters: React.FC<ProjectFiltersProps> = ({
               {learningPaths.map((learningPath) => (
                 <SelectItem key={learningPath.id} value={learningPath.id}>
                   {learningPath.title}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        
+        <div>
+          <label className="text-sm font-medium block mb-2">Opdrachten</label>
+          <Select value={selectedAssignment} onValueChange={onAssignmentChange}>
+            <SelectTrigger>
+              <SelectValue placeholder="All assignments" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Alle opdrachten</SelectItem>
+              {assignments.map((assignment) => (
+                <SelectItem key={assignment.id} value={assignment.id}>
+                  {assignment.name}
                 </SelectItem>
               ))}
             </SelectContent>

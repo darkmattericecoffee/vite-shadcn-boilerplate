@@ -24,7 +24,7 @@ export function AssignmentNavigation({
   hasProjects
 }: AssignmentNavigationProps) {
   return (
-    <div className="flex overflow-x-auto space-x-2 border-b pb-2">
+    <div className="flex overflow-x-auto space-x-2 border-b py-2 pb-4">
       <NavigationButton 
         id="content"
         isActive={activeSection === "content"}

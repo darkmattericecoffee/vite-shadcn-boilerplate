@@ -16,6 +16,8 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { LearningPathObjectives } from '@/components/learning-path/learning-objectives';
 import { CustomDocumentRenderer } from '@/components/ui/document-renderer';
+import { ProjectCard } from '@/components/projects/ProjectCard';
+import { ProjectCardCompact } from '@/components/projects/ProjectCardCompact';
 
 const LearningPathDetailPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -192,7 +194,7 @@ const LearningPathDetailPage = () => {
             <div id="all-objectives">
               <LearningPathObjectives 
                 learningPath={learningPath}
-                className="border-none shadow-md mt-6 LearningPathObjectives"
+                className=" mt-6 LearningPathObjectives"
               />
             </div>
           )}
@@ -328,58 +330,11 @@ const LearningPathDetailPage = () => {
             {finalProjects.length > 0 ? (
               <>
                 <div className="grid grid-cols-1 gap-4">
-                  {/* Only show up to 3 projects in the sidebar */}
-                  {finalProjects.slice(0, 3).map((project) => {
-                    // Get thumbnail from first screenshot if available
-                    const thumbnailUrl = project.screenshots && 
-                      project.screenshots.length > 0 && 
-                      project.screenshots[0].image ? 
-                      getFullUrl(project.screenshots[0].image.url) : 
-                      undefined;
-                    
-                    // Get student info
-                    const studentDisplay = getStudentDisplay(project);
-                    
-                    return (
-                      <Link 
-                        to={`/projects/${project.id}`} 
-                        key={project.id}
-                        className="block group"
-                      >
-                        <Card className="hover:shadow-md transition-all border-muted/70 hover:border-primary/30 overflow-hidden flex flex-col h-full">
-                          <div className="flex">
-                            <div className="w-1/3 bg-muted relative overflow-hidden">
-                              {thumbnailUrl ? (
-                                <img 
-                                  src={thumbnailUrl} 
-                                  alt={`${project.title} screenshot`}
-                                  className="w-full h-full object-cover transition-transform group-hover:scale-105"
-                                />
-                              ) : (
-                                <div className="w-full h-full flex items-center justify-center p-2">
-                                  <GraduationCapIcon size={24} className="text-muted-foreground opacity-50" />
-                                </div>
-                              )}
-                            </div>
-                            
-                            <div className="w-2/3 p-3">
-                              <h3 className="font-medium text-sm group-hover:text-primary transition-colors line-clamp-1">
-                                {project.title}
-                              </h3>
-                              
-                              <div className="flex items-center text-xs text-muted-foreground mt-1">
-                                <span className="line-clamp-1">{studentDisplay.name}</span>
-                                {studentDisplay.class && (
-                                  <span className="ml-1 text-xs opacity-70">({studentDisplay.class})</span>
-                                )}
-                              </div>
-                            </div>
-                          </div>
-                        </Card>
-                      </Link>
-                    );
-                  })}
-                </div>
+                {/* Only show up to 3 projects in the sidebar */}
+                {finalProjects.slice(0, 3).map((project) => (
+                  <ProjectCardCompact key={project.id} project={project} />
+                ))}
+              </div>
                 
                 {/* "Show All" button - scrolls to the projects section below */}
                 {finalProjects.length > 3 && (
@@ -452,84 +407,36 @@ const LearningPathDetailPage = () => {
         </div>
       </div>
       
-      {/* All Projects Section at the bottom */}
-      {finalProjects.length > 0 && (
-        <div id="all-projects" className="space-y-6 pt-8 mt-12 border-t">
-          <div className="flex items-center justify-between pb-4">
-            <h2 className="text-2xl font-bold flex items-center">
-              <GraduationCapIcon size={22} className="mr-2" />
-              Alle eindresultaten
-            </h2>
-            <Badge variant="secondary" className="px-3 py-1">
-              {finalProjects.length} Project{finalProjects.length !== 1 ? 's' : ''}
-            </Badge>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {finalProjects.map((project) => {
-              // Get thumbnail from first screenshot if available
-              const thumbnailUrl = project.screenshots && 
-                project.screenshots.length > 0 && 
-                project.screenshots[0].image ? 
-                getFullUrl(project.screenshots[0].image.url) : 
-                undefined;
-              
-              // Get student info
-              const studentDisplay = getStudentDisplay(project);
-              
-              return (
-                <Link 
-                  to={`/projects/${project.id}`} 
-                  key={project.id}
-                  className="block group"
-                >
-                  <Card className="hover:shadow-md transition-all border-muted/70 hover:border-primary/30 overflow-hidden flex flex-col h-full">
-                    <div className="aspect-video bg-muted relative overflow-hidden">
-                      {thumbnailUrl ? (
-                        <img 
-                          src={thumbnailUrl} 
-                          alt={`${project.title} screenshot`}
-                          className="w-full h-full object-cover transition-transform group-hover:scale-105"
-                        />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center">
-                          <span className="text-muted-foreground">Geen voorvertoning beschikbaar</span>
-                        </div>
-                      )}
-                    </div>
-                    
-                    <CardHeader className="pb-0">
-                      <CardTitle className="text-lg group-hover:text-primary transition-colors">
-                        {project.title}
-                      </CardTitle>
-                    </CardHeader>
-                    
-                    <CardContent className="py-2">
-                      <div className="flex items-center text-sm text-muted-foreground">
-                        <GraduationCapIcon size={14} className="mr-1" />
-                        <span>{studentDisplay.name}</span>
-                        {studentDisplay.class && (
-                          <span className="ml-1">({studentDisplay.class})</span>
-                        )}
-                      </div>
-                      
-                    </CardContent>
-                    
-                    <CardFooter className="pt-2">
-                      <Button variant="outline" size="sm" className="w-full group-hover:bg-primary/5 transition-colors pointer-events-none">
-                        <div className="flex items-center justify-center">
-                          <span className="mr-1">Toon project</span>
-                          <ChevronRightIcon size={14} className="ml-1 transition-transform group-hover:translate-x-1" />
-                        </div>
-                      </Button>
-                    </CardFooter>
-                  </Card>
-                </Link>
-              );
-            })}
-          </div>
-        </div>
-      )}
+{/* All Projects Section at the bottom */}
+{finalProjects.length > 0 && (
+  <div id="all-projects" className="space-y-6 pt-8 mt-12 border-t">
+    <div className="flex items-center justify-between pb-4">
+      <h2 className="text-2xl font-bold flex items-center">
+        <GraduationCapIcon size={22} className="mr-2" />
+        Alle eindresultaten
+      </h2>
+      <Badge variant="secondary" className="px-3 py-1">
+        {finalProjects.length} Project{finalProjects.length !== 1 ? 's' : ''}
+      </Badge>
+    </div>
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {finalProjects.map((project) => {
+        // Create a compatible project object by transforming screenshots
+        const compatibleProject = {
+          ...project,
+          screenshots: project.screenshots?.map(screenshot => ({
+            id: `screenshot-${Math.random().toString(36).substr(2, 9)}`, // Generate a unique ID
+            image: {
+              url: screenshot.image?.url || ''
+            }
+          }))
+        };
+        
+        return <ProjectCard key={project.id} project={compatibleProject} />;
+      })}
+    </div>
+  </div>
+)}
     </div>
   );
 };

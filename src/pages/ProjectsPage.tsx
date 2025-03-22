@@ -1,4 +1,4 @@
-// src/pages/ProjectsPage.tsx with fully refactored filter and sorting handlers
+// src/pages/ProjectsPage.tsx with sidebar filter layout
 import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { 
@@ -247,90 +247,96 @@ const ProjectsPage = () => {
   }, []);
   
   return (
-    <div>
-      <div className="flex flex-col md:flex-row md:items-center justify-between mb-8">
-        <h1 className="text-3xl font-bold tracking-tight mb-4 md:mb-0">Leerling Projecten</h1>
-        
-        <div className="flex flex-col md:flex-row md:items-center gap-4">
-          <Button
-            variant={showFeaturedOnly ? "default" : "outline"}
-            size="sm"
-            onClick={handleFeaturedChange}
-            className="flex items-center"
-          >
-            <StarIcon size={16} className={`mr-2 ${showFeaturedOnly ? "text-yellow-500" : ""}`} />
-            {showFeaturedOnly ? "Alleen Uitgelicht" : "Toon Uitgelicht"}
-          </Button>
-          
-          <Tabs value={sortBy} onValueChange={handleSortChange} className="w-full md:w-auto">
-            <TabsList>
-              <TabsTrigger value="newest">Niewste</TabsTrigger>
-              <TabsTrigger value="oldest">Oudste</TabsTrigger>
-              <TabsTrigger value="title-asc">A-Z</TabsTrigger>
-              <TabsTrigger value="title-desc">Z-A</TabsTrigger>
-            </TabsList>
-          </Tabs>
-        </div>
+    <div className="flex flex-col md:flex-row gap-6">
+      {/* Sidebar Filters */}
+      <div className="w-full md:w-64 lg:w-72 flex-shrink-0">
+        <ProjectFilters
+          students={students}
+          assignments={assignments}
+          languages={languages}
+          learningPaths={learningPaths}
+          selectedStudent={selectedStudent}
+          selectedAssignment={selectedAssignment}
+          selectedLanguage={selectedLanguage}
+          selectedType={selectedType}
+          selectedLearningPath={selectedLearningPath}
+          onStudentChange={handleStudentChange}
+          onAssignmentChange={handleAssignmentChange}
+          onLanguageChange={handleLanguageChange}
+          onTypeChange={handleTypeChange}
+          onLearningPathChange={handleLearningPathChange}
+          onClearFilters={clearFilters}
+        />
       </div>
       
-      <ProjectFilters
-        students={students}
-        assignments={assignments}
-        languages={languages}
-        learningPaths={learningPaths}
-        selectedStudent={selectedStudent}
-        selectedAssignment={selectedAssignment}
-        selectedLanguage={selectedLanguage}
-        selectedType={selectedType}
-        selectedLearningPath={selectedLearningPath}
-        onStudentChange={handleStudentChange}
-        onAssignmentChange={handleAssignmentChange}
-        onLanguageChange={handleLanguageChange}
-        onTypeChange={handleTypeChange}
-        onLearningPathChange={handleLearningPathChange}
-        onClearFilters={clearFilters}
-      />
-      
-      {isLoading ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {[...Array(6)].map((_, index) => (
-            <div key={index} className="bg-muted animate-pulse h-64 rounded-lg"></div>
-          ))}
+      {/* Main Content */}
+      <div className="flex-1">
+        <div className="flex flex-col md:flex-row md:items-center justify-between mb-6">
+          <h1 className="text-3xl font-bold tracking-tight mb-4 md:mb-0">Leerling Projecten</h1>
+          
+          <div className="flex flex-col md:flex-row md:items-center gap-4">
+            <Button
+              variant={showFeaturedOnly ? "default" : "outline"}
+              size="sm"
+              onClick={handleFeaturedChange}
+              className="flex items-center"
+            >
+              <StarIcon size={16} className={`mr-2 ${showFeaturedOnly ? "text-yellow-500" : ""}`} />
+              {showFeaturedOnly ? "Alleen Uitgelicht" : "Toon Uitgelicht"}
+            </Button>
+            
+            <Tabs value={sortBy} onValueChange={handleSortChange} className="w-full md:w-auto">
+              <TabsList>
+                <TabsTrigger value="newest">Niewste</TabsTrigger>
+                <TabsTrigger value="oldest">Oudste</TabsTrigger>
+                <TabsTrigger value="title-asc">A-Z</TabsTrigger>
+                <TabsTrigger value="title-desc">Z-A</TabsTrigger>
+              </TabsList>
+            </Tabs>
+          </div>
         </div>
-      ) : error ? (
-        <div className="text-center py-12 border rounded-lg">
-          <p className="text-muted-foreground">{error}</p>
-          <Button 
-            onClick={fetchProjects}
-            className="mt-4"
-          >
-            Try Again
-          </Button>
-        </div>
-      ) : projects.length === 0 ? (
-        <div className="text-center py-12 border rounded-lg">
-            <p className="text-muted-foreground">Geen projecten gevonden die overeenkomen met je filters.</p>
-          {(selectedStudent !== 'all' || 
-            selectedAssignment !== 'all' || 
-            selectedLanguage !== 'all' || 
-            selectedType !== 'all' || 
-            selectedLearningPath !== 'all' || 
-            showFeaturedOnly) && (
+        
+        {isLoading ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {[...Array(6)].map((_, index) => (
+              <div key={index} className="bg-muted animate-pulse h-64 rounded-lg"></div>
+            ))}
+          </div>
+        ) : error ? (
+          <div className="text-center py-12 border rounded-lg">
+            <p className="text-muted-foreground">{error}</p>
             <Button 
-              onClick={clearFilters}
+              onClick={fetchProjects}
               className="mt-4"
             >
-              Filters wissen
+              Try Again
             </Button>
-          )}
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {projects.map((project) => (
-            <ProjectCard key={project.id} project={project} />
-          ))}
-        </div>
-      )}
+          </div>
+        ) : projects.length === 0 ? (
+          <div className="text-center py-12 border rounded-lg">
+              <p className="text-muted-foreground">Geen projecten gevonden die overeenkomen met je filters.</p>
+            {(selectedStudent !== 'all' || 
+              selectedAssignment !== 'all' || 
+              selectedLanguage !== 'all' || 
+              selectedType !== 'all' || 
+              selectedLearningPath !== 'all' || 
+              showFeaturedOnly) && (
+              <Button 
+                onClick={clearFilters}
+                className="mt-4"
+              >
+                Filters wissen
+              </Button>
+            )}
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {projects.map((project) => (
+              <ProjectCard key={project.id} project={project} />
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 };

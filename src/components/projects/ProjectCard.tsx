@@ -136,7 +136,7 @@ export function ProjectCard({ project }: ProjectCardProps) {
 <div className="flex flex-col text-sm text-muted-foreground mb-3">
     <div className="flex items-center mb-1">
       <UsersIcon size={14} className="mr-1" />
-      <span className="font-medium">Groep Project</span>
+      <span className="font-medium">Samenwerking</span>
       <span className="ml-1 text-xs opacity-70">({project.students.length} leerlingen)</span>
     </div>
     <div className="flex flex-wrap gap-1">
@@ -199,7 +199,7 @@ export function ProjectCard({ project }: ProjectCardProps) {
             {project.students && project.students.length > 1 && (
               <Badge variant="secondary" className="text-xs bg-background/80 backdrop-blur-sm flex items-center gap-1">
                 <UsersIcon size={10} />
-                <span>Groep</span>
+                <span>Samenwerking</span>
               </Badge>
             )}
             

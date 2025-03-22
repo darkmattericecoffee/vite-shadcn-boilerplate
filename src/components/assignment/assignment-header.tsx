@@ -47,7 +47,8 @@ export function AssignmentHeader({ assignment, learningPathId }: AssignmentHeade
     : null;
   
   return (
-    <div className={`sticky top-0 z-10 transition-all duration-300 ${isScrolled ? 'bg-background/95 backdrop-blur-sm border-b' : ''}`}>
+    <div className={`sticky top-0 z-10 transition-all duration-300 ${isScrolled ? 'bg-background/95 backdrop-blur-sm border-b ' : ''}`}>
+      
       <div className="max-w-screen-2xl mx-auto">
         {/* Back button - only show when not scrolled */}
         {!isScrolled && learningPathId && (
@@ -66,8 +67,8 @@ export function AssignmentHeader({ assignment, learningPathId }: AssignmentHeade
         
         {/* Hero section */}
         <div className="flex flex-col">
-          {hasCoverImage && coverImageUrl ? (
-            <div className={`w-full overflow-hidden relative transition-all duration-300 ${isScrolled ? 'h-16 md:h-20' : 'h-56 md:h-64 lg:h-80'}`}>
+        {hasCoverImage && coverImageUrl ? (
+            <div className={`w-full overflow-hidden relative transition-all duration-300 rounded-sm ${isScrolled ? 'h-16 md:h-20' : 'h-56 md:h-64 lg:h-80'}`}>
               {/* Container maintains aspect ratio while image stays fixed relative to viewport */}
               <div className="absolute inset-0">
                 <img 

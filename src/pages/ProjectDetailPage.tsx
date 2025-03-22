@@ -81,7 +81,7 @@ export const ProjectDetailPage = () => {
     if (hasFiles && filesRef.current) observer.observe(filesRef.current);
     if (hasScreenshots && screenshotsRef.current) observer.observe(screenshotsRef.current);
     if (hasLink && linkRef.current) observer.observe(linkRef.current);
-
+    
     return () => {
       observer.disconnect();
     };
@@ -163,10 +163,14 @@ export const ProjectDetailPage = () => {
     );
   }
 
+  // Check if the project has a cover image to adjust navigation positioning
+  const hasCoverImage = project.screenshots && 
+    project.screenshots.length > 0 && 
+    project.screenshots[0].image;
   return (
     <div className="space-y-8">
       {/* Hero section with sticky header and back button */}
-      <div className="sticky top-0 z-20 pt-2 bg-background pb-2 border-b">
+      <div className="sticky top-0 z-20 pt-2 bg-background pb-2">
         <Button variant="outline" size="sm" asChild className="mb-4">
           <Link to="/projects" className="flex items-center">
             <ArrowLeftIcon size={16} className="mr-2" />
@@ -181,7 +185,7 @@ export const ProjectDetailPage = () => {
         {/* Left side: main content */}
         <div className="lg:col-span-8 space-y-6">
           {/* Navigation bar including interactive section when available */}
-          <div className="sticky top-24 z-10 bg-background pt-2 pb-2">
+          <div className={`sticky z-10 bg-background pt-2 pb-2 ${hasCoverImage ? 'top-36' : 'top-24'}`}>
             <ProjectNavigation
               activeSection={activeSection}
               onSectionChange={scrollToSection}
@@ -292,7 +296,7 @@ export const ProjectDetailPage = () => {
 
         {/* Sidebar */}
         <div className="lg:col-span-4">
-          <div className="sticky top-24 space-y-6 pt-2">
+          <div className="sticky top-40 space-y-6 pt-2">
             <ProjectSidebar project={project} onSectionChange={scrollToSection} />
           </div>
         </div>

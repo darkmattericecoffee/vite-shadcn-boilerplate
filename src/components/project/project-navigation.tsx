@@ -27,50 +27,54 @@ export function ProjectNavigation({
   hasLink,
 }: ProjectNavigationProps) {
   return (
-    <div className="flex overflow-x-auto space-x-2 border-b pb-2">
-      {hasInteractive && (
-        <NavigationButton
-          id="interactive"
-          isActive={activeSection === 'interactive'}
-          onClick={() => onSectionChange('interactive')}
-          icon={<ActivityIcon size={16} />}
-          label="Interactief"
-        />
-      )}
-      <NavigationButton
-        id="content"
-        isActive={activeSection === 'content'}
-        onClick={() => onSectionChange('content')}
-        icon={<BookOpenIcon size={16} />}
-        label="Inhoud"
-      />
-      {hasFiles && (
-        <NavigationButton
-          id="files"
-          isActive={activeSection === 'files'}
-          onClick={() => onSectionChange('files')}
-          icon={<FileIcon size={16} />}
-          label="Bestanden"
-        />
-      )}
-      {hasScreenshots && (
-        <NavigationButton
-          id="screenshots"
-          isActive={activeSection === 'screenshots'}
-          onClick={() => onSectionChange('screenshots')}
-          icon={<ImageIcon size={16} />}
-          label="Screenshots"
-        />
-      )}
-      {hasLink && (
-        <NavigationButton
-          id="link"
-          isActive={activeSection === 'link'}
-          onClick={() => onSectionChange('link')}
-          icon={<LinkIcon size={16} />}
-          label="Live Link"
-        />
-      )}
+    <div className="sticky top-[79px] z-20 bg-background/95 backdrop-blur-sm border-b py-2">
+      <div className="max-w-screen-2xl mx-auto">
+        <div className="flex overflow-x-auto space-x-2 pb-2">
+          {hasInteractive && (
+            <NavigationButton
+              id="interactive"
+              isActive={activeSection === 'interactive'}
+              onClick={() => onSectionChange('interactive')}
+              icon={<ActivityIcon size={16} />}
+              label="Interactief"
+            />
+          )}
+          <NavigationButton
+            id="content"
+            isActive={activeSection === 'content'}
+            onClick={() => onSectionChange('content')}
+            icon={<BookOpenIcon size={16} />}
+            label="Inhoud"
+          />
+          {hasFiles && (
+            <NavigationButton
+              id="files"
+              isActive={activeSection === 'files'}
+              onClick={() => onSectionChange('files')}
+              icon={<FileIcon size={16} />}
+              label="Bestanden"
+            />
+          )}
+          {hasScreenshots && (
+            <NavigationButton
+              id="screenshots"
+              isActive={activeSection === 'screenshots'}
+              onClick={() => onSectionChange('screenshots')}
+              icon={<ImageIcon size={16} />}
+              label="Screenshots"
+            />
+          )}
+          {hasLink && (
+            <NavigationButton
+              id="link"
+              isActive={activeSection === 'link'}
+              onClick={() => onSectionChange('link')}
+              icon={<LinkIcon size={16} />}
+              label="Live Link"
+            />
+          )}
+        </div>
+      </div>
     </div>
   );
 }
