@@ -8,7 +8,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
-import { FilterIcon, XIcon } from 'lucide-react';
+import { FilterIcon, XIcon, UsersIcon } from 'lucide-react';
 
 type FilterOption = {
   id: string;
@@ -95,7 +95,10 @@ export const ProjectFilters: React.FC<ProjectFiltersProps> = ({
       
       <div className="space-y-4">
         <div>
-          <label className="text-sm font-medium block mb-2">Leerling</label>
+          <label className="text-sm font-medium block mb-2 flex items-center">
+            <UsersIcon size={14} className="mr-1" />
+            Leerling / Team
+          </label>
           <Select value={selectedStudent} onValueChange={onStudentChange}>
             <SelectTrigger>
               <SelectValue placeholder="All students" />
@@ -118,7 +121,7 @@ export const ProjectFilters: React.FC<ProjectFiltersProps> = ({
               <SelectValue placeholder="All learning paths" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All leerpaden</SelectItem>
+              <SelectItem value="all">Alle leerpaden</SelectItem>
               {learningPaths.map((learningPath) => (
                 <SelectItem key={learningPath.id} value={learningPath.id}>
                   {learningPath.title}
@@ -169,7 +172,7 @@ export const ProjectFilters: React.FC<ProjectFiltersProps> = ({
               <SelectValue placeholder="All types" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All types</SelectItem>
+              <SelectItem value="all">Alle types</SelectItem>
               {projectTypes.map((type) => (
                 <SelectItem key={type.value} value={type.value}>
                   {type.label}
