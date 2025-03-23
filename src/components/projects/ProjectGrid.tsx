@@ -2,40 +2,7 @@
 import React from 'react';
 import { ProjectCard } from './ProjectCard';
 import { Button } from '@/components/ui/button';
-
-interface Project {
-  id: string;
-  title: string;
-  description: {
-    document: any;
-  } | null;
-  projectType: string;
-  demoUrl?: string;
-  featured?: boolean;
-  student: {
-    id: string;
-    name: string;
-    class?: string;
-  };
-  assignment?: {
-    id: string;
-    title: string;
-  };
-  learningPath?: {
-    id: string;
-    title: string;
-  };
-  languages: {
-    id: string;
-    name: string;
-  }[];
-  screenshots: {
-    id: string;
-    image: {
-      url: string;
-    };
-  }[];
-}
+import { Project } from '@/types/project';
 
 interface ProjectGridProps {
   projects: Project[];
@@ -55,13 +22,13 @@ export function ProjectGrid({ projects, isLoading, error, onClearFilters, onRetr
       </div>
     );
   }
-  
+
   if (error) {
     return (
       <div className="text-center py-12 border rounded-lg">
         <p className="text-muted-foreground">{error}</p>
         {onRetry && (
-          <Button 
+          <Button
             onClick={onRetry}
             className="mt-4"
           >
@@ -71,13 +38,13 @@ export function ProjectGrid({ projects, isLoading, error, onClearFilters, onRetr
       </div>
     );
   }
-  
+
   if (projects.length === 0) {
     return (
       <div className="text-center py-12 border rounded-lg">
         <p className="text-muted-foreground">No projects found matching your filters.</p>
         {onClearFilters && (
-          <Button 
+          <Button
             onClick={onClearFilters}
             className="mt-4"
           >
@@ -87,7 +54,7 @@ export function ProjectGrid({ projects, isLoading, error, onClearFilters, onRetr
       </div>
     );
   }
-  
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {projects.map((project) => (

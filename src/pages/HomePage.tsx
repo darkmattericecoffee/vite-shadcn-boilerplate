@@ -1,52 +1,11 @@
-// src/pages/HomePage.tsx - Fixed Project interface
+// src/pages/HomePage.tsx
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { ProjectCard } from '@/components/projects/ProjectCard';
 import { getProjects } from '@/lib/api';
 import { ArrowRightIcon, GemIcon } from 'lucide-react';
-
-// Updated Project interface to match the schema and API
-interface Project {
-  id: string;
-  title: string;
-  description?: {
-    document: any;
-  } | null;
-  projectType?: string;
-  demoUrl?: string;
-  featured?: boolean;
-  students?: {
-    id: string;
-    name: string;
-    class?: {
-      name: string;
-    };
-  }[];
-  assignment?: {
-    id: string;
-    title: string;
-  };
-  learningPath?: {
-    id: string;
-    title: string;
-  };
-  languages?: {
-    id: string;
-    name: string;
-  }[];
-  screenshots?: {
-    id: string;
-    image: {
-      url: string;
-      width?: number;
-      height?: number;
-      filesize?: number;
-    };
-    caption?: string;
-  }[];
-  createdAt?: string;
-}
+import { Project } from '@/types/project';
 
 export const HomePage = () => {
   const [featuredProjects, setFeaturedProjects] = useState<Project[]>([]);
@@ -65,8 +24,7 @@ export const HomePage = () => {
           const validProjects = data.projects
             .filter((project: any) => 
               project && 
-              project.students && 
-              project.students.length > 0
+              ((project.students && project.students.length > 0) || project.student)
             )
             .slice(0, 6); // Limit to 6 projects for the homepage
             
