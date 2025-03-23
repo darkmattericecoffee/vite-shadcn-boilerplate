@@ -5,6 +5,8 @@ import { GraduationCapIcon } from "lucide-react";
 import { getFullUrl } from '@/lib/api';
 import InitialsAvatar from '../ui/InitialsAvatar';
 
+
+
 // Interface for the compact project card
 interface ProjectCardCompactProps {
   project: any; // Using any to avoid type issues, can be refined later

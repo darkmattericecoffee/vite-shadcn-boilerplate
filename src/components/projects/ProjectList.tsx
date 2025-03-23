@@ -3,31 +3,8 @@ import React from 'react';
 import { ProjectCard } from './ProjectCard.js';
 import { ProjectFilters } from './ProjectFilters.js';
 
-type Project = {
-  id: string;
-  title: string;
-  student: {
-    name: string;
-    class?: string;
-  };
-  assignment?: {
-    title: string;
-  };
-  languages: Array<{
-    name: string;
-  }>;
-  projectType: string;
-  screenshots?: Array<{
-    image?: {
-      url: string;
-      width?: number;
-      height?: number;
-      filesize?: number;
-    };
-    caption?: string;
-  }>;
-  createdAt: string;
-};
+// Import the Project type from your types file instead of redefining it
+import { Project } from '../../types/project';
 
 type ProjectListProps = {
   projects: Project[];
@@ -58,30 +35,16 @@ const ProjectList: React.FC<ProjectListProps> = ({ projects, loading }) => {
 
   // Detailed project data logging for debugging
   console.log("Full Projects data:", JSON.stringify(projects, null, 2));
-  
+
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
       {projects.map((project) => {
-        // Get thumbnail from first screenshot's image, if available
-        let thumbnailUrl: string | undefined = undefined;
+        console.log(`Project ${project.title} data:`, project);
         
-        if (project.screenshots && project.screenshots.length > 0 && project.screenshots[0].image) {
-          thumbnailUrl = project.screenshots[0].image.url;
-        }
-        
-        console.log(`Project ${project.title} thumbnailUrl:`, thumbnailUrl);
-          
         return (
           <ProjectCard
             key={project.id}
-            id={project.id}
-            title={project.title}
-            student={project.student}
-            assignment={project.assignment}
-            languages={project.languages}
-            projectType={project.projectType}
-            thumbnailUrl={thumbnailUrl}
-            createdAt={project.createdAt}
+            project={project}
           />
         );
       })}

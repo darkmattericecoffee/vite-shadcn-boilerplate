@@ -23,42 +23,8 @@ import {
 import { getFullUrl } from '@/lib/api';
 import InitialsAvatar from '../ui/InitialsAvatar';
 
-// Define the Project interface - updated to support multiple students
-interface Project {
-  id: string;
-  title: string;
-  description?: {
-    document: any;
-  } | null;
-  projectType?: string;
-  demoUrl?: string;
-  featured?: boolean;
-  students?: {
-    id: string;
-    name: string;
-    class?: {
-      name: string;
-    };
-  }[];
-  assignment?: {
-    id: string;
-    title: string;
-  };
-  learningPath?: {
-    id: string;
-    title: string;
-  };
-  languages?: {
-    id: string;
-    name: string;
-  }[];
-  screenshots?: {
-    id: string;
-    image: {
-      url: string;
-    };
-  }[];
-}
+// Import the Project type from your types file
+import { Project } from '@/types/project';
 
 interface ProjectCardProps {
   project: Project;
@@ -69,7 +35,8 @@ export function ProjectCard({ project }: ProjectCardProps) {
   if (!project) return null;
   
   // Get first screenshot as cover image
-  const coverImage = project.screenshots && project.screenshots.length > 0 && project.screenshots[0].image
+  const coverImage = project.screenshots && project.screenshots.length > 0 && 
+    project.screenshots[0].image && project.screenshots[0].image.url
     ? getFullUrl(project.screenshots[0].image.url)
     : null;
   
@@ -114,6 +81,18 @@ export function ProjectCard({ project }: ProjectCardProps) {
   const formatStudentInfo = () => {
     // If there are no students, return empty string
     if (!project.students || project.students.length === 0) {
+      // Check if there's a legacy student property
+      if (project.student) {
+        return (
+          <div className="flex items-center text-sm text-muted-foreground mb-3">
+            <InitialsAvatar name={project.student.name} size='s' />
+            <span className="ml-1">{project.student.name}</span>
+            {project.student.class && (
+              <span className="ml-1 text-xs opacity-70">({project.student.class})</span>
+            )}
+          </div>
+        );
+      }
       return '';
     }
     
@@ -133,26 +112,26 @@ export function ProjectCard({ project }: ProjectCardProps) {
     
     // If there are multiple students, handle the display differently
     return (
-<div className="flex flex-col text-sm text-muted-foreground mb-3">
-    <div className="flex items-center mb-1">
-      <UsersIcon size={14} className="mr-1" />
-      <span className="font-medium">Samenwerking</span>
-      <span className="ml-1 text-xs opacity-70">({project.students.length} leerlingen)</span>
-    </div>
-    <div className="flex flex-wrap gap-1">
-      {project.students.map((student, index) => (
-        <div key={student.id} className="flex items-center">
-          <InitialsAvatar 
-            name={student.name} 
-            size='s' 
-            colorIndex={index} // Use the array index for color selection
-          />
-          <span className="ml-1 text-xs">{student.name}</span>
-          {project.students && index < project.students.length - 1 && <span className="ml-1">+</span>}
+      <div className="flex flex-col text-sm text-muted-foreground mb-3">
+        <div className="flex items-center mb-1">
+          <UsersIcon size={14} className="mr-1" />
+          <span className="font-medium">Samenwerking</span>
+          <span className="ml-1 text-xs opacity-70">({project.students.length} leerlingen)</span>
         </div>
-      ))}
-    </div>
-  </div>
+        <div className="flex flex-wrap gap-1">
+          {project.students.map((student, index) => (
+            <div key={student.id} className="flex items-center">
+              <InitialsAvatar 
+                name={student.name} 
+                size='s' 
+                colorIndex={index} // Use the array index for color selection
+              />
+              <span className="ml-1 text-xs">{student.name}</span>
+              {project.students && index < project.students.length - 1 && <span className="ml-1">+</span>}
+            </div>
+          ))}
+        </div>
+      </div>
     );
   };
 
