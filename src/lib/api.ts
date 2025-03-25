@@ -1,7 +1,6 @@
 // src/lib/api.ts - Refactored API methods with graduationYear handling
-
-export const API_URL = '/api/graphql';  // Use relative path
-export const API_BASE_URL = '';  // Use empty string for same origin
+export const API_URL = '/api/graphql'; // Use relative path
+export const API_BASE_URL = ''; // Use empty string for same origin
 //export const API_URL = 'http://localhost:3000/api/graphql';
 //export const API_BASE_URL = 'http://localhost:3000';
 import { Project } from "@/types/learning-path";
