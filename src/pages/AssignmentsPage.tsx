@@ -219,7 +219,7 @@ const AssignmentsPage = () => {
         <h1 className="text-3xl font-bold tracking-tight mb-6">Opdrachten</h1>
 
         {filteredAssignments.length > 0 ? (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {filteredAssignments.map((assignment) => (
               <Link 
                 to={`/assignments/${assignment.id}`} 
@@ -290,7 +290,7 @@ const AssignmentsPage = () => {
                     <Button variant="default" className="flex-1 pointer-events-none">
                       <div className="flex items-center justify-center">
                         <FileTextIcon size={16} className="mr-2" />
-                        Toon Details
+                        Details
                       </div>
                     </Button>
                     <Button 
@@ -299,14 +299,14 @@ const AssignmentsPage = () => {
                       className="flex-1"
                       onClick={(e) => e.stopPropagation()}
                     >
-                      <Link 
+                        <Link 
                         to={`/projects?assignment=${assignment.id}`} 
                         className="flex items-center justify-center"
                         onClick={(e) => e.stopPropagation()}
-                      >
-                        <ChevronRightIcon size={16} className="mr-2" />
-                        Toon inzendingen
-                      </Link>
+                        >
+                        <ChevronRightIcon size={16} />
+                        Inzendingen
+                        </Link>
                     </Button>
                   </CardFooter>
                 </Card>

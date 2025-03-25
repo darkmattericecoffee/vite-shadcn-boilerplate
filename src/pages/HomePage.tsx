@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { ProjectCard } from '@/components/projects/ProjectCard';
 import { getProjects } from '@/lib/api';
-import { ArrowRightIcon, GemIcon } from 'lucide-react';
+import { ArrowRightIcon, BrainIcon, GemIcon, MessageCircleCodeIcon } from 'lucide-react';
 import { Project } from '@/types/project';
 
 export const HomePage = () => {
@@ -49,8 +49,8 @@ export const HomePage = () => {
       {/* Hero Section */}
       <section className="text-center py-12 px-4">
         <h1 className="text-4xl font-bold tracking-tight sm:text-5xl mb-6 flex items-center justify-center">
-          <GemIcon size={32} className="mr-2" />
-          Informatica Podium
+        <BrainIcon size={32} className="mr-2" /><MessageCircleCodeIcon size={32} className="mr-2" /><GemIcon size={32} className="mr-2" />
+          Code Podium
         </h1>
         <p className="text-xl text-muted-foreground max-w-2xl mx-auto mb-8">
           Ontdek geweldige projecten gemaakt door leerlingen. Van games en apps

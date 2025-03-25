@@ -15,8 +15,8 @@ interface ProjectGridProps {
 export function ProjectGrid({ projects, isLoading, error, onClearFilters, onRetry }: ProjectGridProps) {
   if (isLoading) {
     return (
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {[...Array(6)].map((_, index) => (
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        {[...Array(8)].map((_, index) => (
           <div key={index} className="bg-muted animate-pulse h-64 rounded-lg"></div>
         ))}
       </div>
