@@ -1,6 +1,7 @@
-// src/pages/ProjectsPage.tsx with sidebar filter layout
+// src/pages/ProjectsPage.tsx with smart bento grid and lazy loading skeleton
 import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import { useInView } from 'react-intersection-observer';
 import { 
   getProjects, 
   getStudents, 
@@ -13,6 +14,32 @@ import { ProjectCard } from '@/components/projects/ProjectCard';
 import { StarIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+
+// Array of possible grid span classes for random sizing
+const possibleSizes = [
+  'col-span-1 row-span-1',
+  'col-span-2 row-span-1',
+  'col-span-1 row-span-2',
+  'col-span-2 row-span-2'
+];
+
+// Lazy loader wrapper that shows a skeleton until in view
+const LazyProjectCard = ({ project, randomClass }: { project: any; randomClass: string }) => {
+  const { ref, inView } = useInView({
+    triggerOnce: true,
+    rootMargin: '100px'
+  });
+
+  return (
+    <div ref={ref} className={randomClass}>
+      {inView ? (
+        <ProjectCard project={project} />
+      ) : (
+        <div className="bg-muted animate-pulse h-64 rounded-lg" />
+      )}
+    </div>
+  );
+};
 
 const ProjectsPage = () => {
   // Filter state
@@ -287,7 +314,7 @@ const ProjectsPage = () => {
             
             <Tabs value={sortBy} onValueChange={handleSortChange} className="w-full md:w-auto">
               <TabsList>
-                <TabsTrigger value="newest">Niewste</TabsTrigger>
+                <TabsTrigger value="newest">Nieuwste</TabsTrigger>
                 <TabsTrigger value="oldest">Oudste</TabsTrigger>
                 <TabsTrigger value="title-asc">A-Z</TabsTrigger>
                 <TabsTrigger value="title-desc">Z-A</TabsTrigger>
@@ -314,7 +341,7 @@ const ProjectsPage = () => {
           </div>
         ) : projects.length === 0 ? (
           <div className="text-center py-12 border rounded-lg">
-              <p className="text-muted-foreground">Geen projecten gevonden die overeenkomen met je filters.</p>
+            <p className="text-muted-foreground">Geen projecten gevonden die overeenkomen met je filters.</p>
             {(selectedStudent !== 'all' || 
               selectedAssignment !== 'all' || 
               selectedLanguage !== 'all' || 
@@ -330,11 +357,14 @@ const ProjectsPage = () => {
             )}
           </div>
         ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {projects.map((project) => (
-              <ProjectCard key={project.id} project={project} />
-            ))}
-            </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 grid-flow-dense">
+            {projects.map((project) => {
+              const randomClass = possibleSizes[Math.floor(Math.random() * possibleSizes.length)];
+              return (
+                <LazyProjectCard key={project.id} project={project} randomClass={randomClass} />
+              );
+            })}
+          </div>
         )}
       </div>
     </div>
