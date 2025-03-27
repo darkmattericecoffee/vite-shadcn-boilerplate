@@ -1,4 +1,4 @@
-// src/pages/ProjectsPage.tsx with standard 4-column grid layout
+// src/pages/ProjectsPage.tsx with 3-column grid and updated card style
 import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useInView } from 'react-intersection-observer';
@@ -15,6 +15,15 @@ import { StarIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
+// Enhanced project card wrapper to match the new design
+const ProjectCardWrapper = ({ project }: { project: any }) => {
+  return (
+    <div className="bg-white rounded-lg shadow-sm overflow-hidden">
+      <ProjectCard project={project} />
+    </div>
+  );
+};
+
 // Lazy loader for project cards
 const LazyProjectCard = ({ project }: { project: any }) => {
   const { ref, inView } = useInView({
@@ -25,11 +34,9 @@ const LazyProjectCard = ({ project }: { project: any }) => {
   return (
     <div ref={ref} className="w-full">
       {inView ? (
-        <div className="rounded-lg border bg-card text-card-foreground shadow-sm overflow-hidden h-full">
-          <ProjectCard project={project} />
-        </div>
+        <ProjectCardWrapper project={project} />
       ) : (
-        <div className="bg-muted animate-pulse h-64 rounded-lg" />
+        <div className="bg-muted animate-pulse h-96 rounded-lg" />
       )}
     </div>
   );
@@ -318,9 +325,9 @@ const ProjectsPage = () => {
         </div>
         
         {isLoading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {[...Array(8)].map((_, index) => (
-              <div key={index} className="bg-muted animate-pulse h-64 rounded-lg"></div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+            {[...Array(6)].map((_, index) => (
+              <div key={index} className="bg-muted animate-pulse h-96 rounded-lg"></div>
             ))}
           </div>
         ) : error ? (
@@ -351,7 +358,7 @@ const ProjectsPage = () => {
             )}
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
             {projects.map((project) => (
               <LazyProjectCard key={project.id} project={project} />
             ))}
