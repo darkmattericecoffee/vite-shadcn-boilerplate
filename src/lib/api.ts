@@ -1,10 +1,11 @@
 // src/lib/api.ts - Refactored API methods with graduationYear handling
 //export const API_URL = '/api/graphql'; // Use relative path
 //export const API_BASE_URL = ''; // Use empty string for same origin
-export const API_URL = 'http://localhost:3000/api/graphql';
-export const API_BASE_URL = 'http://localhost:3000';
+export const API_URL = import.meta.env.VITE_API_URL || '/api/graphql';
+export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
 import { Project } from "@/types/learning-path";
 
+// Helper function to get the full URL for images or files
 // Helper function to get the full URL for images or files
 export const getFullUrl = (url?: string) => {
   if (!url) return undefined;
