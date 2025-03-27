@@ -1,4 +1,4 @@
-// src/pages/AssignmentsPage.tsx with sidebar filters
+// src/pages/AssignmentsPage.tsx with learning path sections and sidebar
 import React, { useEffect, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { getAssignments, getLearningPaths, getFullUrl } from '@/lib/api';
@@ -10,15 +10,10 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from '@/components/ui/button';
-import { BookOpenIcon, CalendarIcon, ChevronRightIcon, FileTextIcon, FilterIcon, LayersIcon, XIcon } from 'lucide-react';
+import { BookOpenIcon, CalendarIcon, ChevronRightIcon, FileTextIcon, LayersIcon } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+import { LearningPathButtons } from '@/components/assignment/assignment-learning-path-bubbles';
+import { LearningPathSidebar } from '@/components/assignment/assignment-learning-path-sidebar';
 
 const AssignmentsPage = () => {
   interface Screenshot {
@@ -48,6 +43,11 @@ const AssignmentsPage = () => {
     learningPath?: LearningPath;
   }
 
+  interface AssignmentsByLearningPath {
+    learningPath: LearningPath | null;
+    assignments: Assignment[];
+  }
+
   interface LearningPathOption {
     id: string;
     title: string;
@@ -56,11 +56,25 @@ const AssignmentsPage = () => {
   const [assignments, setAssignments] = useState<Assignment[]>([]);
   const [learningPaths, setLearningPaths] = useState<LearningPathOption[]>([]);
   const [filteredAssignments, setFilteredAssignments] = useState<Assignment[]>([]);
+  const [groupedAssignments, setGroupedAssignments] = useState<AssignmentsByLearningPath[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchParams, setSearchParams] = useSearchParams();
-  const [selectedLearningPath, setSelectedLearningPath] = useState<string>(
-    searchParams.get('learningPath') || 'all'
+  const [selectedLearningPathId, setSelectedLearningPathId] = useState<string | null>(
+    searchParams.get('learningPath') || null
   );
+  const [viewMode, setViewMode] = useState<'desktop' | 'mobile'>(
+    window.innerWidth > 768 ? 'desktop' : 'mobile'
+  );
+
+  // Handle window resize for responsive layout
+  useEffect(() => {
+    const handleResize = () => {
+      setViewMode(window.innerWidth > 768 ? 'desktop' : 'mobile');
+    };
+    
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -85,35 +99,69 @@ const AssignmentsPage = () => {
     fetchData();
   }, []);
 
-  // Apply filters whenever assignments or selected learning path changes
+  // Apply filters and group assignments by learning path
   useEffect(() => {
-    if (selectedLearningPath === 'all') {
-      setFilteredAssignments(assignments);
-    } else {
-      setFilteredAssignments(
-        assignments.filter(
-          assignment => assignment.learningPath && assignment.learningPath.id === selectedLearningPath
-        )
+    // First filter assignments by selected learning path
+    let filtered = [...assignments];
+    
+    if (selectedLearningPathId) {
+      filtered = filtered.filter(
+        assignment => assignment.learningPath && assignment.learningPath.id === selectedLearningPathId
       );
     }
-  }, [assignments, selectedLearningPath]);
+    
+    setFilteredAssignments(filtered);
+    
+    // Then group them by learning path
+    const grouped: { [key: string]: AssignmentsByLearningPath } = {};
+    
+    // First add assignments with learning paths
+    filtered.forEach(assignment => {
+      if (assignment.learningPath) {
+        const lpId = assignment.learningPath.id;
+        if (!grouped[lpId]) {
+          grouped[lpId] = {
+            learningPath: assignment.learningPath,
+            assignments: []
+          };
+        }
+        grouped[lpId].assignments.push(assignment);
+      }
+    });
+    
+    // Then add assignments without learning paths
+    const withoutLearningPath = filtered.filter(assignment => !assignment.learningPath);
+    if (withoutLearningPath.length > 0) {
+      grouped['none'] = {
+        learningPath: null,
+        assignments: withoutLearningPath
+      };
+    }
+    
+    // Convert to array and sort
+    const groupedArray = Object.values(grouped).sort((a, b) => {
+      // Put "none" group at the end
+      if (!a.learningPath) return 1;
+      if (!b.learningPath) return -1;
+      // Sort by learning path title
+      return a.learningPath.title.localeCompare(b.learningPath.title);
+    });
+    
+    setGroupedAssignments(groupedArray);
+  }, [assignments, selectedLearningPathId]);
 
   // Update URL when filter changes
   useEffect(() => {
-    if (selectedLearningPath === 'all') {
+    if (!selectedLearningPathId) {
       searchParams.delete('learningPath');
     } else {
-      searchParams.set('learningPath', selectedLearningPath);
+      searchParams.set('learningPath', selectedLearningPathId);
     }
     setSearchParams(searchParams);
-  }, [selectedLearningPath, searchParams, setSearchParams]);
+  }, [selectedLearningPathId, searchParams, setSearchParams]);
 
-  const handleLearningPathChange = (value: string) => {
-    setSelectedLearningPath(value);
-  };
-
-  const clearFilters = () => {
-    setSelectedLearningPath('all');
+  const handleLearningPathSelect = (learningPathId: string | null) => {
+    setSelectedLearningPathId(learningPathId);
   };
 
   // Helper function to extract plain text from the document structure
@@ -149,9 +197,123 @@ const AssignmentsPage = () => {
     return '';
   };
 
+  // Helper function to get the color for a learning path
+  const getLearningPathColor = (title: string): string => {
+    const colors = [
+      'bg-pink-500',
+      'bg-purple-500',
+      'bg-blue-500',
+      'bg-cyan-500',
+      'bg-green-500',
+      'bg-yellow-500',
+      'bg-orange-500',
+      'bg-red-500',
+    ];
+    
+    // Simple hash function to map title to a color
+    const hash = title.split('').reduce((acc, char) => {
+      return acc + char.charCodeAt(0);
+    }, 0);
+    
+    return colors[hash % colors.length];
+  };
+
+  // Render assignment card
+  const renderAssignmentCard = (assignment: Assignment) => {
+    return (
+      <Link 
+        to={`/assignments/${assignment.id}`} 
+        key={assignment.id} 
+        className="block group"
+      >
+        <Card className="hover:shadow-md transition-shadow overflow-hidden h-full">
+          {assignment.screenshots && assignment.screenshots.length > 0 && (
+            <div className="relative h-48 overflow-hidden">
+              <img 
+                src={getFullUrl(assignment.screenshots[0].image.url)} 
+                alt={assignment.screenshots[0].caption || `${assignment.title} thumbnail`}
+                className="object-cover w-full h-full"
+              />
+              
+              {/* Learning Path Badge - Appear on top of the image */}
+              {assignment.learningPath && (
+                <div className="absolute top-3 right-3">
+                  <Badge 
+                    variant="secondary" 
+                    className={`flex items-center gap-1.5 ${getLearningPathColor(assignment.learningPath.title)} text-white`}
+                  >
+                    <LayersIcon size={12} />
+                    {assignment.learningPath.title}
+                  </Badge>
+                </div>
+              )}
+            </div>
+          )}
+          <CardHeader>
+            <div className="flex items-start justify-between">
+              <CardTitle className="flex items-center group-hover:text-primary transition-colors">
+                <BookOpenIcon size={20} className="mr-2 flex-shrink-0" />
+                <span>{assignment.title}</span>
+              </CardTitle>
+              
+              {/* If we don't have a screenshot but do have a learning path, show the badge here */}
+              {(!assignment.screenshots || assignment.screenshots.length === 0) && 
+              assignment.learningPath && (
+                <Badge 
+                  variant="secondary" 
+                  className={`flex items-center gap-1.5 ml-2 flex-shrink-0 ${getLearningPathColor(assignment.learningPath.title)} text-white`}
+                >
+                  <LayersIcon size={12} />
+                  {assignment.learningPath.title}
+                </Badge>
+              )}
+            </div>
+          </CardHeader>
+          <CardContent>
+            {assignment.dueDate && (
+              <div className="flex items-center text-muted-foreground mb-3">
+                <CalendarIcon size={16} className="mr-2" />
+                <span>Deadline: {new Date(assignment.dueDate).toLocaleDateString()}</span>
+              </div>
+            )}
+            
+            {assignment.description && (
+              <p className="text-sm text-muted-foreground line-clamp-3">
+                {getPlainTextDescription(assignment.description.document)}
+              </p>
+            )}
+          </CardContent>
+          <CardFooter className="flex gap-3">
+            <Button variant="default" className="flex-1 pointer-events-none">
+              <div className="flex items-center justify-center">
+                <FileTextIcon size={16} className="mr-2" />
+                Details
+              </div>
+            </Button>
+            <Button 
+              asChild 
+              variant="outline" 
+              className="flex-1"
+              onClick={(e) => e.stopPropagation()}
+            >
+                <Link 
+                to={`/projects?assignment=${assignment.id}`} 
+                className="flex items-center justify-center"
+                onClick={(e) => e.stopPropagation()}
+                >
+                <ChevronRightIcon size={16} />
+                Inzendingen
+                </Link>
+            </Button>
+          </CardFooter>
+        </Card>
+      </Link>
+    );
+  };
+
   if (loading) {
     return (
-      <div className="flex flex-col md:flex-row gap-6">
+      <div className="flex flex-col md:flex-row gap-6 h-[calc(100vh-4rem)]">
         <div className="w-full md:w-64 lg:w-72 flex-shrink-0">
           <div className="bg-muted animate-pulse h-64 rounded-lg"></div>
         </div>
@@ -168,161 +330,65 @@ const AssignmentsPage = () => {
   }
 
   return (
-    <div className="flex flex-col md:flex-row gap-6">
-      {/* Sidebar Filters */}
-      <div className="w-full md:w-64 lg:w-72 flex-shrink-0">
-        <div className="bg-card border rounded-lg p-4 h-full">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-medium flex items-center">
-              <FilterIcon size={18} className="mr-2" />
-              Filter Opdrachten
-            </h2>
-            
-            {selectedLearningPath !== 'all' && (
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                onClick={clearFilters}
-                className="flex items-center text-muted-foreground hover:text-foreground"
-              >
-                <XIcon size={14} className="mr-1" />
-                Wis filters
-              </Button>
-            )}
-          </div>
-          
-          <div className="space-y-4">
-            <div>
-              <label className="text-sm font-medium block mb-2">Leerpad</label>
-              <Select value={selectedLearningPath} onValueChange={handleLearningPathChange}>
-                <SelectTrigger>
-                  <SelectValue placeholder="All learning paths" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Alle leerpaden</SelectItem>
-                  {learningPaths.map((path) => (
-                    <SelectItem key={path.id} value={path.id}>
-                      {path.title}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            
-            {/* You can add more filters here later if needed */}
-          </div>
-        </div>
-      </div>
+    <div className="flex flex-col md:flex-row gap-6 h-[calc(100vh-4rem)]">
+      {/* Sidebar for desktop view */}
+      {viewMode === 'desktop' && (
+        <LearningPathSidebar 
+          learningPaths={learningPaths}
+          selectedLearningPathId={selectedLearningPathId}
+          onLearningPathSelect={handleLearningPathSelect}
+        />
+      )}
       
       {/* Main Content */}
-      <div className="flex-1">
-        <h1 className="text-3xl font-bold tracking-tight mb-6">Opdrachten</h1>
+      <div className="flex-1 overflow-auto p-6">
+        <h1 className="text-3xl font-bold tracking-tight mb-4">Opdrachten</h1>
+
+        {/* Filter buttons for all views */}
+        <LearningPathButtons 
+          learningPaths={learningPaths}
+          selectedLearningPathId={selectedLearningPathId}
+          onLearningPathSelect={handleLearningPathSelect}
+        />
 
         {filteredAssignments.length > 0 ? (
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {filteredAssignments.map((assignment) => (
-              <Link 
-                to={`/assignments/${assignment.id}`} 
-                key={assignment.id} 
-                className="block group"
-              >
-                <Card className="hover:shadow-md transition-shadow overflow-hidden h-full">
-                  {assignment.screenshots && assignment.screenshots.length > 0 && (
-                    <div className="relative h-48 overflow-hidden">
-                      <img 
-                        src={getFullUrl(assignment.screenshots[0].image.url)} 
-                        alt={assignment.screenshots[0].caption || `${assignment.title} thumbnail`}
-                        className="object-cover w-full h-full"
-                      />
-                      
-                      {/* Learning Path Badge - Appear on top of the image */}
-                      {assignment.learningPath && (
-                        <div className="absolute top-3 right-3">
-                          <Badge variant="secondary" className="flex items-center gap-1.5 bg-background/80 backdrop-blur-sm">
-                            <LayersIcon size={12} />
-                            {assignment.learningPath.title}
-                          </Badge>
-                        </div>
-                      )}
-                    </div>
+          <div className="space-y-16">
+            {groupedAssignments.map((group) => (
+              <div key={group.learningPath?.id || 'none'} className="space-y-6">
+                <div>
+                  <div className="flex items-center gap-2">
+                    <LayersIcon size={20} />
+                    <h2 className="text-2xl font-semibold">
+                      {group.learningPath ? group.learningPath.title : "Overige Opdrachten"}
+                    </h2>
+                    <Badge variant="outline">{group.assignments.length}</Badge>
+                  </div>
+                  
+                  {/* Colored underline that matches the learning path color */}
+                  {group.learningPath && (
+                    <div className={`h-1 w-24 mt-2 rounded-full ${getLearningPathColor(group.learningPath.title)}`}></div>
                   )}
-                  <CardHeader>
-                    <div className="flex items-start justify-between">
-                      <CardTitle className="flex items-center group-hover:text-primary transition-colors">
-                        <BookOpenIcon size={20} className="mr-2 flex-shrink-0" />
-                        <span>{assignment.title}</span>
-                      </CardTitle>
-                      
-                      {/* If we don't have a screenshot but do have a learning path, show the badge here */}
-                      {(!assignment.screenshots || assignment.screenshots.length === 0) && 
-                      assignment.learningPath && (
-                        <Badge variant="secondary" className="flex items-center gap-1.5 ml-2 flex-shrink-0">
-                          <LayersIcon size={12} />
-                          Leerpad
-                        </Badge>
-                      )}
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    {assignment.dueDate && (
-                      <div className="flex items-center text-muted-foreground mb-3">
-                        <CalendarIcon size={16} className="mr-2" />
-                        <span>Deadline: {new Date(assignment.dueDate).toLocaleDateString()}</span>
-                      </div>
-                    )}
-                    
-                    {/* Learning Path info - display when there's no screenshot */}
-                    {(!assignment.screenshots || assignment.screenshots.length === 0) && 
-                    assignment.learningPath && (
-                      <div className="flex items-center text-muted-foreground mb-3">
-                        <LayersIcon size={16} className="mr-2" />
-                        <span>Leerpad: {assignment.learningPath.title}</span>
-                      </div>
-                    )}
-                    
-                    {assignment.description && (
-                      <p className="text-sm text-muted-foreground line-clamp-3">
-                        {getPlainTextDescription(assignment.description.document)}
-                      </p>
-                    )}
-                  </CardContent>
-                  <CardFooter className="flex gap-3">
-                    <Button variant="default" className="flex-1 pointer-events-none">
-                      <div className="flex items-center justify-center">
-                        <FileTextIcon size={16} className="mr-2" />
-                        Details
-                      </div>
-                    </Button>
-                    <Button 
-                      asChild 
-                      variant="outline" 
-                      className="flex-1"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                        <Link 
-                        to={`/projects?assignment=${assignment.id}`} 
-                        className="flex items-center justify-center"
-                        onClick={(e) => e.stopPropagation()}
-                        >
-                        <ChevronRightIcon size={16} />
-                        Inzendingen
-                        </Link>
-                    </Button>
-                  </CardFooter>
-                </Card>
-              </Link>
+                  {!group.learningPath && (
+                    <div className="h-1 w-24 mt-2 rounded-full bg-gray-500"></div>
+                  )}
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {group.assignments.map(renderAssignmentCard)}
+                </div>
+              </div>
             ))}
           </div>
         ) : (
           <div className="text-center py-12 border rounded-lg">
-              <p className="text-muted-foreground">Geen opdrachten gevonden die overeenkomen met de geselecteerde filters.</p>
-            {selectedLearningPath !== 'all' && (
+            <p className="text-muted-foreground">Geen opdrachten gevonden die overeenkomen met de geselecteerde filters.</p>
+            {selectedLearningPathId && (
               <Button 
                 variant="outline" 
                 className="mt-4"
-                onClick={clearFilters}
+                onClick={() => handleLearningPathSelect(null)}
               >
-                Wis Filters
+                Toon alle opdrachten
               </Button>
             )}
           </div>

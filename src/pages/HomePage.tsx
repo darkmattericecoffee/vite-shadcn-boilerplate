@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { ProjectCard } from '@/components/projects/ProjectCard';
 import { getProjects } from '@/lib/api';
-import { ArrowRightIcon, BrainIcon, GemIcon, MessageCircleCodeIcon } from 'lucide-react';
+import { ArrowRightIcon, BrainIcon, GemIcon, MessageCircleCodeIcon, PresentationIcon } from 'lucide-react';
 import { Project } from '@/types/project';
 
 export const HomePage = () => {

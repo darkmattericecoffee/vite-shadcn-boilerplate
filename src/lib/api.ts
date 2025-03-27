@@ -1,8 +1,8 @@
 // src/lib/api.ts - Refactored API methods with graduationYear handling
-export const API_URL = '/api/graphql'; // Use relative path
-export const API_BASE_URL = ''; // Use empty string for same origin
-//export const API_URL = 'http://localhost:3000/api/graphql';
-//export const API_BASE_URL = 'http://localhost:3000';
+//export const API_URL = '/api/graphql'; // Use relative path
+//export const API_BASE_URL = ''; // Use empty string for same origin
+export const API_URL = 'http://localhost:3000/api/graphql';
+export const API_BASE_URL = 'http://localhost:3000';
 import { Project } from "@/types/learning-path";
 
 // Helper function to get the full URL for images or files
@@ -319,6 +319,7 @@ export async function getProjectById(id: string) {
     return { project: null };
   }
 }
+
 
 // Query to get all programming languages
 export async function getProgrammingLanguages() {
@@ -659,5 +660,44 @@ export async function createOrUpdateStudent(studentData: {
     `;
     
     return fetchGraphQL(query, variables);
+  }
+}
+
+// Function to get students with their project counts
+export async function getStudentsWithProjectCounts() {
+  const query = `
+    query GetStudentsWithProjectCounts {
+      students {
+        id
+        name
+        class {
+          id
+          name
+        }
+        graduationYear
+        projectsCount
+      }
+    }
+  `;
+
+  try {
+    const data = await fetchGraphQL(query);
+    // Add projectCount property to each student (if not already present)
+    if (data.students) {
+      data.students = data.students.map((student: { 
+        id: string; 
+        name: string; 
+        class?: { id: string; name: string }; 
+        graduationYear?: string;
+        projectsCount?: number 
+      }) => ({
+        ...student,
+        projectCount: student.projectsCount || 0
+      }));
+    }
+    return data;
+  } catch (error) {
+    console.error('Error in getStudentsWithProjectCounts:', error);
+    return { students: [] };
   }
 }

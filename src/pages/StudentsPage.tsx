@@ -1,7 +1,7 @@
 // src/pages/StudentsPage.tsx
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { getStudents } from '@/lib/api';
+import { getStudentsWithProjectCounts } from '@/lib/api'; // Updated import
 import {
   Card,
   CardContent,
@@ -45,7 +45,8 @@ export const StudentsPage = () => {
     const fetchStudents = async () => {
       try {
         setLoading(true);
-        const data = await getStudents();
+        // Use our new function to get students with project counts
+        const data = await getStudentsWithProjectCounts();
         setAllStudents(data.students);
         setStudents(data.students);
 
@@ -148,7 +149,7 @@ export const StudentsPage = () => {
         
         {students.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {students.map((student) => (
+            {students.map((student: Student) => (
               <Card key={student.id} className="overflow-hidden hover:shadow-md transition-shadow">
                 <CardHeader>
                   <div className="flex items-center gap-4">
@@ -171,7 +172,7 @@ export const StudentsPage = () => {
                   <Button asChild variant="outline" className="w-full" size="sm">
                     <Link to={`/projects?student=${student.id}`} className="flex items-center justify-center gap-2">
                       <GraduationCapIcon size={16} />
-                      Toon projecten
+                      Toon projecten {student.projectCount && student.projectCount > 0 ? `(${student.projectCount})` : ''}
                     </Link>
                   </Button>
                 </CardFooter>

@@ -6,11 +6,21 @@ export interface ProjectFile {
   id: string;
   description?: string;
   title?: string;
-  fileType?: string; // Added missing fileType property
+  fileType?: string;
   file?: {
     filename: string;
     url: string;
     filesize: number;
+  };
+}
+
+export interface CodeFile {
+  id: string;
+  description?: string;
+  file: {
+    filename: string;
+    url: string;
+    filesize?: number;
   };
 }
 
@@ -111,5 +121,6 @@ export interface Project {
   
   screenshots?: ProjectScreenshot[];
   files?: ProjectFile[];
+  codeFiles?: CodeFile[]; // Added codeFiles property
   zipArchives?: ProjectZipArchive[];
 }

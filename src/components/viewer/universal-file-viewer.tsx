@@ -1,3 +1,4 @@
+// src/components/ui/universal-file-viewer.tsx
 import React, { useState } from 'react';
 import DocViewer, { DocViewerRenderers, IDocument } from "react-doc-viewer";
 import { 

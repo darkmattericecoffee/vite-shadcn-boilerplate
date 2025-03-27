@@ -3,7 +3,7 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
-import { CheckIcon } from 'lucide-react';
+import { CheckIcon, GroupIcon, SchoolIcon } from 'lucide-react';
 
 interface ClassSidebarProps {
   classes: { id: string; name: string }[];
@@ -23,12 +23,18 @@ export const ClassSidebar = ({
   onGraduationYearSelect,
 }: ClassSidebarProps) => {
   return (
-    <div className="w-56 border-r h-full pr-1">
-      <div className="p-4 border-b">
-        <h2 className="font-semibold">Klassen</h2>
-      </div>
+    <div className="w-56 border-r h-full border rounded-lg p-4">
+      <div className="flex items-center justify-between mb-4">
+       
+       <div className="p-4 border-b">
+       <h2 className="font-semibold flex items-center gap-2">
+         <SchoolIcon size={16} />
+         Filteren
+       </h2>
+     </div>
+     </div>
       <ScrollArea className="h-[calc(100vh-12rem)]">
-        <div className="p-2">
+        <div className="pt-2">
           <Button
             variant={selectedClassId === null ? "secondary" : "ghost"}
             className="w-full justify-start mb-1"

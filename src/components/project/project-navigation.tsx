@@ -4,9 +4,10 @@ import { cn } from '@/lib/utils';
 import {
   BookOpenIcon,
   FileIcon,
+  FileTextIcon,
   ImageIcon,
   LinkIcon,
-  ActivityIcon,
+  PlayIcon,
   VideoIcon,
 } from 'lucide-react';
 
@@ -14,9 +15,10 @@ interface ProjectNavigationProps {
   activeSection: string;
   onSectionChange: (section: string) => void;
   hasInteractive?: boolean;
-  hasFiles: boolean;
-  hasScreenshots: boolean;
-  hasLink: boolean;
+  hasFiles?: boolean;
+  hasCodeFiles?: boolean;
+  hasScreenshots?: boolean;
+  hasLink?: boolean;
   hasVideo?: boolean;
 }
 
@@ -24,24 +26,37 @@ export function ProjectNavigation({
   activeSection,
   onSectionChange,
   hasInteractive = false,
-  hasFiles,
-  hasScreenshots,
-  hasLink,
+  hasFiles = false,
+  hasCodeFiles = false,
+  hasScreenshots = false,
+  hasLink = false,
   hasVideo = false,
 }: ProjectNavigationProps) {
   return (
-    <div className="sticky top-[79px] z-20 bg-background/95 backdrop-blur-sm border-b py-2">
+    <div className="bg-background/95 backdrop-blur-sm border-b py-2">
       <div className="max-w-screen-2xl mx-auto">
-        <div className="flex overflow-x-auto space-x-2 pb-2">
+        <div className="flex overflow-x-auto space-x-2 pb-2 px-4">
+          {/* Content tab is always present */}
+          <NavigationButton
+            id="content"
+            isActive={activeSection === 'content'}
+            onClick={() => onSectionChange('content')}
+            icon={<FileTextIcon size={16} />}
+            label="Beschrijving"
+          />
+
+          {/* Interactive content tab (if available) */}
           {hasInteractive && (
             <NavigationButton
               id="interactive"
               isActive={activeSection === 'interactive'}
               onClick={() => onSectionChange('interactive')}
-              icon={<ActivityIcon size={16} />}
-              label="Interactief"
+              icon={<PlayIcon size={16} />}
+              label="Interactive"
             />
           )}
+
+          {/* Video tab (if available) */}
           {hasVideo && (
             <NavigationButton
               id="video"
@@ -51,38 +66,48 @@ export function ProjectNavigation({
               label="Video"
             />
           )}
-          <NavigationButton
-            id="content"
-            isActive={activeSection === 'content'}
-            onClick={() => onSectionChange('content')}
-            icon={<BookOpenIcon size={16} />}
-            label="Inhoud"
-          />
+
+          {/* Files tab (if available) */}
           {hasFiles && (
             <NavigationButton
               id="files"
               isActive={activeSection === 'files'}
               onClick={() => onSectionChange('files')}
               icon={<FileIcon size={16} />}
-              label="Bestanden"
+              label="Files"
             />
           )}
+          
+          {/* Code Files tab (if available) */}
+          {hasCodeFiles && (
+            <NavigationButton
+              id="codeFiles"
+              isActive={activeSection === 'codeFiles'}
+              onClick={() => onSectionChange('codeFiles')}
+              icon={<FileTextIcon size={16} />}
+              label="Documenten"
+            />
+          )}
+
+          {/* Screenshots tab (if available) */}
           {hasScreenshots && (
             <NavigationButton
               id="screenshots"
               isActive={activeSection === 'screenshots'}
               onClick={() => onSectionChange('screenshots')}
               icon={<ImageIcon size={16} />}
-              label="Screenshots"
+              label="Afbeeldingen"
             />
           )}
+
+          {/* Link tab (if available) */}
           {hasLink && (
             <NavigationButton
               id="link"
               isActive={activeSection === 'link'}
               onClick={() => onSectionChange('link')}
               icon={<LinkIcon size={16} />}
-              label="Live Link"
+              label="Live Project"
             />
           )}
         </div>
@@ -111,7 +136,7 @@ function NavigationButton({
       id={`nav-${id}`}
       onClick={onClick}
       className={cn(
-        'flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-md transition-colors',
+        'flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-md transition-colors whitespace-nowrap',
         isActive ? 'bg-primary text-primary-foreground' : 'hover:bg-muted'
       )}
     >

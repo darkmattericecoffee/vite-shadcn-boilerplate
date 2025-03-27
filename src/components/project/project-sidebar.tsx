@@ -14,6 +14,7 @@ import {
   ExternalLinkIcon,
   TagIcon,
   VideoIcon,
+  FileTextIcon,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { getFullUrl } from "@/lib/api";
@@ -52,7 +53,9 @@ export function ProjectSidebar({
       })
     : null;
 
+  // Check for different file types
   const hasFiles = Boolean(project.files && project.files.length > 0);
+  const hasCodeFiles = Boolean(project.codeFiles && project.codeFiles.length > 0);
   const hasScreenshots = Boolean(
     project.screenshots && project.screenshots.length > 0
   );
@@ -89,7 +92,6 @@ export function ProjectSidebar({
 
   return (
     <>
-      {/* Student Information Card */}
       {/* Student Information Card */}
       <Card>
         <CardHeader className="pb-2">
@@ -275,6 +277,19 @@ export function ProjectSidebar({
                   </span>
                 </Button>
               )}
+              {hasCodeFiles && (
+                <Button
+                  variant="outline"
+                  className="w-full flex items-center justify-start"
+                  onClick={() => onSectionChange("codeFiles")}
+                >
+                  <FileTextIcon size={16} className="mr-2" />
+                  <span>
+                    {project.codeFiles!.length} Document
+                    {project.codeFiles!.length !== 1 ? "s" : ""}
+                  </span>
+                </Button>
+              )}
               {hasScreenshots && (
                 <Button
                   variant="outline"
@@ -291,10 +306,7 @@ export function ProjectSidebar({
             </div>
           </div>
         </CardContent>
-      </Card>
-
-      {/* Project Details Card */}
-      
+      </Card>      
     </>
   );
 }

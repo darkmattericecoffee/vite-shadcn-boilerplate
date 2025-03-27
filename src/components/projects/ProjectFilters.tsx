@@ -73,12 +73,15 @@ export const ProjectFilters: React.FC<ProjectFiltersProps> = ({
     selectedLearningPath !== 'all';
 
   return (
-    <div className="bg-card border rounded-lg p-4 h-full">
+    <div className="border rounded-lg p-6 h-full">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-lg font-medium flex items-center">
-          <FilterIcon size={18} className="mr-2" />
-          Filter Projecten
+       
+        <div className="p-4 border-b">
+        <h2 className="font-semibold flex items-center gap-2">
+          <FilterIcon size={16} />
+          Filteren
         </h2>
+      </div>
         
         {hasActiveFilters && (
           <Button 

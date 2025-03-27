@@ -2,19 +2,19 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { ArrowLeftIcon, MaximizeIcon, ExternalLinkIcon } from 'lucide-react';
+import { MaximizeIcon, ExternalLinkIcon } from 'lucide-react';
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
 import { getProjectById, getFullUrl } from '@/lib/api';
 
-// Import refactored project components
-import { ProjectHeader } from '@/components/project/project-header';
-import { ProjectNavigation } from '@/components/project/project-navigation';
+// Import project components
+import { ProjectHeaderWithNav } from '@/components/project/project-headernav';
 import { ProjectContent } from '@/components/project/project-content';
 import { ProjectFiles } from '@/components/project/project-files';
 import { ProjectScreenshots } from '@/components/project/project-screenshots';
 import { ProjectLink } from '@/components/project/project-link';
 import { ProjectSidebar } from '@/components/project/project-sidebar';
 import { ProjectVideo } from '@/components/project/project-video';
+import { ProjectCodeFiles } from '@/components/project/project-code-files';
 
 // Import the Project type
 import { Project } from '@/types/project';
@@ -31,6 +31,7 @@ export const ProjectDetailPage = () => {
   const videoRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   const filesRef = useRef<HTMLDivElement>(null);
+  const codeFilesRef = useRef<HTMLDivElement>(null);
   const screenshotsRef = useRef<HTMLDivElement>(null);
   const linkRef = useRef<HTMLDivElement>(null);
 
@@ -59,14 +60,19 @@ export const ProjectDetailPage = () => {
     if (!project) return;
 
     const hasFiles = Boolean(project.files && project.files.length > 0);
+    const hasCodeFiles = Boolean(project.codeFiles && project.codeFiles.length > 0);
     const hasScreenshots = Boolean(project.screenshots && project.screenshots.length > 0);
     const hasLink = Boolean(project.link);
     const hasInteractive = Boolean(hasInteractiveContent);
     const hasVideo = Boolean(project.embedCode);
 
+    // Adjust rootMargin to account for the sticky header height
+    const headerHeight = document.querySelector('.sticky-header')?.clientHeight || 0;
+    const rootMargin = `-${headerHeight + 20}px 0px -70% 0px`;
+
     const observerOptions = {
       root: null,
-      rootMargin: '-32px 0px -70% 0px', // Adjust for sticky header height
+      rootMargin,
       threshold: 0,
     };
 
@@ -83,6 +89,7 @@ export const ProjectDetailPage = () => {
     if (hasVideo && videoRef.current) observer.observe(videoRef.current);
     if (contentRef.current) observer.observe(contentRef.current);
     if (hasFiles && filesRef.current) observer.observe(filesRef.current);
+    if (hasCodeFiles && codeFilesRef.current) observer.observe(codeFilesRef.current);
     if (hasScreenshots && screenshotsRef.current) observer.observe(screenshotsRef.current);
     if (hasLink && linkRef.current) observer.observe(linkRef.current);
     
@@ -136,6 +143,9 @@ export const ProjectDetailPage = () => {
       case 'files':
         ref = filesRef;
         break;
+      case 'codeFiles':
+        ref = codeFilesRef;
+        break;
       case 'screenshots':
         ref = screenshotsRef;
         break;
@@ -145,7 +155,12 @@ export const ProjectDetailPage = () => {
     }
 
     if (ref && ref.current) {
-      ref.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      // Add offset for the sticky header
+      const headerHeight = document.querySelector('.sticky-header')?.clientHeight || 0;
+      const yOffset = -headerHeight - 20; // Additional 20px buffer
+      const y = ref.current.getBoundingClientRect().top + window.pageYOffset + yOffset;
+      
+      window.scrollTo({ top: y, behavior: 'smooth' });
     }
   };
 
@@ -169,44 +184,33 @@ export const ProjectDetailPage = () => {
       </div>
     );
   }
-
-  // Check if the project has a cover image to adjust navigation positioning
-  const hasCoverImage = project.screenshots && 
-    project.screenshots.length > 0 && 
-    project.screenshots[0].image;
+  
   return (
     <div className="space-y-8">
-      {/* Hero section with sticky header and back button */}
-      <div className="sticky top-0 z-20 pt-2 bg-background pb-2">
-        <Button variant="outline" size="sm" asChild className="mb-4">
-          <Link to="/projects" className="flex items-center">
-            <ArrowLeftIcon size={16} className="mr-2" />
-            Terug naar projecten
-          </Link>
-        </Button>
-        <ProjectHeader project={project} />
-      </div>
+      {/* Combined header and navigation with sticky positioning */}
+      <ProjectHeaderWithNav
+        project={project}
+        activeSection={activeSection}
+        onSectionChange={scrollToSection}
+        hasInteractive={Boolean(hasInteractiveContent)}
+        hasFiles={Boolean(project.files && project.files.length > 0)}
+        hasCodeFiles={Boolean(project.codeFiles && project.codeFiles.length > 0)}
+        hasScreenshots={Boolean(project.screenshots && project.screenshots.length > 0)}
+        hasLink={Boolean(project.link)}
+        hasVideo={Boolean(project.embedCode)}
+      />
 
       {/* Main content grid */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 pt-4">
         {/* Left side: main content */}
         <div className="lg:col-span-8 space-y-6">
-          {/* Navigation bar including interactive section when available */}
-          <div className={`sticky z-10 bg-background pt-2 pb-2 ${hasCoverImage ? 'top-36' : 'top-24'}`}>
-            <ProjectNavigation
-              activeSection={activeSection}
-              onSectionChange={scrollToSection}
-              hasInteractive={Boolean(hasInteractiveContent)}
-              hasFiles={Boolean(project.files && project.files.length > 0)}
-              hasScreenshots={Boolean(project.screenshots && project.screenshots.length > 0)}
-              hasLink={Boolean(project.link)}
-              hasVideo={Boolean(project.embedCode)}
-            />
-          </div>
-
           {/* Interactive content section */}
+          {/* Content section */}
+          <div id="content" ref={contentRef} className="scroll-mt-48">
+            <ProjectContent project={project} />
+          </div>
           {hasInteractiveContent && (
-            <div id="interactive" ref={interactiveRef} className="scroll-mt-32">
+            <div id="interactive" ref={interactiveRef} className="scroll-mt-48">
               <div className="relative border rounded-lg overflow-hidden">
                 <div className="aspect-video bg-white">
                   {interactiveContentUrl ? (
@@ -277,33 +281,37 @@ export const ProjectDetailPage = () => {
 
           {/* Video section */}
           {project.embedCode && (
-            <div id="video" ref={videoRef} className="scroll-mt-32">
+            <div id="video" ref={videoRef} className="scroll-mt-48">
               <ProjectVideo embedCode={project.embedCode} title="Video" />
             </div>
           )}
 
-          {/* Content section */}
-          <div id="content" ref={contentRef} className="scroll-mt-32">
-            <ProjectContent project={project} />
-          </div>
+          
 
           {/* Files section */}
           {project.files && project.files.length > 0 && (
-            <div id="files" ref={filesRef} className="scroll-mt-32">
+            <div id="files" ref={filesRef} className="scroll-mt-48">
               <ProjectFiles files={project.files} />
+            </div>
+          )}
+
+          {/* Code Files section */}
+          {project.codeFiles && project.codeFiles.length > 0 && (
+            <div id="codeFiles" ref={codeFilesRef} className="scroll-mt-48">
+              <ProjectCodeFiles codeFiles={project.codeFiles} />
             </div>
           )}
 
           {/* Screenshots section */}
           {project.screenshots && project.screenshots.length > 0 && (
-            <div id="screenshots" ref={screenshotsRef} className="scroll-mt-32">
+            <div id="screenshots" ref={screenshotsRef} className="scroll-mt-48">
               <ProjectScreenshots screenshots={project.screenshots} />
             </div>
           )}
 
           {/* Live link section */}
           {project.link && (
-            <div id="link" ref={linkRef} className="scroll-mt-32">
+            <div id="link" ref={linkRef} className="scroll-mt-48">
               <ProjectLink link={project.link} />
             </div>
           )}
@@ -311,7 +319,7 @@ export const ProjectDetailPage = () => {
 
         {/* Sidebar */}
         <div className="lg:col-span-4">
-          <div className="sticky top-40 space-y-6 pt-2">
+          <div className="sticky top-60 space-y-6 pt-2">
             <ProjectSidebar project={project} onSectionChange={scrollToSection} />
           </div>
         </div>
