@@ -1,4 +1,4 @@
-// src/pages/ProjectsPage.tsx with smart bento grid and lazy loading skeleton
+// src/pages/ProjectsPage.tsx with standard 4-column grid layout
 import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useInView } from 'react-intersection-observer';
@@ -15,25 +15,19 @@ import { StarIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
-// Array of possible grid span classes for random sizing
-const possibleSizes = [
-  'col-span-1 row-span-1',
-  'col-span-2 row-span-1',
-  'col-span-1 row-span-2',
-  'col-span-2 row-span-2'
-];
-
-// Lazy loader wrapper that shows a skeleton until in view
-const LazyProjectCard = ({ project, randomClass }: { project: any; randomClass: string }) => {
+// Lazy loader for project cards
+const LazyProjectCard = ({ project }: { project: any }) => {
   const { ref, inView } = useInView({
     triggerOnce: true,
     rootMargin: '100px'
   });
 
   return (
-    <div ref={ref} className={randomClass}>
+    <div ref={ref} className="w-full">
       {inView ? (
-        <ProjectCard project={project} />
+        <div className="rounded-lg border bg-card text-card-foreground shadow-sm overflow-hidden h-full">
+          <ProjectCard project={project} />
+        </div>
       ) : (
         <div className="bg-muted animate-pulse h-64 rounded-lg" />
       )}
@@ -324,8 +318,8 @@ const ProjectsPage = () => {
         </div>
         
         {isLoading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {[...Array(6)].map((_, index) => (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {[...Array(8)].map((_, index) => (
               <div key={index} className="bg-muted animate-pulse h-64 rounded-lg"></div>
             ))}
           </div>
@@ -357,13 +351,10 @@ const ProjectsPage = () => {
             )}
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 grid-flow-dense">
-            {projects.map((project) => {
-              const randomClass = possibleSizes[Math.floor(Math.random() * possibleSizes.length)];
-              return (
-                <LazyProjectCard key={project.id} project={project} randomClass={randomClass} />
-              );
-            })}
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {projects.map((project) => (
+              <LazyProjectCard key={project.id} project={project} />
+            ))}
           </div>
         )}
       </div>
