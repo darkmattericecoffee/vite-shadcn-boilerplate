@@ -402,38 +402,9 @@ const TimelinePage = () => {
   const renderAssignmentItem = (item: TimelineItem) => (
     <Link to={`/assignments/${item.id}`} className="block" key={`${item.type}-${item.id}`}>
       <Card className={`mb-3 hover:shadow-md transition-shadow border-l-4 ${item.isUpcoming ? 'border-l-purple-500' : (item.isPast ? 'border-l-gray-300' : 'border-l-blue-500')}`}>
-        <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-2">
-          <div>
-            <div className="flex items-center">
-              <BookOpenIcon size={16} className="mr-2" />
-              <CardTitle className="text-md font-medium">
-                {item.title}
-                {item.isUpcoming && (
-                  <Badge variant="outline" className="ml-2 bg-purple-100 text-purple-800 border-purple-300">
-                    Volgende deadline
-                  </Badge>
-                )}
-              </CardTitle>
-            </div>
-            {item.learningPathTitle && (
-              <Badge variant="secondary" className={`mt-1 flex w-fit items-center gap-1 ${getLearningPathColor(item.learningPathTitle)} text-white`}>
-                <LayersIcon size={12} />
-                {item.learningPathTitle}
-              </Badge>
-            )}
-          </div>
-          <Badge variant={item.isPast ? "outline" : "default"} className="flex items-center gap-1">
-            <CalendarIcon size={12} />
-            {item.date.toLocaleDateString('nl-NL', {
-              day: 'numeric',
-              month: 'short',
-              year: 'numeric'
-            })}
-          </Badge>
-        </CardHeader>
-        <CardContent className="pt-2">
+        <div className="flex">
           {item.screenshots && item.screenshots.length > 0 && (
-            <div className="h-32 w-full overflow-hidden rounded-md">
+            <div className="w-32 h-32 overflow-hidden">
               <img 
                 src={getFullUrl(item.screenshots[0].image.url)} 
                 alt={item.screenshots[0].caption || `${item.title} thumbnail`}
@@ -441,7 +412,41 @@ const TimelinePage = () => {
               />
             </div>
           )}
-        </CardContent>
+          <div className="flex-1">
+            <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-2">
+              <div>
+                <div className="flex items-center">
+                  <BookOpenIcon size={16} className="mr-2" />
+                  <CardTitle className="text-md font-medium">
+                    {item.title}
+                    {item.isUpcoming && (
+                      <Badge variant="outline" className="ml-2 bg-purple-100 text-purple-800 border-purple-300">
+                        Volgende deadline
+                      </Badge>
+                    )}
+                  </CardTitle>
+                </div>
+                {item.learningPathTitle && (
+                  <Badge variant="secondary" className={`mt-1 flex w-fit items-center gap-1 ${getLearningPathColor(item.learningPathTitle)} text-white`}>
+                    <LayersIcon size={12} />
+                    {item.learningPathTitle}
+                  </Badge>
+                )}
+              </div>
+              <Badge variant={item.isPast ? "outline" : "default"} className="flex items-center gap-1">
+                <CalendarIcon size={12} />
+                {item.date.toLocaleDateString('nl-NL', {
+                  day: 'numeric',
+                  month: 'short',
+                  year: 'numeric'
+                })}
+              </Badge>
+            </CardHeader>
+            <CardContent className="pt-2">
+              {/* Screenshot moved to the left */}
+            </CardContent>
+          </div>
+        </div>
       </Card>
     </Link>
   );
@@ -595,67 +600,72 @@ const TimelinePage = () => {
                           <div className={`absolute -left-10 top-1/2 transform -translate-y-1/2 h-4 w-4 rounded-full border-2 border-white ${isUpcoming ? 'bg-purple-500' : (isPast ? 'bg-gray-300' : 'bg-blue-500')}`}></div>
                           
                           <Link to={`/assignments/${assignment.id}`}>
-                            <Card className={`hover:shadow-md transition-shadow ${isUpcoming ? 'border-purple-200 bg-purple-50' : ''}`}>
-                              <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-2">
-                                <div>
-                                  <div className="flex items-center">
-                                    <BookOpenIcon size={16} className="mr-2" />
-                                    <CardTitle className="text-md font-medium">
-                                      {assignment.title}
-                                      {isUpcoming && (
-                                        <Badge variant="outline" className="ml-2 bg-purple-100 text-purple-800 border-purple-300">
-                                          Volgende deadline
-                                        </Badge>
-                                      )}
-                                    </CardTitle>
-                                  </div>
-                                  {assignment.orderInPath && (
-                                    <span className="text-sm text-muted-foreground">
-                                      Onderdeel {assignment.orderInPath}
-                                    </span>
-                                  )}
-                                </div>
-                                <div className="flex items-center">
-                                  {holidayDuringDeadline && (
-                                    <TooltipProvider>
-                                      <Tooltip>
-                                        <TooltipTrigger asChild>
-                                          <div 
-                                            className="h-5 w-5 rounded-full mr-2 flex items-center justify-center cursor-help" 
-                                            style={{ backgroundColor: holidayDuringDeadline.color }}
-                                          >
-                                            <UmbrellaIcon size={12} />
-                                          </div>
-                                        </TooltipTrigger>
-                                        <TooltipContent>
-                                          <p>Deadline valt tijdens {holidayDuringDeadline.name}</p>
-                                        </TooltipContent>
-                                      </Tooltip>
-                                    </TooltipProvider>
-                                  )}
-                                  <Badge variant={isPast ? "outline" : "default"} className={`flex items-center gap-1 ${isUpcoming ? 'bg-purple-500' : ''}`}>
-                                    <CalendarIcon size={12} />
-                                    {assignment.dueDateObj?.toLocaleDateString('nl-NL', {
-                                      day: 'numeric',
-                                      month: 'short',
-                                      year: 'numeric'
-                                    })}
-                                  </Badge>
-                                </div>
-                              </CardHeader>
-                              <CardContent className="pt-2">
-                                {assignment.screenshots && assignment.screenshots.length > 0 && (
-                                  <div className="h-32 w-full overflow-hidden rounded-md">
-                                    <img 
-                                      src={getFullUrl(assignment.screenshots[0].image.url)} 
-                                      alt={assignment.screenshots[0].caption || `${assignment.title} thumbnail`}
-                                      className="h-full w-full object-cover"
-                                    />
-                                  </div>
-                                )}
-                              </CardContent>
-                            </Card>
-                          </Link>
+  <Card className={`hover:shadow-md transition-shadow ${isUpcoming ? 'border-purple-200 bg-purple-50' : ''}`}>
+    <div className="flex">
+      {assignment.screenshots && assignment.screenshots.length > 0 && (
+        <div className="w-32 h-auto overflow-hidden">
+          <img 
+            src={getFullUrl(assignment.screenshots[0].image.url)} 
+            alt={assignment.screenshots[0].caption || `${assignment.title} thumbnail`}
+            className="h-full w-full object-cover"
+          />
+        </div>
+      )}
+      <div className="flex-1">
+        <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-2">
+          <div>
+            <div className="flex items-center">
+              <BookOpenIcon size={16} className="mr-2" />
+              <CardTitle className="text-md font-medium">
+                {assignment.title}
+                {isUpcoming && (
+                  <Badge variant="outline" className="ml-2 bg-purple-100 text-purple-800 border-purple-300">
+                    Volgende deadline
+                  </Badge>
+                )}
+              </CardTitle>
+            </div>
+            {assignment.orderInPath && (
+              <span className="text-sm text-muted-foreground">
+                Onderdeel {assignment.orderInPath}
+              </span>
+            )}
+          </div>
+          <div className="flex items-center">
+            {holidayDuringDeadline && (
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <div 
+                      className="h-5 w-5 rounded-full mr-2 flex items-center justify-center cursor-help" 
+                      style={{ backgroundColor: holidayDuringDeadline.color }}
+                    >
+                      <UmbrellaIcon size={12} />
+                    </div>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Deadline valt tijdens {holidayDuringDeadline.name}</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            )}
+            <Badge variant={isPast ? "outline" : "default"} className={`flex items-center gap-1 ${isUpcoming ? 'bg-purple-500' : ''}`}>
+              <CalendarIcon size={12} />
+              {assignment.dueDateObj?.toLocaleDateString('nl-NL', {
+                day: 'numeric',
+                month: 'short',
+                year: 'numeric'
+              })}
+            </Badge>
+          </div>
+        </CardHeader>
+        <CardContent className="pt-0">
+          {/* Content here if needed */}
+        </CardContent>
+      </div>
+    </div>
+  </Card>
+</Link>
                         </div>
                       );
                     } else {
