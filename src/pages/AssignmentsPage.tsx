@@ -1,4 +1,4 @@
-// src/pages/AssignmentsPage.tsx with learning path sections and sidebar
+// src/pages/AssignmentsPage.tsx with deadline sorting functionality
 import React, { useEffect, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { getAssignments, getLearningPaths, getFullUrl } from '@/lib/api';
@@ -10,10 +10,28 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from '@/components/ui/button';
-import { BookOpenIcon, CalendarIcon, ChevronRightIcon, FileTextIcon, LayersIcon } from 'lucide-react';
+import { 
+  BookOpenIcon, 
+  CalendarIcon, 
+  ChevronRightIcon, 
+  FileTextIcon, 
+  LayersIcon,
+  SortAscIcon,
+  SortDescIcon,
+  CalendarClockIcon
+} from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { LearningPathButtons } from '@/components/assignment/assignment-learning-path-bubbles';
 import { LearningPathSidebar } from '@/components/assignment/assignment-learning-path-sidebar';
+import { 
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger 
+} from "@/components/ui/dropdown";
+
+
+
 
 const AssignmentsPage = () => {
   interface Screenshot {
@@ -39,6 +57,7 @@ const AssignmentsPage = () => {
       document: any;
     };
     dueDate?: string;
+    dueDateObj?: Date; // Added for sorting
     screenshots?: Screenshot[];
     learningPath?: LearningPath;
   }
@@ -53,6 +72,8 @@ const AssignmentsPage = () => {
     title: string;
   }
 
+  type SortOrder = 'default' | 'deadlineAsc' | 'deadlineDesc';
+
   const [assignments, setAssignments] = useState<Assignment[]>([]);
   const [learningPaths, setLearningPaths] = useState<LearningPathOption[]>([]);
   const [filteredAssignments, setFilteredAssignments] = useState<Assignment[]>([]);
@@ -61,6 +82,9 @@ const AssignmentsPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [selectedLearningPathId, setSelectedLearningPathId] = useState<string | null>(
     searchParams.get('learningPath') || null
+  );
+  const [sortOrder, setSortOrder] = useState<SortOrder>(
+    (searchParams.get('sort') as SortOrder) || 'default'
   );
   const [viewMode, setViewMode] = useState<'desktop' | 'mobile'>(
     window.innerWidth > 768 ? 'desktop' : 'mobile'
@@ -87,7 +111,15 @@ const AssignmentsPage = () => {
           getLearningPaths()
         ]);
         
-        setAssignments(assignmentsData.assignments);
+        // Process assignments to add date objects for sorting
+        const processedAssignments = assignmentsData.assignments.map((assignment: Assignment) => {
+          return {
+            ...assignment,
+            dueDateObj: assignment.dueDate ? new Date(assignment.dueDate) : undefined
+          };
+        });
+        
+        setAssignments(processedAssignments);
         setLearningPaths(learningPathsData.learningPaths);
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -99,7 +131,7 @@ const AssignmentsPage = () => {
     fetchData();
   }, []);
 
-  // Apply filters and group assignments by learning path
+  // Apply filters, sorting, and group assignments by learning path
   useEffect(() => {
     // First filter assignments by selected learning path
     let filtered = [...assignments];
@@ -108,6 +140,23 @@ const AssignmentsPage = () => {
       filtered = filtered.filter(
         assignment => assignment.learningPath && assignment.learningPath.id === selectedLearningPathId
       );
+    }
+    
+    // Apply sorting if needed
+    if (sortOrder === 'deadlineAsc') {
+      filtered.sort((a, b) => {
+        // Assignments without deadlines go to the end
+        if (!a.dueDateObj) return 1;
+        if (!b.dueDateObj) return -1;
+        return a.dueDateObj.getTime() - b.dueDateObj.getTime();
+      });
+    } else if (sortOrder === 'deadlineDesc') {
+      filtered.sort((a, b) => {
+        // Assignments without deadlines go to the end
+        if (!a.dueDateObj) return 1;
+        if (!b.dueDateObj) return -1;
+        return b.dueDateObj.getTime() - a.dueDateObj.getTime();
+      });
     }
     
     setFilteredAssignments(filtered);
@@ -148,20 +197,31 @@ const AssignmentsPage = () => {
     });
     
     setGroupedAssignments(groupedArray);
-  }, [assignments, selectedLearningPathId]);
+  }, [assignments, selectedLearningPathId, sortOrder]);
 
-  // Update URL when filter changes
+  // Update URL when filter or sort changes
   useEffect(() => {
     if (!selectedLearningPathId) {
       searchParams.delete('learningPath');
     } else {
       searchParams.set('learningPath', selectedLearningPathId);
     }
+    
+    if (sortOrder === 'default') {
+      searchParams.delete('sort');
+    } else {
+      searchParams.set('sort', sortOrder);
+    }
+    
     setSearchParams(searchParams);
-  }, [selectedLearningPathId, searchParams, setSearchParams]);
+  }, [selectedLearningPathId, sortOrder, searchParams, setSearchParams]);
 
   const handleLearningPathSelect = (learningPathId: string | null) => {
     setSelectedLearningPathId(learningPathId);
+  };
+
+  const handleSortChange = (newSortOrder: SortOrder) => {
+    setSortOrder(newSortOrder);
   };
 
   // Helper function to extract plain text from the document structure
@@ -218,15 +278,34 @@ const AssignmentsPage = () => {
     return colors[hash % colors.length];
   };
 
+  // Format date for display
+  const formatDate = (dateString?: string): string => {
+    if (!dateString) return 'Geen deadline';
+    
+    return new Date(dateString).toLocaleDateString('nl-NL', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric'
+    });
+  };
+
+  // Helper to determine if an assignment is past due
+  const isPastDue = (dueDate?: string): boolean => {
+    if (!dueDate) return false;
+    return new Date(dueDate) < new Date();
+  };
+
   // Render assignment card
   const renderAssignmentCard = (assignment: Assignment) => {
+    const pastDue = isPastDue(assignment.dueDate);
+    
     return (
       <Link 
         to={`/assignments/${assignment.id}`} 
         key={assignment.id} 
         className="block group"
       >
-        <Card className="hover:shadow-md transition-shadow overflow-hidden h-full">
+        <Card className={`hover:shadow-md transition-shadow overflow-hidden h-full ${pastDue ? 'border-l-4 border-l-amber-500' : ''}`}>
           {assignment.screenshots && assignment.screenshots.length > 0 && (
             <div className="relative h-48 overflow-hidden">
               <img 
@@ -271,9 +350,10 @@ const AssignmentsPage = () => {
           </CardHeader>
           <CardContent>
             {assignment.dueDate && (
-              <div className="flex items-center text-muted-foreground mb-3">
+              <div className={`flex items-center ${pastDue ? 'text-amber-600 font-medium' : 'text-muted-foreground'} mb-3`}>
                 <CalendarIcon size={16} className="mr-2" />
-                <span>Deadline: {new Date(assignment.dueDate).toLocaleDateString()}</span>
+                <span>Deadline: {formatDate(assignment.dueDate)}</span>
+                {pastDue && <Badge variant="outline" className="ml-2 text-amber-600 border-amber-600">Verlopen</Badge>}
               </div>
             )}
             
@@ -342,7 +422,48 @@ const AssignmentsPage = () => {
       
       {/* Main Content */}
       <div className="flex-1 overflow-auto p-6">
-        <h1 className="text-3xl font-bold tracking-tight mb-4">Opdrachten</h1>
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+          <h1 className="text-3xl font-bold tracking-tight">Opdrachten</h1>
+          
+          <div className="flex items-center gap-3">
+            {/* Sort Dropdown */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" className="gap-2">
+                  {sortOrder === 'default' && <SortAscIcon size={16} />}
+                  {sortOrder === 'deadlineAsc' && <CalendarClockIcon size={16} />}
+                  {sortOrder === 'deadlineDesc' && <CalendarClockIcon size={16} className="rotate-180" />}
+                  
+                  {sortOrder === 'default' && "Standaard"}
+                  {sortOrder === 'deadlineAsc' && "Deadline (oplopend)"}
+                  {sortOrder === 'deadlineDesc' && "Deadline (aflopend)"}
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={() => handleSortChange('default')}>
+                  <SortAscIcon size={16} className="mr-2" />
+                  Standaard
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handleSortChange('deadlineAsc')}>
+                  <CalendarClockIcon size={16} className="mr-2" />
+                  Deadline (oplopend)
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handleSortChange('deadlineDesc')}>
+                  <CalendarClockIcon size={16} className="mr-2 rotate-180" />
+                  Deadline (aflopend)
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            {/* Timeline View Link */}
+            <Button asChild variant="outline">
+              <Link to="/timeline" className="gap-2">
+                <CalendarIcon size={16} />
+                Tijdlijn weergave
+              </Link>
+            </Button>
+          </div>
+        </div>
 
         {/* Filter buttons for all views */}
         <LearningPathButtons 

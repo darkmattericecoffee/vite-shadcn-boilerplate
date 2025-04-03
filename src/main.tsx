@@ -7,6 +7,7 @@ import {
   Navigate
 } from 'react-router-dom';
 import { Layout } from './components/Layout';
+import { TimelineLayout } from './components/TimelineLayout';
 import {
   HomePage,
   ProjectsPage,
@@ -15,8 +16,9 @@ import {
   AssignmentsPage,
   AssignmentDetailPage,
   LearningPathsPage,
-  LearningPathDetailPage // Import the new component
+  LearningPathDetailPage
 } from './pages';
+import { TimelinePage } from './pages/TimelinePage';
 import './index.css';
 
 const router = createBrowserRouter([
@@ -45,7 +47,7 @@ const router = createBrowserRouter([
         element: <AssignmentsPage />,
       },
       {
-        path: 'assignments/:id', // Add the new route
+        path: 'assignments/:id',
         element: <AssignmentDetailPage />,
       },
       {
@@ -53,12 +55,22 @@ const router = createBrowserRouter([
         element: <LearningPathsPage />,
       },
       {
-        path: 'learning-paths/:id', // Add the new route
+        path: 'learning-paths/:id',
         element: <LearningPathDetailPage />,
       },
       {
         path: '*',
         element: <Navigate to="/" replace />,
+      },
+    ],
+  },
+  {
+    path: '/timeline',
+    element: <TimelineLayout />,
+    children: [
+      {
+        index: true,
+        element: <TimelinePage />,
       },
     ],
   },

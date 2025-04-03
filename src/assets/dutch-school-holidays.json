@@ -1,0 +1,64 @@
+{
+  "holidays": [
+    {
+      "name": "Kerstvakantie 2024/2025",
+      "region": "Midden",
+      "startDate": "2024-12-21",
+      "endDate": "2025-01-05"
+    },
+    {
+      "name": "Voorjaarsvakantie 2025",
+      "region": "Midden",
+      "startDate": "2025-02-22",
+      "endDate": "2025-03-02"
+    },
+    {
+      "name": "Meivakantie 2025",
+      "region": "Landelijk",
+      "startDate": "2025-04-26",
+      "endDate": "2025-05-11"
+    },
+    {
+      "name": "Zomervakantie 2025",
+      "region": "Midden",
+      "startDate": "2025-07-12",
+      "endDate": "2025-08-24"
+    },
+    {
+      "name": "Herfstvakantie 2025",
+      "region": "Midden",
+      "startDate": "2025-10-18",
+      "endDate": "2025-10-26"
+    },
+    {
+      "name": "Kerstvakantie 2025/2026",
+      "region": "Midden",
+      "startDate": "2025-12-20",
+      "endDate": "2026-01-04"
+    },
+    {
+      "name": "Voorjaarsvakantie 2026",
+      "region": "Midden",
+      "startDate": "2026-02-21",
+      "endDate": "2026-03-01"
+    },
+    {
+      "name": "Meivakantie 2026",
+      "region": "Landelijk",
+      "startDate": "2026-04-25",
+      "endDate": "2026-05-10"
+    },
+    {
+      "name": "Zomervakantie 2026",
+      "region": "Midden",
+      "startDate": "2026-07-11",
+      "endDate": "2026-08-23"
+    },
+    {
+      "name": "Herfstvakantie 2026",
+      "region": "Midden",
+      "startDate": "2026-10-17",
+      "endDate": "2026-10-25"
+    }
+  ]
+}

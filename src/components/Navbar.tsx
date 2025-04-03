@@ -11,7 +11,8 @@ import {
   MenuIcon, 
   X, 
   MessageCircleCodeIcon,
-  BrainIcon
+  BrainIcon,
+  CalendarIcon
 } from 'lucide-react';
 
 export const Navbar = () => {
@@ -102,6 +103,14 @@ export const Navbar = () => {
                 </Link>
               </li>
               <li>
+                <Link to="/timeline">
+                  <Button variant={isActive('/timeline') ? 'default' : 'ghost'} className="flex items-center gap-2">
+                    <CalendarIcon size={16} />
+                    <span>Deadlines</span>
+                  </Button>
+                </Link>
+              </li>
+              <li>
                 <Link to="/projects">
                   <Button variant={isActive('/projects') ? 'default' : 'ghost'} className="flex items-center gap-2">
                     <CodeIcon size={16} />
@@ -148,6 +157,14 @@ export const Navbar = () => {
                   <Button variant={isActive('/assignments') ? 'default' : 'ghost'} className="w-full justify-start items-center gap-2">
                     <BookOpenIcon size={16} />
                     <span>Opdrachten</span>
+                  </Button>
+                </Link>
+              </li>
+              <li>
+                <Link to="/timeline" onClick={handleLinkClick}>
+                  <Button variant={isActive('/timeline') ? 'default' : 'ghost'} className="w-full justify-start items-center gap-2">
+                    <CalendarIcon size={16} />
+                    <span>Deadlines</span>
                   </Button>
                 </Link>
               </li>
